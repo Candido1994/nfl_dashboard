@@ -1,0 +1,58 @@
+name: Atualizar site
+
+on:
+  schedule:
+    # toda terça às 12:00 UTC (09:00 em Brasília), depois do Monday Night Football
+    - cron: "0 12 * * 2"
+  workflow_dispatch:        # botão "Run workflow" na aba Actions
+  push:
+    branches: [main]        # publica também quando você altera o projeto
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# uma publicação por vez; não cancela a que já está em andamento
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt pytest
+
+      - name: Rodar testes
+        run: pytest -q
+
+      - name: Gerar o site
+        env:
+          NFL_TZ: America/Sao_Paulo
+          NFL_SEASON: ${{ vars.NFL_SEASON }}   # opcional: Settings > Variables > Actions
+        run: python generate.py --out site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

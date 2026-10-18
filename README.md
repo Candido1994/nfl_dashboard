@@ -38,7 +38,7 @@ python generate.py 2026 --out docs   # escolhe a pasta de saída
 python -m nfl_dashboard 2026         # forma equivalente
 ```
 
-A data de "atualizado em" usa o fuso de Brasília. Para mudar, defina `NFL_TZ` (por exemplo `NFL_TZ=America/New_York`).
+A temporada também pode vir da variável de ambiente `NFL_SEASON`. A data de "atualizado em" usa o fuso de Brasília. Para mudar, defina `NFL_TZ` (por exemplo `NFL_TZ=America/New_York`).
 
 ## Estrutura do repositório
 
@@ -98,10 +98,37 @@ Os testes cobrem a montagem das páginas, os rankings e a agregação de jogador
 
 ## Publicação
 
-A pasta `site/` é um site estático completo. Dá para publicá-la em Cloudflare Pages, Netlify (arrastando a pasta),
-GitHub Pages ou qualquer outra hospedagem estática. Para atualizar, rode o script e publique a pasta de novo.
+A pasta `site/` é um site estático completo e pode ir para qualquer hospedagem estática
+(Cloudflare Pages, Netlify, GitHub Pages...). Este repositório já vem com publicação automática no **GitHub Pages**.
 
-A atualização automática semanal (GitHub Actions) ainda não está configurada neste repositório.
+### Publicando no GitHub Pages (uma vez)
+
+1. Crie um repositório público no GitHub e envie o projeto:
+   ```bash
+   git init -b main
+   git add .
+   git commit -m "Primeira versão"
+   git remote add origin https://github.com/SEU_USUARIO/nfl-dashboard.git
+   git push -u origin main
+   ```
+2. No repositório, vá em **Settings → Pages** e, em **Source**, escolha **GitHub Actions**.
+3. Vá na aba **Actions**, abra o fluxo **Atualizar site** e clique em **Run workflow**.
+   Quando terminar, o endereço aparece no resumo da execução e em Settings → Pages:
+   `https://SEU_USUARIO.github.io/nfl-dashboard/`.
+
+### Atualização automática
+
+O fluxo `.github/workflows/atualizar-site.yml` roda **toda terça às 12:00 UTC (09:00 em Brasília)**, depois do Monday Night Football:
+instala as dependências, roda os testes, gera o site e publica. Ele também roda quando você envia alterações para a branch `main`
+e quando você clica em **Run workflow**.
+
+- **Mudar o dia ou o horário:** edite a linha `cron` do arquivo (o horário é UTC).
+- **Mudar a temporada:** em **Settings → Secrets and variables → Actions → Variables**, crie `NFL_SEASON` com o ano (por exemplo `2027`).
+  Sem a variável, vale o padrão de `nfl_dashboard/config.py`.
+- **Se a execução falhar** (por exemplo, o nflverse fora do ar), o site continua com a última versão publicada.
+  Abra a execução na aba Actions para ver o erro e rode de novo depois.
+- **Atenção:** em repositórios públicos, o GitHub desativa as execuções agendadas depois de 60 dias sem atividade no repositório.
+  Se isso acontecer, na aba Actions clique em **Enable workflow** (ou envie qualquer alteração).
 
 ## Limitações conhecidas
 

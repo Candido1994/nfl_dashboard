@@ -24,8 +24,9 @@ def _now():
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Gera o painel semanal da NFL (HTML estático).")
-    parser.add_argument("temporada", nargs="?", type=int, default=DEFAULT_SEASON,
-                        help=f"ano da temporada (padrão: {DEFAULT_SEASON})")
+    default_season = int(os.environ.get("NFL_SEASON") or DEFAULT_SEASON)
+    parser.add_argument("temporada", nargs="?", type=int, default=default_season,
+                        help=f"ano da temporada (padrão: variável NFL_SEASON ou {DEFAULT_SEASON})")
     parser.add_argument("--out", default="site", help="pasta de saída (padrão: site)")
     args = parser.parse_args(argv)
     season = args.temporada

@@ -1,0 +1,7 @@
+# mantém as versões das actions do workflow atualizadas (abre um pull request por mês)
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
