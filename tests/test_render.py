@@ -20,8 +20,8 @@ def test_aba_ativa_e_links():
 
 def test_json_nao_fecha_a_tag_script():
     html = render_page("painel", {"x": "</script><b>"}, "v1")
-    assert html.count("</script>") == 2  # dados + arquivo js
-    assert "<\\/script>" in html
+    assert "</script><b>" not in html   # o texto perigoso não aparece cru
+    assert "<\\/script><b>" in html     # aparece com a barra escapada
 
 
 def test_write_site_copia_static_e_grava_paginas(tmp_path):
