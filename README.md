@@ -1,0 +1,116 @@
+# NFL Dashboard
+
+Painel semanal da NFL, gerado como **páginas HTML estáticas** a partir dos dados do
+[nflverse](https://nflverse.com) (via [`nflreadpy`](https://github.com/nflverse/nflreadpy)).
+Rode o script uma vez por semana e publique a pasta gerada em qualquer hospedagem de site estático.
+
+> Projeto independente, sem vínculo com a NFL.
+
+## Páginas
+
+| Página | Arquivo | O que mostra |
+|---|---|---|
+| Painel | `index.html` | Os 32 times: pontos, jardas aéreas e corridas, turnovers, sacks, EPA e success rate (feitos e cedidos), saldos e campanha. Tabela ordenável, filtros por conferência/divisão e rankings por métrica. |
+| Confrontos | `confrontos.html` | Jogos da semana atual (ou da próxima, se a atual já terminou), cada um expansível: projeção de pontos, duelos ataque x defesa, destaques e comparativo completo com a posição de cada time na liga. |
+| Evolução | `evolucao.html` | Gráfico semana a semana de qualquer métrica (valor ou posição no ranking) e tabela de movimentação do ranking. |
+| Jogadores | `jogadores.html` | Líderes por time e tabelas de QBs, corredores, recebedores, defesa e kickers. |
+
+Todas as páginas têm três janelas de período: **temporada**, **últimas 3 semanas** e **último jogo**.
+Os cards de confronto têm links que abrem *Jogadores* e *Evolução* já filtrados pelos dois times
+(por exemplo `jogadores.html?times=NE,SF`).
+
+## Como rodar
+
+Requer Python 3.10 ou mais novo e acesso à internet (os dados são baixados do nflverse a cada execução).
+
+```bash
+python -m venv .venv
+source .venv/bin/activate        # no Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+python generate.py 2026          # gera a pasta site/
+```
+
+Abra `site/index.html` no navegador. Opções:
+
+```bash
+python generate.py 2026 --out docs   # escolhe a pasta de saída
+python -m nfl_dashboard 2026         # forma equivalente
+```
+
+A data de "atualizado em" usa o fuso de Brasília. Para mudar, defina `NFL_TZ` (por exemplo `NFL_TZ=America/New_York`).
+
+## Estrutura do repositório
+
+```
+nfl-dashboard/
+├── generate.py              # atalho para a linha de comando
+├── requirements.txt
+├── nfl_dashboard/           # código Python
+│   ├── config.py            # lista de métricas e temporada padrão
+│   ├── stats.py             # estatísticas dos times, rankings, confrontos e histórico
+│   ├── players.py           # estatísticas de jogadores
+│   ├── render.py            # monta o HTML a partir dos templates
+│   └── cli.py               # orquestra tudo e grava a pasta de saída
+├── templates/
+│   ├── layout.html          # estrutura comum (cabeçalho, abas, scripts)
+│   └── pages/               # conteúdo de cada página
+├── static/
+│   ├── css/style.css        # todo o visual (tema claro e escuro)
+│   └── js/                  # um script por página (tabelas, filtros, gráfico)
+├── tests/                   # testes automatizados
+└── site/                    # saída gerada (não é versionada)
+```
+
+O Python calcula os números e os grava como JSON dentro de cada página. O navegador só monta tabelas e gráficos
+com esses dados, então o site final não precisa de servidor.
+
+## Como os números são calculados
+
+- **Janelas:** "último jogo" e "últimas 3 semanas" contam os jogos do próprio time (a semana de bye não entra).
+- **Turnovers cedidos:** interceptações + fumbles perdidos. **Turnovers forçados:** os cedidos pelo adversário no mesmo jogo.
+- **Jardas por jogada:** (jardas aéreas + corridas) ÷ (passes tentados + corridas + sacks sofridos).
+- **EPA/jogada e success rate:** calculados a partir do play-by-play, só com passes e corridas da temporada regular.
+- **Ranking na liga:** de 1 a 32, em que **1 é o melhor em todas as métricas**, inclusive nas defensivas (1º em jardas cedidas = a defesa que menos cede).
+- **Campanha:** vitórias-derrotas (e empates, quando existem) em cada janela.
+- **Confrontos:** a projeção de pontos é a média entre os pontos que o ataque faz e os que a defesa adversária cede.
+  "Vantagem clara" em um duelo ataque x defesa significa diferença de 6 ou mais posições no ranking
+  (constante `TH` em `static/js/confrontos.js`).
+- **Evolução:** recalculada do zero a cada execução, então não depende de execuções anteriores.
+- **Jogadores:** vêm de `load_player_stats` por semana. Colunas que não existirem nos dados contam como zero.
+
+## Personalizando
+
+- **Visual:** edite `static/css/style.css`. As cores ficam nas variáveis do início do arquivo.
+- **Textos e estrutura das páginas:** edite os arquivos em `templates/`.
+- **Comportamento (tabelas, filtros, gráfico):** edite os arquivos em `static/js/`.
+- **Nova métrica:** adicione em `METRICS` (`nfl_dashboard/config.py`) e calcule em `build_games` (`nfl_dashboard/stats.py`).
+  Se for média por jogo, ela aparece sozinha no painel e nos rankings.
+
+## Testes
+
+```bash
+pip install pytest
+pytest
+```
+
+Os testes cobrem a montagem das páginas, os rankings e a agregação de jogadores, e não precisam de internet.
+
+## Publicação
+
+A pasta `site/` é um site estático completo. Dá para publicá-la em Cloudflare Pages, Netlify (arrastando a pasta),
+GitHub Pages ou qualquer outra hospedagem estática. Para atualizar, rode o script e publique a pasta de novo.
+
+A atualização automática semanal (GitHub Actions) ainda não está configurada neste repositório.
+
+## Limitações conhecidas
+
+- Os nomes das colunas de jogadores seguem o padrão do nflverse. Se o nflverse mudar algum nome, a estatística correspondente aparece zerada.
+- Os dados do nflverse costumam ser atualizados na manhã seguinte aos jogos, então rode o script depois disso.
+- O estilo usa a fonte Barlow Semi Condensed, carregada do Google Fonts. Sem internet, o navegador usa uma fonte do sistema.
+
+## Dados e licença
+
+Dados: [nflverse](https://nflverse.com). Consulte os termos de uso e a atribuição exigida por eles antes de publicar.
+
+Licença do código: a definir.

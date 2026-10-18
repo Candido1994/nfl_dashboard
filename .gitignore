@@ -1,0 +1,12 @@
+# saída gerada (publique esta pasta, não versione)
+site/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# sistema
+.DS_Store

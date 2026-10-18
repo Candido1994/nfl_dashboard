@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="static/css/style.css?v={{VERSION}}">
+</head>
+<body class="{{BODY_CLASS}}">
+<header class="top">
+  <div class="top-in">
+    <div><h1>{{H1}}</h1><div class="sub" id="sub"></div></div>
+    <nav class="tabs" aria-label="Páginas">{{NAV}}</nav>
+  </div>
+  <div class="yard" aria-hidden="true"></div>
+</header>
+{{CONTENT}}
+<script>window.__DATA__={{DATA}};</script>
+<script src="static/js/{{SCRIPT}}.js?v={{VERSION}}"></script>
+</body>
+</html>
