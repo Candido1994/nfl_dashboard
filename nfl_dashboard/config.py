@@ -43,3 +43,5 @@ METRICS = [
 RATIOS = ("ypp", "ypp_a", "epa", "epa_a", "sr", "sr_a")
 # métricas que são médias simples por jogo
 BASE = [k for k, _, _ in METRICS if k not in RATIOS]
+
+GOATCOUNTER_URL = "https://nfl-dashboard.goatcounter.com/count"

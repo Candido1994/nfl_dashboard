@@ -31,3 +31,17 @@ def test_write_site_copia_static_e_grava_paginas(tmp_path):
     assert (tmp_path / "static" / "css" / "style.css").exists()
     for key in PAGES:
         assert (tmp_path / "static" / "js" / f"{key}.js").exists()
+
+
+
+def test_contador_de_acessos_so_aparece_quando_configurado(monkeypatch):
+    import nfl_dashboard.render as render
+
+    monkeypatch.setattr(render, "GOATCOUNTER_URL", "")
+    assert "goatcounter" not in render.render_page("painel", {}, "v1").lower()
+
+    monkeypatch.setattr(render, "GOATCOUNTER_URL", "https://exemplo.goatcounter.com/count")
+    html = render.render_page("painel", {}, "v1")
+    assert 'data-goatcounter="https://exemplo.goatcounter.com/count"' in html
+    assert "sem cookies" in html and "{{" not in html
+    
