@@ -1,23 +1,39 @@
 # NFL Dashboard
 
-Painel semanal da NFL, gerado como **páginas HTML estáticas** a partir dos dados do
-[nflverse](https://nflverse.com) (via [`nflreadpy`](https://github.com/nflverse/nflreadpy)).
-Rode o script uma vez por semana e publique a pasta gerada em qualquer hospedagem de site estático.
+**Um painel interativo para explorar estatísticas, confrontos e evolução dos times da NFL.**
 
-> Projeto independente, sem vínculo com a NFL.
+Projeto pessoal que une minha paixão pela NFL com análise de dados. O dashboard utiliza dados do [nflverse](https://nflverse.com/), processados em Python e apresentados em páginas HTML estáticas, com tabelas interativas, filtros, rankings e gráficos históricos.
 
-## Páginas
+[**Acessar o dashboard ao vivo**](https://candido1994.github.io/nfl_dashboard/) · [**Explorar o código-fonte**](https://github.com/Candido1994/nfl_dashboard)
+
+*Projeto independente, sem vínculo com a NFL.*
+
+## Páginas do dashboard
 
 | Página | Arquivo | O que mostra |
-|---|---|---|
-| Painel | `index.html` | Os 32 times: pontos, jardas aéreas e corridas, turnovers, sacks, EPA e success rate (feitos e cedidos), saldos e campanha. Tabela ordenável, filtros por conferência/divisão e rankings por métrica. |
-| Confrontos | `confrontos.html` | Jogos da semana atual (ou da próxima, se a atual já terminou), cada um expansível: projeção de pontos, duelos ataque x defesa, destaques e comparativo completo com a posição de cada time na liga. |
-| Evolução | `evolucao.html` | Gráfico semana a semana de qualquer métrica (valor ou posição no ranking) e tabela de movimentação do ranking. |
-| Jogadores | `jogadores.html` | Líderes por time e tabelas de QBs, corredores, recebedores, defesa e kickers. |
+| :--- | :--- | :--- |
+| **Painel** | `index.html` | Comparação dos 32 times: pontos, jardas aéreas e terrestres, turnovers, sacks, EPA e success rate (produzidos e cedidos), saldos e campanha. Inclui tabela ordenável, filtros por conferência e divisão e rankings por métrica. |
+| **Confrontos** | `confrontos.html` | Jogos da semana atual (ou da próxima, se a atual já terminou), com cards expansíveis, projeção de pontos, duelos entre ataque e defesa, destaques e comparativo com a posição de cada time na liga. |
+| **Evolução** | `evolucao.html` | Gráficos semana a semana de métricas ou posições no ranking e tabela de movimentação no ranking. |
+| **Jogadores** | `jogadores.html` | Líderes por time e tabelas de quarterbacks, corredores, recebedores, jogadores de defesa e kickers. |
 
-Todas as páginas têm três janelas de período: **temporada**, **últimas 3 semanas** e **último jogo**.
-Os cards de confronto têm links que abrem *Jogadores* e *Evolução* já filtrados pelos dois times
-(por exemplo `jogadores.html?times=NE,SF`).
+## Principais recursos
+
+- Filtros por conferência, divisão e equipe.
+- Rankings comparativos por métrica.
+- Três janelas de análise: **temporada**, **últimas 3 semanas** e **último jogo**. As janelas de jogo consideram as partidas disputadas por cada equipe; a semana de bye não entra na contagem.
+- Gráficos históricos de desempenho e movimentação no ranking.
+- Integração entre confrontos, estatísticas de jogadores e evolução dos times. Os cards de confronto incluem links para abrir as páginas de Jogadores e Evolução filtradas pelas duas equipes, por exemplo: `jogadores.html?times=NE,SF`.
+- Geração automatizada e publicação pelo GitHub Actions.
+
+## Tecnologias
+
+- **Python:** processamento e análise dos dados.
+- **nflreadpy e nflverse:** obtenção das estatísticas.
+- **HTML, CSS e JavaScript:** apresentação e interatividade.
+- **pytest:** testes automatizados.
+- **GitHub Actions:** automação de testes, geração e publicação.
+- **GitHub Pages:** hospedagem do dashboard.
 
 ## Como rodar
 
@@ -150,6 +166,6 @@ O arquivo `tzdata` fica sem versão porque é só a base de fusos horários.
 
 ## Dados e licença
 
-Dados: [nflverse](https://nflverse.com). Consulte os termos de uso e a atribuição exigida por eles antes de publicar.
+Os dados são provenientes do [nflverse](https://nflverse.com/). Consulte os termos de uso e os requisitos de atribuição aplicáveis antes de redistribuir ou publicar os dados.
 
-Licença do código: a definir.
+**Licença do código:** Este projeto está sob a licença [MIT](LICENSE). A licença do código não substitui os termos aplicáveis aos dados de terceiros.
