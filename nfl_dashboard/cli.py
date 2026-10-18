@@ -3,7 +3,7 @@ import argparse
 import os
 from datetime import datetime
 
-from .config import DEFAULT_SEASON, METRICS
+from .config import DEFAULT_SEASON, METRICS, local_tz_name, tz_label
 from .players import PLAYER_META, load_players
 from .render import write_site
 from .stats import (
@@ -17,7 +17,7 @@ def _now():
     try:
         from zoneinfo import ZoneInfo
 
-        return datetime.now(ZoneInfo(os.environ.get("NFL_TZ", "America/Sao_Paulo")))
+        return datetime.now(ZoneInfo(local_tz_name()))
     except Exception:  # sem base de fusos (ex.: Windows sem tzdata)
         return datetime.now()
 
@@ -38,7 +38,7 @@ def main(argv=None):
     week = int(g["week"].max() or 0)
     metrics = [{"k": k, "l": l, "hb": hb} for k, l, hb in METRICS]
 
-    mu = build_matchups(season, info, {t["abbr"]: t for t in teams})
+    mu = build_matchups(season, info, {t["abbr"]: t for t in teams}, local_tz_name())
     weeks, hteams = build_history(g, info)
 
     pages = {
@@ -47,7 +47,7 @@ def main(argv=None):
             "metrics": metrics, "teams": teams,
         },
         "confrontos": {
-            "season": season, "updated": updated, "metrics": metrics,
+            "season": season, "updated": updated, "metrics": metrics, "tz": tz_label(),
             "nteams": sum(1 for t in teams if t.get("s")),
             "ranks": {w: compute_ranks(teams, w) for w in ("s", "w3", "w1")},
             **(mu or {"week": None, "games": [], "bye": []}),

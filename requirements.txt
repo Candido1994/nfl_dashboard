@@ -1,2 +1,21 @@
-nflreadpy
-polars
+# Versões exatas da última execução bem-sucedida do fluxo (Python 3.12, Linux).
+# Para atualizar: troque os números, rode os testes e confira a execução no GitHub.
+nflreadpy==0.1.5
+polars==2.0.0
+polars-runtime-32==2.0.0
+annotated-types==0.8.0
+certifi==2026.7.22
+charset-normalizer==3.5.2
+idna==3.20
+platformdirs==4.13.4
+pydantic==2.14.1
+pydantic-core==2.50.1
+pydantic-settings==2.16.0
+python-dotenv==1.2.4
+requests==2.34.2
+tqdm==4.70.1
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.8.0
+# base de fusos horários (necessária no Windows; no Linux já existe no sistema)
+tzdata

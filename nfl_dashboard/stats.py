@@ -130,7 +130,33 @@ def compute_ranks(teams, win="s"):
     return ranks
 
 
-def build_matchups(season, info, by_abbr):
+_DIAS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
+
+
+def local_kickoff(gameday, gametime, tz_name):
+    """O nflverse informa gameday/gametime no horário do Leste dos EUA (ET).
+    Converte para o fuso escolhido e devolve ("dom, 18/10", "14:00")."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    day = str(gameday or "")[:10]
+    if not day:
+        return "", ""
+    clock = str(gametime or "")[:5]
+    try:
+        if not clock:
+            d = datetime.strptime(day, "%Y-%m-%d")
+            return f"{_DIAS[d.weekday()]}, {d:%d/%m}", "horário a definir"
+        et = datetime.strptime(f"{day} {clock}", "%Y-%m-%d %H:%M").replace(
+            tzinfo=ZoneInfo("America/New_York")
+        )
+        loc = et.astimezone(ZoneInfo(tz_name))
+        return f"{_DIAS[loc.weekday()]}, {loc:%d/%m}", f"{loc:%H:%M}"
+    except Exception:  # fuso inválido ou sem base de fusos: mostra o horário original
+        return day, f"{clock} ET" if clock else ""
+
+
+def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
     """Jogos da semana atual (se ainda há jogo pendente) ou da próxima."""
     import nflreadpy as nfl
     import polars as pl
@@ -146,12 +172,13 @@ def build_matchups(season, info, by_abbr):
         a, h = r["away_team"], r["home_team"]
         playing |= {a, h}
         empty = lambda x: {"abbr": x, "label": label(x, info), "w1": None, "w3": None, "s": None}
+        day, time = local_kickoff(r.get("gameday"), r.get("gametime"), tz_name)
         games.append(
             {
                 "away": by_abbr.get(a) or empty(a),
                 "home": by_abbr.get(h) or empty(h),
-                "day": str(r.get("gameday") or ""),
-                "time": r.get("gametime") or "",
+                "day": day,
+                "time": time,
                 "as": r.get("away_score"),
                 "hs": r.get("home_score"),
             }

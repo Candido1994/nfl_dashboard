@@ -6,7 +6,7 @@ const f=v=>v==null?"–":v;
 const NT=D.nteams||32,TH=6;
 const MK=Object.fromEntries(D.metrics.map(m=>[m.k,m]));
 document.querySelector("h1").textContent="NFL "+D.season+(D.week?" – Confrontos da semana "+D.week:" – Confrontos");
-$("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários em ET";
+$("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários: "+(D.tz||"ET");
 $("bye").textContent=D.bye.length?"Folga (bye): "+D.bye.join(", "):"";
 $("wins").innerHTML=Object.entries(WL).map(([k,l])=>`<button data-w="${k}">${l}</button>`).join("");
 $("wins").onclick=e=>{if(e.target.dataset.w){win=e.target.dataset.w;draw()}};

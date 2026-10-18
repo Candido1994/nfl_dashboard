@@ -38,7 +38,10 @@ python generate.py 2026 --out docs   # escolhe a pasta de saída
 python -m nfl_dashboard 2026         # forma equivalente
 ```
 
-A temporada também pode vir da variável de ambiente `NFL_SEASON`. A data de "atualizado em" usa o fuso de Brasília. Para mudar, defina `NFL_TZ` (por exemplo `NFL_TZ=America/New_York`).
+A temporada também pode vir da variável de ambiente `NFL_SEASON`.
+
+**Fuso horário:** o nflverse informa os horários dos jogos em horário do Leste dos EUA (ET). O site converte para o horário de Brasília,
+e o "atualizado em" usa o mesmo fuso. Para outro fuso, defina `NFL_TZ` (por exemplo `NFL_TZ=America/New_York`).
 
 ## Estrutura do repositório
 
@@ -90,7 +93,7 @@ com esses dados, então o site final não precisa de servidor.
 ## Testes
 
 ```bash
-pip install pytest
+pip install -r requirements-dev.txt
 pytest
 ```
 
@@ -129,6 +132,15 @@ e quando você clica em **Run workflow**.
   Abra a execução na aba Actions para ver o erro e rode de novo depois.
 - **Atenção:** em repositórios públicos, o GitHub desativa as execuções agendadas depois de 60 dias sem atividade no repositório.
   Se isso acontecer, na aba Actions clique em **Enable workflow** (ou envie qualquer alteração).
+
+## Dependências
+
+`requirements.txt` fixa as **versões exatas** usadas na última execução bem-sucedida do fluxo (Python 3.12), incluindo as bibliotecas das quais o
+`nflreadpy` e o `polars` dependem. Assim, uma versão nova de qualquer biblioteca não muda o resultado sem você perceber.
+`requirements-dev.txt` acrescenta as ferramentas de teste.
+
+Para atualizar, troque os números no arquivo, rode `pytest` e confira a execução do fluxo na aba Actions.
+O arquivo `tzdata` fica sem versão porque é só a base de fusos horários.
 
 ## Limitações conhecidas
 

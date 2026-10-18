@@ -1,6 +1,20 @@
 """Configuração do projeto: métricas exibidas nas páginas."""
+import os
 
 DEFAULT_SEASON = 2026
+
+# fuso usado para "atualizado em" e para os horários dos jogos (troque com a variável NFL_TZ)
+DEFAULT_TZ = "America/Sao_Paulo"
+TZ_LABELS = {"America/Sao_Paulo": "Brasília"}
+
+
+def local_tz_name():
+    return os.environ.get("NFL_TZ") or DEFAULT_TZ
+
+
+def tz_label():
+    name = local_tz_name()
+    return TZ_LABELS.get(name, name)
 
 # (chave, rótulo, maior_é_melhor) -- a ordem define as colunas do painel
 METRICS = [
