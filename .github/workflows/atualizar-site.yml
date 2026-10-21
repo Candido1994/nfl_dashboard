@@ -2,8 +2,8 @@ name: Atualizar site
 
 on:
   schedule:
-    # toda terça às 12:00 UTC (09:00 em Brasília), depois do Monday Night Football
-    - cron: "0 12 * * 2"
+    # terça e quarta às 12:17 UTC (09:17 em Brasília); o minuto 17 evita o horário de pico do GitHub
+    - cron: "17 12 * * 2,3"
   workflow_dispatch:        # botão "Run workflow" na aba Actions
   push:
     branches: [main]        # publica também quando você altera o projeto
@@ -34,6 +34,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
       - name: Rodar testes
+        if: github.event_name != 'schedule'   # a atualização semanal não depende dos testes
         run: pytest -q
 
       - name: Gerar o site
