@@ -156,6 +156,12 @@ def local_kickoff(gameday, gametime, tz_name):
         return day, f"{clock} ET" if clock else ""
 
 
+def divisional(info, a, b):
+    """Nome da divisão quando os dois times são da mesma divisão; senão None."""
+    da = info.get(a, {}).get("team_division")
+    return da if da and da == info.get(b, {}).get("team_division") else None
+
+
 def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
     """Jogos da semana atual (se ainda há jogo pendente) ou da próxima."""
     import nflreadpy as nfl
@@ -181,6 +187,7 @@ def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
                 "time": time,
                 "as": r.get("away_score"),
                 "hs": r.get("home_score"),
+                "division": divisional(info, a, h),
             }
         )
     bye = sorted(label(a, info) for a in info if a not in playing)

@@ -20,3 +20,18 @@ def test_empates_dividem_a_mesma_posicao_e_none_e_ignorado():
     teams = [_team("A", pf=20), _team("B", pf=20), _team("C", pf=10), _team("D", pf=None)]
     r = compute_ranks(teams, "s")
     assert r["pf"] == {"A": 1, "B": 1, "C": 3}
+
+
+def test_jogo_de_divisao():
+    from nfl_dashboard.stats import divisional
+
+    info = {
+        "NE": {"team_division": "AFC East"},
+        "NYJ": {"team_division": "AFC East"},
+        "KC": {"team_division": "AFC West"},
+        "XX": {},
+    }
+    assert divisional(info, "NE", "NYJ") == "AFC East"
+    assert divisional(info, "NE", "KC") is None
+    assert divisional(info, "XX", "NE") is None      # sem dados da divisão
+    assert divisional(info, "ZZ", "WW") is None      # times desconhecidos
