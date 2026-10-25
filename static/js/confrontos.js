@@ -5,7 +5,7 @@ const $=id=>document.getElementById(id);
 const f=v=>v==null?"–":v;
 const NT=D.nteams||32,TH=6;
 const MK=Object.fromEntries(D.metrics.map(m=>[m.k,m]));
-document.querySelector("h1").textContent="NFL "+D.season+(D.week?" – Confrontos da semana "+D.week:" – Confrontos");
+document.querySelector("h1").textContent="NFL "+D.season+(D.round?" – Playoffs · "+D.round:D.week?" – Confrontos da semana "+D.week:" – Confrontos");
 $("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários: "+(D.tz||"ET");
 $("bye").textContent=D.bye.length?"Folga (bye): "+D.bye.join(", "):"";
 $("wins").innerHTML=Object.entries(WL).map(([k,l])=>`<button data-w="${k}">${l}</button>`).join("");
@@ -59,8 +59,10 @@ function fullTable(g){
 function card(g,i,open){
  const a=g.away,h=g.home,A=a[win],H=h[win];
  const sc=g.as!=null?` • <b>Final: ${g.as} x ${g.hs}</b>`:"";
- const dv=g.division?`<div class="dvrow"><span class="dvtag">Jogo de divisão · ${g.division}</span></div>`:"";
- return`<details class="card${g.division?" dv":""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><b>${a.label}</b><small>${A?A.rec:"–"}</small></span><span class="at">@</span><span class="tm"><b>${h.label}</b><small>${H?H.rec:"–"}</small></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}</summary>
+ const po=g.round?`<span class="potag">Playoffs · ${g.round}</span>`:"";
+ const dt=g.division?`<span class="dvtag">Jogo de divisão · ${g.division}</span>`:"";
+ const dv=po||dt?`<div class="dvrow">${po}${dt}</div>`:"";
+ return`<details class="card${g.division?" dv":""}${g.round?" po":""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><b>${a.label}</b><small>${A?A.rec:"–"}</small></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><b>${h.label}</b><small>${H?H.rec:"–"}</small></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}</summary>
  <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
 function draw(){
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));

@@ -162,19 +162,57 @@ def divisional(info, a, b):
     return da if da and da == info.get(b, {}).get("team_division") else None
 
 
-def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
-    """Jogos da semana atual (se ainda há jogo pendente) ou da próxima."""
-    import nflreadpy as nfl
-    import polars as pl
+# game_type do nflverse -> nome da rodada dos playoffs (na ordem em que acontecem)
+POSTSEASON = {
+    "WC": "Wild Card",
+    "DIV": "Rodada Divisional",
+    "CON": "Final da Conferência",
+    "SB": "Super Bowl",
+}
 
-    sched = nfl.load_schedules([season]).filter(pl.col("game_type") == "REG")
-    pending = sched.filter(pl.col("home_score").is_null())
-    if pending.height == 0:
+
+def select_games(rows):
+    """Escolhe quais jogos mostrar a partir das linhas do calendário (todas as fases).
+
+    Temporada regular: a primeira semana que ainda tem jogo pendente.
+    Playoffs (quando a temporada regular acabou): a primeira rodada com jogo pendente;
+    se todas já foram disputadas, a última rodada com resultado.
+    Devolve (jogos, nome_da_rodada_ou_None, semana) ou None quando não há o que mostrar."""
+    reg = [r for r in rows if r.get("game_type") == "REG"]
+    pending = [r for r in reg if r.get("home_score") is None]
+    if pending:
+        wk = min(r["week"] for r in pending)
+        return [r for r in reg if r["week"] == wk], None, wk
+    post = [
+        r for r in rows
+        if r.get("game_type") in POSTSEASON and r.get("away_team") and r.get("home_team")
+    ]
+    if not post:
         return None
-    wk = int(pending["week"].min())
-    wg = sched.filter(pl.col("week") == wk).sort(["gameday", "gametime"])
+    order = list(POSTSEASON)
+    chosen = None
+    for gt in order:  # primeira rodada com jogo pendente
+        rd = [r for r in post if r["game_type"] == gt]
+        if any(r.get("home_score") is None for r in rd):
+            chosen = gt
+            break
+    if chosen is None:  # tudo disputado: mostra a última rodada
+        chosen = max((r["game_type"] for r in post), key=order.index)
+    rd = [r for r in post if r["game_type"] == chosen]
+    return rd, POSTSEASON[chosen], min(r["week"] for r in rd)
+
+
+def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
+    """Jogos da semana atual (ou da próxima) e, depois da temporada regular, da rodada dos playoffs."""
+    import nflreadpy as nfl
+
+    picked = select_games(nfl.load_schedules([season]).to_dicts())
+    if not picked:
+        return None
+    wg, rnd, wk = picked
+    wg = sorted(wg, key=lambda r: (str(r.get("gameday") or ""), str(r.get("gametime") or "")))
     games, playing = [], set()
-    for r in wg.to_dicts():
+    for r in wg:
         a, h = r["away_team"], r["home_team"]
         playing |= {a, h}
         empty = lambda x: {"abbr": x, "label": label(x, info), "w1": None, "w3": None, "s": None}
@@ -188,10 +226,13 @@ def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
                 "as": r.get("away_score"),
                 "hs": r.get("home_score"),
                 "division": divisional(info, a, h),
+                "round": rnd,
+                "neutral": r.get("location") == "Neutral",
             }
         )
-    bye = sorted(label(a, info) for a in info if a not in playing)
-    return {"week": wk, "games": games, "bye": bye}
+    # nos playoffs a lista de folgas não faz sentido (só 14 times jogam)
+    bye = sorted(label(a, info) for a in info if a not in playing) if rnd is None else []
+    return {"week": wk, "round": rnd, "games": games, "bye": bye}
 
 
 def build_history(g, info):
