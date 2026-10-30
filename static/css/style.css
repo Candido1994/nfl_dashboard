@@ -1,5 +1,8 @@
 :root{color-scheme:light dark;--bg:#F3F5F1;--surface:#fff;--fg:#17211B;--mut:#5A685F;--line:#DCE2DA;--acc:#1B6B3A;--acc-ink:#fff;--good:#1B7A41;--bad:#B3261E;--flag:#F2B705;--zebra:#F8FAF7;--hover:#EAF2EA;--seg:#E9EEE7;--win:#E4F3E8;--badbg:#FBE9E7;--focus:#1B6B3A}
 @media(prefers-color-scheme:dark){:root{--bg:#0D130F;--surface:#141C17;--fg:#E7EEE8;--mut:#97A89D;--line:#27322B;--acc:#58BF7B;--acc-ink:#07130B;--good:#58BF7B;--bad:#FF8A80;--flag:#F5C518;--zebra:#171F1A;--hover:#1F2B23;--seg:#1B241E;--win:#1B3325;--badbg:#3A1F1C;--focus:#58BF7B}}
+/* cores das rodadas dos playoffs: wc = Wild Card, div = Rodada Divisional, con = Final da Conferência, sb = Super Bowl */
+:root{--po-wc:#1F5FBF;--po-wc-ink:#FFFFFF;--po-div:#6B3FA0;--po-div-ink:#FFFFFF;--po-con:#C2410C;--po-con-ink:#FFFFFF;--po-sb:#BE185D;--po-sb-ink:#FFFFFF}
+@media(prefers-color-scheme:dark){:root{--po-wc:#7DB3FF;--po-wc-ink:#0A1A33;--po-div:#B9A0F0;--po-div-ink:#1E1033;--po-con:#FFA374;--po-con-ink:#2A1004;--po-sb:#F59AC4;--po-sb-ink:#330A20}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 "Barlow Semi Condensed","Roboto Condensed","Arial Narrow",system-ui,sans-serif;font-variant-numeric:tabular-nums}
@@ -86,10 +89,14 @@ select{width:100%;min-height:44px;padding:0 12px;border:1px solid var(--line);bo
 .mu .tm small{font-size:14px;font-weight:600;color:var(--mut)}
 .mu .at{color:var(--mut);font-weight:600}
 .card .m{color:var(--mut);font-size:14px;margin-top:6px}
-.card.po{border-left:4px solid var(--acc)}
 .card.dv{border-left:4px solid var(--flag)}
+.po-wc{--po:var(--po-wc);--po-ink:var(--po-wc-ink)}
+.po-div{--po:var(--po-div);--po-ink:var(--po-div-ink)}
+.po-con{--po:var(--po-con);--po-ink:var(--po-con-ink)}
+.po-sb{--po:var(--po-sb);--po-ink:var(--po-sb-ink)}
+.card.po{border-left:4px solid var(--po,var(--acc))}
 .dvrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.potag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--acc-ink);font-size:12.5px;font-weight:700}
+.potag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--po,var(--acc));color:var(--po-ink,var(--acc-ink));font-size:12.5px;font-weight:700}
 .dvtag{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--flag);color:#17211B;font-size:12.5px;font-weight:700}
 .cb{padding:12px 16px 16px}
 .cb table{width:100%;border-collapse:collapse}

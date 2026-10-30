@@ -45,3 +45,17 @@ def test_depois_do_super_bowl_mostra_o_resultado_final():
 def test_jogos_de_playoff_sem_times_definidos_sao_ignorados():
     rows = [_g("REG", 18, 24), {"game_type": "WC", "week": 19, "away_team": None, "home_team": None, "home_score": None}]
     assert select_games(rows) is None
+
+
+def test_toda_rodada_tem_cor_no_css_e_no_js():
+    from pathlib import Path
+
+    from nfl_dashboard.stats import POSTSEASON
+
+    root = Path(__file__).resolve().parent.parent
+    css = (root / "static" / "css" / "style.css").read_text(encoding="utf-8")
+    js = (root / "static" / "js" / "confrontos.js").read_text(encoding="utf-8")
+    for nome in POSTSEASON.values():
+        assert f'"{nome}":' in js, nome          # nome da rodada mapeado para uma classe
+    for classe in ("wc", "div", "con", "sb"):
+        assert f".po-{classe}{{" in css, classe  # classe definida no CSS
