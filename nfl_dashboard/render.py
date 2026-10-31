@@ -3,7 +3,8 @@ import json
 import shutil
 from datetime import datetime
 from pathlib import Path
-from .config import GOATCOUNTER_URL
+
+from .config import GOATCOUNTER_URL, REPO_URL
 
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES = ROOT / "templates"
@@ -54,6 +55,7 @@ def render_page(key, data, version=None):
         "NAV": _nav(key),
         "VERSION": version or datetime.now().strftime("%Y%m%d%H%M%S"),
         "SCRIPT": key,
+        "REPO_URL": REPO_URL,
         "ANALYTICS": (
             f'<script data-goatcounter="{GOATCOUNTER_URL}" async src="https://gc.zgo.at/count.js"></script>'
             if GOATCOUNTER_URL else ""
