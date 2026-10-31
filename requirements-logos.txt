@@ -1,0 +1,3 @@
+# usado só uma vez, no seu computador, por: python -m nfl_dashboard.logos
+-r requirements.txt
+Pillow>=10

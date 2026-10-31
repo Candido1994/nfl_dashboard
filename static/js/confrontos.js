@@ -33,7 +33,7 @@ function resumo(g){
  const pj=(O,Dd)=>((O.pf+Dd.pa)/2).toFixed(1);
  const aw=d1.filter(x=>x.edge==="a").length+d2.filter(x=>x.edge==="d").length;
  const hw=d2.filter(x=>x.edge==="a").length+d1.filter(x=>x.edge==="d").length;
- return`<section class="sec"><h3>Resumo</h3><div class="proj"><div><small>${a.label}</small><b>${pj(A,H)}</b></div><span class="mid">pontos projetados</span><div><small>${h.label}</small><b>${pj(H,A)}</b></div></div>
+ return`<section class="sec"><h3>Resumo</h3><div class="proj"><div>${teamLogo(a.abbr,28)}<small>${a.label}</small><b>${pj(A,H)}</b></div><span class="mid">pontos projetados</span><div>${teamLogo(h.abbr,28)}<small>${h.label}</small><b>${pj(H,A)}</b></div></div>
  <p class="tally">Duelos ataque x defesa com vantagem clara (de ${d1.length+d2.length}): <b>${a.abbr} ${aw}</b> × <b>${hw} ${h.abbr}</b></p>
  <p class="note">Projeção simples: média entre os pontos que o ataque faz e os que a defesa adversária cede. Vantagem clara = diferença de ${TH} ou mais posições no ranking da liga.</p>
  <p class="note"><b>Aviso:</b> projeção apenas didática; não use para apostas nem para fins lucrativos.</p></section>`}
@@ -64,7 +64,7 @@ function card(g,i,open){
  const po=g.round?`<span class="potag">Playoffs · ${g.round}</span>`:"";
  const dt=g.division?`<span class="dvtag">Jogo de divisão · ${g.division}</span>`:"";
  const dv=po||dt?`<div class="dvrow">${po}${dt}</div>`:"";
- return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><b>${a.label}</b><small>${A?A.rec:"–"}</small></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><b>${h.label}</b><small>${H?H.rec:"–"}</small></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}</summary>
+ return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><span class="tt">${teamLogo(a.abbr,40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A?A.rec:"–"}</small></span></span></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><span class="tt">${teamLogo(h.abbr,40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H?H.rec:"–"}</small></span></span></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}</summary>
  <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
 function draw(){
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));

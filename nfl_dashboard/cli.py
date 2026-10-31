@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 from .config import DEFAULT_SEASON, METRICS, local_tz_name, tz_label
+from .logos import load_team_colors
 from .players import PLAYER_META, load_players
 from .render import write_site
 from .stats import (
@@ -65,6 +66,9 @@ def main(argv=None):
             "players": load_players(season, team_weeks_from(g)),
         },
     }
+    colors = load_team_colors()
+    for page in pages.values():
+        page["colors"] = colors
     for path in write_site(args.out, pages):
         print(f"OK: {path}")
     if not mu:

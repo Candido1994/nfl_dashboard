@@ -38,7 +38,7 @@ function leaders(){
  const cards=sel.slice(0,4).map(t=>{
   const lines=LD.map(([k,l,key,fn])=>{const p=topOf(k,t,key);if(!p||!(p[win][key]>0))return"";
    return`<div class="ln"><small>${l}</small><b>${esc(p.n)}</b><span>${fn(p[win])}</span></div>`}).join("");
-  return`<section class="lead"><h3>${esc(TL[t])}</h3>${lines||'<p class="note">Sem estatísticas neste período.</p>'}</section>`}).join("");
+  return`<section class="lead"><h3 class="lt">${teamLogo(t,28)}${esc(TL[t])}</h3>${lines||'<p class="note">Sem estatísticas neste período.</p>'}</section>`}).join("");
  return cards+(sel.length>4?`<p class="hint">Líderes mostrados para os 4 primeiros times selecionados.</p>`:"")}
 function table(){
  const c=C(),R=rowsOf(cat);
@@ -46,13 +46,13 @@ function table(){
  R.sort((a,b)=>sk==="n"?-sd*a.n.localeCompare(b.n):sd*((a[win][sk]??-1e9)-(b[win][sk]??-1e9)));
  const lim=sel.length?R.length:60;
  let h=`<tr><th data-s="n"${sc("n")}>Jogador</th><th>Time</th><th>Pos</th>`+c.cols.map(([k,l])=>`<th data-s="${k}"${sc(k)}>${l}</th>`).join("")+"</tr>";
- h+=R.slice(0,lim).map(p=>`<tr><td>${esc(p.n)}</td><td>${p.t}</td><td>${p.p||"–"}</td>`+c.cols.map(([k])=>`<td>${f(p[win][k])}</td>`).join("")+"</tr>").join("");
+ h+=R.slice(0,lim).map(p=>`<tr><td>${esc(p.n)}</td><td><span class="tn">${teamLogo(p.t,20)}${p.t}</span></td><td>${p.p||"–"}</td>`+c.cols.map(([k])=>`<td>${f(p[win][k])}</td>`).join("")+"</tr>").join("");
  $("pt").innerHTML=R.length?h:"";
  $("note").textContent=!R.length?"Nenhum jogador com estatísticas neste período.":(R.length>lim?`Mostrando os ${lim} primeiros de ${R.length} – filtre por time para ver os demais.`:"")}
 function draw(){
  document.querySelectorAll("#cats button").forEach(b=>b.classList.toggle("on",b.dataset.c===cat));
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));
- $("chips").innerHTML=sel.map((a,k)=>{const c=PAL[k%PAL.length];return`<button data-a="${a}" style="border-color:${c};color:${c}">${esc(TL[a])} ✕</button>`}).join("");
+ $("chips").innerHTML=sel.map((a,k)=>{const c=PAL[k%PAL.length];return`<button data-a="${a}" style="border-color:${c};color:${c}">${teamLogo(a,20)}${esc(TL[a])} ✕</button>`}).join("");
  $("lead").innerHTML=leaders();
  table()}
 draw();

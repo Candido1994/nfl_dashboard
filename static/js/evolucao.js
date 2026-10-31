@@ -57,11 +57,11 @@ function table(){
  let h='<tr><th>#</th><th style="text-align:left">Time</th><th>Δ</th><th>Atual</th><th>Sem. ant.</th></tr>';
  h+=rows.map(a=>{const t=T.find(x=>x.abbr===a),d=p[a]!=null?p[a]-r[a]:null;
   const dd=d==null?"–":d>0?`<span class="up">▲${d}</span>`:d<0?`<span class="dn">▼${-d}</span>`:"=";
-  return`<tr><td>${r[a]}</td><td style="text-align:left">${t.label}</td><td>${dd}</td><td>${fmt(val(t,i))}</td><td>${fmt(i>0?val(t,i-1):null)}</td></tr>`}).join("");
+  return`<tr><td>${r[a]}</td><td style="text-align:left"><span class="tn">${teamLogo(a,20)}${t.label}</span></td><td>${dd}</td><td>${fmt(val(t,i))}</td><td>${fmt(i>0?val(t,i-1):null)}</td></tr>`}).join("");
  $("tb").innerHTML=h}
 function draw(){
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));
  document.querySelectorAll("#modes button").forEach(b=>b.classList.toggle("on",b.dataset.m===mode));
- $("chips").innerHTML=sel.map((a,k)=>{const t=T.find(x=>x.abbr===a),c=PAL[k%PAL.length];return`<button data-a="${a}" style="border-color:${c};color:${c}">${t?t.label:a} ✕</button>`}).join("");
+ $("chips").innerHTML=sel.map((a,k)=>{const t=T.find(x=>x.abbr===a),c=PAL[k%PAL.length];return`<button data-a="${a}" style="border-color:${c};color:${c}">${teamLogo(a,20)}${t?t.label:a} ✕</button>`}).join("");
  chart();table()}
 sel=urlTeams.length?urlTeams:topN(3);draw();
