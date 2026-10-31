@@ -3,6 +3,8 @@ import os
 
 DEFAULT_SEASON = 2026
 
+REPO_URL = "https://github.com/Candido1994/nfl_dashboard"
+
 # fuso usado para "atualizado em" e para os horários dos jogos (troque com a variável NFL_TZ)
 DEFAULT_TZ = "America/Sao_Paulo"
 TZ_LABELS = {"America/Sao_Paulo": "Brasília"}
@@ -15,6 +17,7 @@ def local_tz_name():
 def tz_label():
     name = local_tz_name()
     return TZ_LABELS.get(name, name)
+
 
 # (chave, rótulo, maior_é_melhor) -- a ordem define as colunas do painel
 METRICS = [
@@ -44,4 +47,6 @@ RATIOS = ("ypp", "ypp_a", "epa", "epa_a", "sr", "sr_a")
 # métricas que são médias simples por jogo
 BASE = [k for k, _, _ in METRICS if k not in RATIOS]
 
+# Contador de acessos opcional (GoatCounter: sem cookies, gratuito para uso não comercial).
+# Deixe vazio para não incluir nenhum script.
 GOATCOUNTER_URL = "https://nfl-dashboard.goatcounter.com/count"
