@@ -3,7 +3,8 @@ import argparse
 import os
 from datetime import datetime
 
-from .config import DEFAULT_SEASON, METRICS, local_tz_name, tz_label
+from .broadcasts import admin_page, attach_channels, load_broadcasts, schedule_rows
+from .config import DEFAULT_SEASON, METRICS, REPO_URL, local_tz_name, tz_label
 from .logos import load_team_colors
 from .players import PLAYER_META, load_players
 from .render import write_site
@@ -40,6 +41,8 @@ def main(argv=None):
     metrics = [{"k": k, "l": l, "hb": hb} for k, l, hb in METRICS]
 
     mu = build_matchups(season, info, {t["abbr"]: t for t in teams}, local_tz_name())
+    broadcasts = load_broadcasts()
+    attach_channels(season, mu, broadcasts)
     weeks, hteams = build_history(g, info)
 
     pages = {
@@ -65,6 +68,9 @@ def main(argv=None):
             "cats": PLAYER_META,
             "players": load_players(season, team_weeks_from(g)),
         },
+        "admin": admin_page(
+            season, schedule_rows(season), info, local_tz_name(), broadcasts, updated, REPO_URL
+        ),
     }
     colors = load_team_colors()
     for page in pages.values():

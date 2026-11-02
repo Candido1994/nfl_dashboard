@@ -19,6 +19,15 @@ def tz_label():
     return TZ_LABELS.get(name, name)
 
 
+# Canais de transmissão no Brasil: (id estável, nome exibido).
+# Para incluir um canal novo, acrescente uma linha (o id não pode mudar depois de usado).
+CHANNELS = [
+    ("espn", "ESPN"),
+    ("sportv2", "sportv2"),
+    ("getv", "ge tv"),
+    ("disney", "Disney+"),
+]
+
 # (chave, rótulo, maior_é_melhor) -- a ordem define as colunas do painel
 METRICS = [
     ("pf", "Pontos feitos", 1),

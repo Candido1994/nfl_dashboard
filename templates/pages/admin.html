@@ -1,0 +1,22 @@
+<main>
+<p class="aviso"><b>Área administrativa.</b> Marque onde cada jogo passa no Brasil e toque em <b>Salvar</b>. O site é atualizado sozinho em 1 a 2 minutos. É opcional: jogo sem marcação continua sem nenhuma indicação.</p>
+<details class="tkbox" id="tkbox">
+  <summary>Token do GitHub <span id="tkstate"></span></summary>
+  <div class="tkin">
+    <div class="field"><label class="lbl" for="tok">Cole o token (começa com github_pat_)</label>
+    <input id="tok" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="off"></div>
+    <label class="chk rem"><input type="checkbox" id="rem"><span>Lembrar neste aparelho (menos seguro)</span></label>
+    <div class="row"><button class="btn" id="tksave" type="button">Usar token</button><button class="btn" id="tkclear" type="button">Esquecer token</button></div>
+    <p class="note">Sem "lembrar", o token fica só na memória desta aba e some ao fechá-la. Com "lembrar", fica guardado no navegador deste aparelho. Como as outras páginas do site carregam um contador de acessos de terceiros, não marque essa opção em aparelhos compartilhados.</p>
+    <ol class="steps">
+      <li>No GitHub, abra <b>Settings → Developer settings → Personal access tokens → Fine-grained tokens</b> e clique em <b>Generate new token</b>.</li>
+      <li>Em <b>Repository access</b>, escolha <b>Only select repositories</b> e marque só este repositório.</li>
+      <li>Em <b>Permissions → Repository permissions</b>, coloque <b>Contents: Read and write</b>. Nenhuma outra permissão.</li>
+      <li>Defina uma validade (por exemplo, 90 dias), gere o token e copie.</li>
+    </ol>
+  </div>
+</details>
+<div id="msg" class="msg" role="status" aria-live="polite"></div>
+<div id="adm"></div>
+<div class="savebar"><span id="dirty"></span><button class="btn primary" id="save" type="button">Salvar transmissões</button></div>
+</main>

@@ -10,6 +10,7 @@ const MK=Object.fromEntries(D.metrics.map(m=>[m.k,m]));
 document.querySelector("h1").textContent="NFL "+D.season+(D.round?" – Playoffs · "+D.round:D.week?" – Confrontos da semana "+D.week:" – Confrontos");
 $("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários: "+(D.tz||"ET");
 $("bye").textContent=D.bye.length?"Folga (bye): "+D.bye.join(", "):"";
+if(D.games.some(g=>g.canais&&g.canais.length)){const n=document.createElement("div");n.textContent="Transmissão no Brasil informada manualmente; confirme na programação oficial.";$("bye").appendChild(n)}
 $("wins").innerHTML=Object.entries(WL).map(([k,l])=>`<button data-w="${k}">${l}</button>`).join("");
 $("wins").onclick=e=>{if(e.target.dataset.w){win=e.target.dataset.w;draw()}};
 $("ex").onclick=()=>document.querySelectorAll("#games .card").forEach(d=>d.open=true);
@@ -64,7 +65,8 @@ function card(g,i,open){
  const po=g.round?`<span class="potag">Playoffs · ${g.round}</span>`:"";
  const dt=g.division?`<span class="dvtag">Jogo de divisão · ${g.division}</span>`:"";
  const dv=po||dt?`<div class="dvrow">${po}${dt}</div>`:"";
- return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><span class="tt">${teamLogo(a.abbr,40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A?A.rec:"–"}</small></span></span></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><span class="tt">${teamLogo(h.abbr,40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H?H.rec:"–"}</small></span></span></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}</summary>
+ const bc=g.canais&&g.canais.length?`<div class="bcrow"><span class="bcl">Onde assistir</span>${g.canais.map(c=>`<span class="bc">${c}</span>`).join("")}</div>`:"";
+ return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><span class="tt">${teamLogo(a.abbr,40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A?A.rec:"–"}</small></span></span></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><span class="tt">${teamLogo(h.abbr,40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H?H.rec:"–"}</small></span></span></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}${bc}</summary>
  <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
 function draw(){
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));

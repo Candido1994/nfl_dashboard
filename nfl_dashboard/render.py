@@ -30,6 +30,28 @@ PAGES = {
     },
 }
 
+# páginas fora do menu (sem aba, sem contador de acessos e com cabeçalhos de segurança)
+HIDDEN_PAGES = {
+    "admin": {
+        "file": "admin.html", "tab": "Admin", "title": "NFL – Transmissões (admin)",
+        "body_class": "narrow",
+    },
+}
+
+# A página admin só pode falar com a API do GitHub (limita para onde um token poderia ser enviado).
+ADMIN_HEAD = (
+    '<meta name="robots" content="noindex,nofollow">\n'
+    '<meta name="referrer" content="no-referrer">\n'
+    '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; '
+    "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com; "
+    "base-uri 'none'; form-action 'none'\">"
+)
+
+
+def _page(key):
+    return PAGES.get(key) or HIDDEN_PAGES[key]
+
 
 def _nav(active):
     links = []
@@ -45,9 +67,11 @@ def _json_for_script(data):
 
 
 def render_page(key, data, version=None):
-    page = PAGES[key]
+    page = _page(key)
+    hidden = key in HIDDEN_PAGES
     layout = (TEMPLATES / "layout.html").read_text(encoding="utf-8")
     content = (TEMPLATES / "pages" / f"{key}.html").read_text(encoding="utf-8")
+    use_counter = bool(GOATCOUNTER_URL) and not hidden
     values = {
         "TITLE": page["title"],
         "H1": page["title"],
@@ -56,12 +80,13 @@ def render_page(key, data, version=None):
         "VERSION": version or datetime.now().strftime("%Y%m%d%H%M%S"),
         "SCRIPT": key,
         "REPO_URL": REPO_URL,
+        "HEAD_EXTRA": ADMIN_HEAD if hidden else "",
         "ANALYTICS": (
             f'<script data-goatcounter="{GOATCOUNTER_URL}" async src="https://gc.zgo.at/count.js"></script>'
-            if GOATCOUNTER_URL else ""
+            if use_counter else ""
         ),
         "ANALYTICS_NOTE": (
-            "<p>Contagem de acessos anônima e sem cookies (GoatCounter).</p>" if GOATCOUNTER_URL else ""
+            "<p>Contagem de acessos anônima e sem cookies (GoatCounter).</p>" if use_counter else ""
         ),
     }
     html = layout
@@ -80,7 +105,7 @@ def write_site(out_dir, pages_data):
     version = datetime.now().strftime("%Y%m%d%H%M%S")
     written = []
     for key, data in pages_data.items():
-        path = out / PAGES[key]["file"]
+        path = out / _page(key)["file"]
         path.write_text(render_page(key, data, version), encoding="utf-8")
         written.append(path)
     return written
