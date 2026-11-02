@@ -1,4 +1,9 @@
 {
   "versao": 1,
-  "jogos": {}
+  "jogos": {
+    "2026_08_CHI_SEA": [
+      "espn",
+      "disney"
+    ]
+  }
 }
