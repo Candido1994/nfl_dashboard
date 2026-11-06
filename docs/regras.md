@@ -1,6 +1,6 @@
 # Regras — NFL Dashboard
 
-> Última atualização: 27/10/2026
+> Última atualização: 04/11/2026
 
 ## 1. Regras de cálculo
 
@@ -62,6 +62,7 @@
 - **Jogo de divisão:** os dois times têm a mesma divisão na tabela de times do nflverse; etiqueta amarela com o nome da divisão.
 - **Playoffs:** etiqueta com a cor da rodada e faixa lateral nessa cor (vale mesmo se o jogo também for de divisão).
 - **Campo neutro:** o separador entre os times é "x" (quando a localização do jogo é "Neutral"); caso contrário, "@" (visitante @ mandante).
+- **Ordem das linhas sob o horário:** etiquetas (playoffs e divisão) e, depois, "Onde assistir".
 
 ### 2.5 Leitura do confronto
 - **Pontos projetados:** (pontos feitos pelo ataque + pontos cedidos pela defesa adversária) ÷ 2, na janela selecionada. É uma estimativa simples.
@@ -71,6 +72,24 @@
 - **Destaques:** por time, a maior oportunidade (maior vantagem a favor do ataque) e o maior obstáculo (maior vantagem da defesa adversária), se passarem do limite.
 - **Comparativo completo:** o melhor valor de cada linha fica em verde; o selo ao lado do valor é a posição na liga (verde no 1º quarto, vermelho no último).
 - Sem estatísticas suficientes para a janela, o card avisa em vez de calcular.
+
+### 2.6 Último confronto na temporada
+- Procura, no calendário completo, o jogo **já disputado** (com placar) entre os dois times em uma **semana anterior** à do jogo exibido, em qualquer fase da temporada.
+- Na temporada regular isso só ocorre entre rivais de divisão (jogam duas vezes); nos playoffs vale para qualquer par que já tenha se enfrentado.
+- Havendo mais de um, mostra o mais recente. O placar segue a orientação em que o jogo aconteceu (visitante e mandante daquele jogo), com o placar do vencedor em destaque.
+- A linha de apoio traz a semana (ou "Playoffs · rodada"), a data e o local ("jogo em" + sigla do mandante).
+- Sem encontro anterior, o bloco não aparece.
+
+### 2.7 Transmissões no Brasil
+- **Fonte:** informadas manualmente pelo administrador na página admin (a partir da página do Instagram dele); não há fonte automática.
+- **Canais:** lista `CHANNELS` em `nfl_dashboard/config.py` (id estável e nome exibido): ESPN, sportv2, ge tv e Disney+. Novos canais entram acrescentando uma linha.
+- **Arquivo:** `data/transmissoes.json` no formato `{"versao": 1, "jogos": {chave: [ids]}}`. A chave do jogo é `AAAA_SS_VISITANTE_MANDANTE` (semana com dois dígitos), por exemplo `2026_09_GB_DET`.
+- **Validação:** ids desconhecidos são ignorados, repetições removidas e a ordem segue `CHANNELS`. Jogo com lista vazia é removido do arquivo ao salvar.
+- **Exibição:** linha "Onde assistir" com uma etiqueta de contorno por canal. Jogo sem canal não mostra nada. Havendo ao menos um jogo com canal, a página mostra a nota "Transmissão no Brasil informada manualmente; confirme na programação oficial."
+- **Falhas:** arquivo ausente, vazio, ilegível ou com formato inválido: o site é publicado sem transmissões e o fluxo avisa no log.
+- **Quais jogos o admin lista:** os ainda não disputados da semana exibida em Confrontos e, na temporada regular, também os da semana seguinte; nos playoffs, só a rodada atual.
+- **Salvamento:** lê a versão atual do arquivo, altera só os jogos listados, preserva as demais chaves, ordena as chaves e grava com a mensagem "Atualiza transmissões (data)"; em conflito, tenta uma segunda vez.
+- **Token:** fine-grained, só este repositório, "Contents: Read and write", validade curta; por padrão fica só na memória da aba; "Lembrar neste aparelho" é opcional e menos seguro.
 
 ## 3. Regras da página de Evolução
 
@@ -95,28 +114,41 @@
 - Padrão do Painel: saldo de pontos, do maior para o menor. Padrão de cada tabela de jogadores: a estatística principal da categoria.
 - Filtro do Painel: todos, AFC, NFC ou uma das 8 divisões.
 
-## 6. Regras de conteúdo e legais
+## 6. Regras de logos
+
+- **Arquivo:** `static/img/teams/<sigla em minúsculas>.png`, quadrado de 128 × 128 px, fundo transparente e margem de cerca de 6%. A sigla segue o nflverse (por exemplo `la` para os Rams).
+- **Origem:** o script `python -m nfl_dashboard.logos` baixa os endereços informados pela tabela de times do nflverse (na ordem `team_logo_espn`, `team_logo_squared`, `team_logo_wikipedia`) e converte; só baixa o que ainda não existe (`--force` baixa de novo).
+- **Tamanhos exibidos:** 40 px nos cards de Confrontos (32 px em telas de até 400 px), 28 px no resumo do card e nos cartões de líderes, 24 px na tabela do painel e 20 px no ranking, nos chips e nas colunas de time.
+- **Plano B:** sem o arquivo, aparece um círculo com a sigla na cor do time (`team_color` do nflverse; padrão `#5A685F`). Em 24 px ou menos, só a cor, sem texto.
+- **Tema escuro:** o logo fica sobre um círculo branco, para logos escuros não sumirem.
+- O logo é decorativo (o nome do time sempre aparece ao lado).
+
+## 7. Regras de conteúdo e legais
 
 - **Aviso didático:** projeções e análises são apenas didáticas e não devem ser usadas para apostas nem para fins lucrativos. Aparece no topo e em cada card de Confrontos, no README e na descrição do projeto.
 - **Atribuição:** o rodapé informa que os dados são do nflverse (CC BY 4.0) e que foram processados e agregados.
 - **Licenças:** código sob MIT; dados do nflverse sob CC BY 4.0; o conjunto FTN (CC BY-SA 4.0) não é usado. Ao incluir um conjunto novo, conferir a licença antes.
+- **Marcas e logos:** o rodapé informa que logos e marcas são propriedade dos respectivos titulares; não são cobertos pelas licenças do código nem dos dados.
 - **Marca:** o rodapé informa que o projeto é independente e sem vínculo com a NFL.
 - **IA:** o projeto não usa IA nem a API do Claude; os textos de destaque são regras fixas sobre os números.
-- **Contador de acessos:** só com `GOATCOUNTER_URL` preenchido; nesse caso o rodapé informa que a contagem é anônima e sem cookies.
+- **Contador de acessos:** só com `GOATCOUNTER_URL` preenchido, nunca na página admin; nesse caso o rodapé informa que a contagem é anônima e sem cookies.
 
-## 7. Regras de desenvolvimento e entrega
+## 8. Regras de desenvolvimento e entrega
 
 - **Versões fixas:** `requirements.txt` com versões exatas; atualizar trocando o número, rodando `pytest` e conferindo a execução no GitHub.
 - **Testes:** rodam a cada alteração enviada para a `main`; as execuções agendadas só atualizam os dados.
-- **Publicação:** commit na `main` publica automaticamente; se o build falhar, o site continua na última versão.
-- **Antes de colar arquivos novos:** rodar `git pull` (pedidos do Dependabot e outras alterações podem ter mudado o repositório).
+- **Publicação:** commit na `main` publica automaticamente (inclusive o commit feito pela página admin); se o build falhar, o site continua na última versão.
+- **Antes de colar arquivos novos:** rodar `git pull` (pedidos do Dependabot, commits da página admin e outras alterações podem ter mudado o repositório).
 - **Pedidos do Dependabot:** aprovar, conferir a execução na aba Actions e, se ficar vermelha, usar "Revert".
 - **Entrega de alterações:** o código e os arquivos são enviados completos no chat, para copiar e colar; não são gerados arquivos para baixar.
-- **Documentação:** sempre que uma alteração afetar produto, arquitetura, regras ou design, os documentos de `docs/` são atualizados, e a mudança é registrada no `memory.md` com a data.
-- **Datas:** cada registro leva a data da solicitação, da modificação e da implementação.
+- **Documentação:** sempre que uma alteração afetar produto, arquitetura, regras ou design, os documentos de `docs/` são atualizados e enviados completos, e a mudança é registrada no `docs/memory.md` com a data.
+- **Datas:** cada registro leva a data da solicitação, da modificação e da implementação, no fuso de Brasília (dd/mm/aaaa).
+- **Marcadores do layout:** `{{...}}` só existe em `templates/`; os dados entram pelo marcador `__DADOS__`.
 
 ## Histórico de alterações
 
 | Data | Alteração |
 |---|---|
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
+| 29/10/2026 | Seção 7: inclusão do `AGENTS.md`, do envio completo dos documentos e do fuso das datas (a parte do `AGENTS.md` foi revertida em 30/10/2026). |
+| 04/11/2026 | Novas regras: último confronto (2.6), transmissões (2.7), logos (6), marcas no rodapé e marcador de dados; seções renumeradas. |

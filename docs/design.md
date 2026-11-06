@@ -1,6 +1,6 @@
 # Design — NFL Dashboard
 
-> Última atualização: 27/10/2026
+> Última atualização: 04/11/2026
 
 ## 1. Princípios
 
@@ -23,6 +23,7 @@ marcações de jardas sob o cabeçalho.
 | Corpo | 16 px, entrelinha 1,4. Tabela do painel: 15 px. Títulos de coluna: 13 px. |
 | Título da página | 26 px, peso 700, espaçamento −0,01 em. |
 | Seções | `h2` 18 px; `h3` dos cards 15 px; textos de apoio 13–14 px. |
+| Placar do último confronto | 26 px, peso 700. |
 
 Em telas de até 480 px os botões segmentados passam a 15 px, e em até 400 px as abas e os botões vão a 14 px.
 
@@ -58,53 +59,68 @@ Em telas de até 480 px os botões segmentados passam a 15 px, e em até 400 px 
 
 O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no claro e 10,1 no escuro) e ao item ativo (aba atual, coluna ordenada).
 
+### 3.3 Logos e distintivos
+- O distintivo usa a cor do time (`team_color` do nflverse, padrão `#5A685F`); a cor do texto (clara ou escura) é escolhida pelo brilho do fundo.
+- No tema escuro, o logo fica sobre um círculo branco com 10% de margem interna.
+
 ## 4. Espaçamento, forma e largura
 
-- **Raios:** cards e tabelas 14 px; campos e botões 10 px; controle segmentado 12 px (botões internos 9 px); etiquetas e selos 999 px.
+- **Raios:** cards e tabelas 14 px; campos e botões 10 px; controle segmentado 12 px (botões internos 9 px); etiquetas, selos e logos 999 px / círculo.
 - **Espaçamentos comuns:** conteúdo 16 px; cards 12–16 px; separação entre blocos 12–18 px.
-- **Largura máxima:** Painel e Jogadores 1100 px; Evolução 880 px; Confrontos 760 px. O rodapé acompanha a largura da página.
-- **Pontos de quebra:** 599 px (abas ocupam a largura toda), 480 px (ranking e botões compactos) e 400 px (fontes menores nas abas).
+- **Largura máxima:** Painel e Jogadores 1100 px; Evolução 880 px; Confrontos e Admin 760 px. O rodapé acompanha a largura da página.
+- **Pontos de quebra:** 599 px (abas ocupam a largura toda), 480 px (ranking e botões compactos; sigla e apelido do time em linhas separadas) e 400 px (fontes menores nas abas; logo do cabeçalho do card de 32 px).
 
 ## 5. Componentes
 
 | Componente | Descrição |
 |---|---|
-| Cabeçalho | Título, subtítulo com data de atualização, abas (Painel, Confrontos, Evolução, Jogadores) e faixa de marcações de jardas. A aba atual leva sublinhado amarelo. |
+| Cabeçalho | Título, subtítulo com data de atualização, abas (Painel, Confrontos, Evolução, Jogadores) e faixa de marcações de jardas. A aba atual leva sublinhado amarelo. A página admin usa o mesmo cabeçalho, sem aba própria. |
+| Logo / distintivo | Círculo de 20, 24, 28, 32 ou 40 px com o logo do time; sem o arquivo, círculo na cor do time com a sigla (só a cor em 24 px ou menos). |
 | Controle segmentado | Botões lado a lado para a janela, a posição e o modo; o selecionado fica verde. Altura de 40 px. |
-| Menus e botões | Altura mínima de 44 px; menus com rótulo visível acima. |
-| Tabela | Cabeçalho fixo, primeira coluna fixa, linhas alternadas, destaque ao passar o mouse, divisórias entre grupos de colunas e seta + sublinhado amarelo na coluna ordenada. A rolagem fica dentro do quadro (altura máxima de 75% da tela). |
-| Ranking | Linhas com posição, nome, barra e valor; no celular a barra vai para uma segunda linha. |
-| Card de confronto | `details` expansível: times e campanhas, horário e placar, etiquetas, seta que gira ao abrir. Conteúdo: links, resumo, destaques, duelos, campanha e comparativo. |
+| Menus e botões | Altura mínima de 44 px; menus com rótulo visível acima; botão principal (`.btn.primary`) em verde. |
+| Tabela | Cabeçalho fixo, primeira coluna fixa (164 px no painel, com logo), linhas alternadas, destaque ao passar o mouse, divisórias entre grupos de colunas e seta + sublinhado amarelo na coluna ordenada. A rolagem fica dentro do quadro (altura máxima de 75% da tela). |
+| Ranking | Linhas com posição, logo (20 px), nome, barra e valor; no celular a barra vai para uma segunda linha. |
+| Card de confronto | `details` expansível: logo (40 px), sigla e apelido e campanha de cada time, horário e placar, etiquetas, "Onde assistir" e seta no canto inferior direito que gira ao abrir. Conteúdo: links, último confronto, resumo, destaques, duelos, campanha e comparativo. |
 | Etiquetas | "Jogo de divisão" (amarela) e "Playoffs · rodada" (cor da rodada), em uma linha própria sob o horário; quebram de linha em telas estreitas. |
 | Faixa lateral do card | Amarela para jogo de divisão; na cor da rodada nos playoffs (a rodada tem prioridade). |
-| Placar projetado | Dois números grandes (32 px) em um bloco suave, com o texto "pontos projetados" no meio. |
+| Onde assistir | Rótulo "Onde assistir" e uma etiqueta de contorno neutra por canal, sob as etiquetas coloridas; só aparece nos jogos marcados. |
+| Último confronto | Bloco suave com logo, sigla e placar de cada time ("GB 24 × 20 DET", placar do vencedor em destaque) e uma linha de apoio (semana ou rodada, data e local). |
+| Placar projetado | Dois números grandes (32 px) em um bloco suave, com logos de 28 px e o texto "pontos projetados" no meio. |
 | Selo de posição | Pequeno selo ao lado do valor ("12º"): verde no 1º quarto da liga, vermelho no último, neutro no meio. |
 | Destaques | Lista de barras com borda verde (oportunidade) ou vermelha (obstáculo). |
 | Vantagem | Texto "Ataque" (verde), "Defesa" (vermelho) ou "Equilíbrio" (neutro). |
-| Aviso | Bloco com borda amarela, no topo de Confrontos; versão em texto simples nos cards. |
-| Chips de times | Botões arredondados com a cor da linha no gráfico e "✕" para remover. |
+| Aviso | Bloco com borda amarela, no topo de Confrontos e da página admin; versão em texto simples nos cards. |
+| Chips de times | Botões arredondados com o logo (20 px), a cor da linha no gráfico e "✕" para remover. |
 | Gráfico de evolução | SVG com grade tracejada, linhas dos times selecionados em cores distintas (8 cores) e as demais em cinza claro. |
-| Cartão de líderes | Um cartão por time com QB, corredor, recebedor, defensor, pass rush e kicker. |
-| Rodapé | Texto centralizado com atribuição, licença e link do código. |
+| Cartão de líderes | Um cartão por time, com logo (28 px) no título, QB, corredor, recebedor, defensor, pass rush e kicker. |
+| Admin: token | Caixa expansível "Token do GitHub" com campo de senha, opção "Lembrar neste aparelho (menos seguro)", botões "Usar token" e "Esquecer token" e o passo a passo para criar o token. |
+| Admin: jogo | Cartão com os dois times (logos de 28 px), data e hora e as quatro caixas de canal em grade 2×2 (44 px de altura, marcadas ficam em verde claro). |
+| Admin: barra de salvar | Barra fixa na parte de baixo com "Alterações não salvas" e o botão "Salvar transmissões". |
+| Admin: mensagens | Faixa com borda verde (sucesso) ou vermelha (erro), com link para a aba Actions após salvar. |
+| Rodapé | Texto centralizado com atribuição, aviso de marcas, licença e link do código. |
 
 ## 6. Interação
 
 - Cards: tocar no cabeçalho abre ou fecha; "Expandir todos" e "Recolher todos" no topo; ao trocar a janela, os cards abertos continuam abertos.
 - Tabelas: tocar no título ordena; tocar de novo inverte.
 - Links entre páginas já levam os filtros (times, posição, janela, métrica e modo).
+- Admin: marcar as caixas mostra "Alterações não salvas"; salvar desabilita o botão até a resposta; o token recolhe a caixa quando está pronto.
 - Movimento: só a seta do card gira (0,2 s); com "reduzir movimento" ativo, não há animação.
 
 ## 7. Acessibilidade
 
 - Contraste de texto de pelo menos 4,5:1 nos dois temas (calculado para as cores das rodadas e do amarelo).
 - Foco visível com contorno de 3 px; alvos de toque de 40 a 44 px.
-- A aba atual é marcada com `aria-current="page"`; o gráfico tem `role="img"` e texto alternativo; os menus têm rótulo.
+- A aba atual é marcada com `aria-current="page"`; o gráfico tem `role="img"` e texto alternativo; os menus têm rótulo; as mensagens do admin usam `role="status"`.
+- Logos têm texto alternativo vazio, porque o nome do time sempre aparece ao lado.
 - Os temas seguem a preferência do aparelho (`prefers-color-scheme`).
 
 ## 8. Como evoluir o design
 
 - Mudar cores: editar as variáveis no início de `static/css/style.css` (e conferir o contraste nos dois temas).
 - Nova rodada ou nova cor de rodada: acrescentar o par de variáveis, a classe `po-*` e o mapa `RC` em `static/js/confrontos.js`; o teste de consistência falha se algo ficar de fora.
+- Novo tamanho de logo: acrescentar a classe `.tl-N` no CSS e chamar `teamLogo(sigla, N)`.
+- Novo canal de transmissão: acrescentar uma linha em `CHANNELS` (`config.py`); o admin e os cards usam sozinhos.
 - Novas métricas aparecem sozinhas no painel e nos rankings (ver `regras.md` e `arquitetura.md`).
 
 ## Histórico de alterações
@@ -112,3 +128,4 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 | Data | Alteração |
 |---|---|
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
+| 04/11/2026 | Logos e distintivos, cabeçalho do card com logo, seta no canto inferior, "Onde assistir", bloco de último confronto e componentes da página admin. |

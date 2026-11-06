@@ -1,11 +1,12 @@
 # Memória do projeto — NFL Dashboard
 
-> Última atualização: 27/10/2026
+> Última atualização: 04/11/2026
 
 Este documento reúne os pedidos, decisões e modificações do projeto que ficaram registrados na memória do assistente, com a data de cada um.
 
-**Sobre as datas:** a memória não guarda data por linha, só a data da última atualização de cada arquivo. As datas da seção 1 são **aproximadas**
-(dia ou intervalo), deduzidas dessas atualizações e de eventos que você informou. Os registros novos levam a data exata.
+**Sobre as datas:** todas no fuso de Brasília. A memória não guarda data por linha, só a data da última atualização de cada arquivo.
+As datas dos registros 1 a 26 são **aproximadas** (dia ou intervalo), deduzidas dessas atualizações e de eventos que você informou.
+Os registros a partir do 27 levam a data conhecida.
 
 ## 1. Pedidos e decisões registrados
 
@@ -36,18 +37,27 @@ Este documento reúne os pedidos, decisões e modificações do projeto que fica
 | 23 | 18/10/2026 | Pedido | Horários dos jogos em Brasília; rodapé "projeto independente, sem vínculo com a NFL"; versões das dependências fixas. |
 | 24 | 18/10/2026 | Decisão | Licença MIT para o código; dados do nflverse sob CC BY 4.0 (atribuição); aviso de que as projeções são didáticas, sem apostas nem fins lucrativos. |
 | 25 | 25/10/2026 | Pedido | Páginas funcionando nos playoffs, com etiqueta da rodada (Wild Card, Divisional, Conference, Super Bowl); etiqueta de jogo de divisão em linha própria no card. |
+| 26 | 25–27/10/2026 | Pedido | Cores diferentes para cada rodada dos playoffs, funcionando nos temas claro e escuro; amarelo mantido no jogo de divisão. |
+| 27 | 27/10/2026 | Pedido | Criar `PRD.md`, `arquitetura.md`, `regras.md` e `design.md` (pasta `docs/`) a partir do projeto, mantidos atualizados; depois, o `memory.md` com os registros e as datas. |
+| 28 | 29/10/2026 | Pergunta | Se um `AGENTS.md` na raiz seria necessário para gerenciar os arquivos de documentação e direcionar o assistente. A mensagem saiu sem a interrogação e foi lida como pedido de criação. |
+| 29 | 30/10/2026 | Decisão | O `AGENTS.md` não foi criado: o usuário confirmou que não alterou nenhum arquivo e o projeto segue sem ele. Reavaliar se passar a usar um agente de código (Claude Code, Codex, Cursor). |
+| 30 | 30/10/2026 | Pedido | Planejar, antes de mexer em arquivos, duas features: logos dos times (páginas e tamanhos a avaliar) e indicação de onde cada jogo é transmitido no Brasil (ESPN, sportv2, ge tv, Disney+), marcada por ele. Opcional: se não atualizar na semana, nada muda no site nem no fluxo. |
+| 31 | 30/10/2026 | Decisão | Logos oficiais baixados por script (a partir do nflverse), em todas as páginas; transmissões atualizadas por página admin com token do GitHub. |
+| 32 | 31/10/2026 | Pedido | Seguir para a etapa 2 (transmissões) após a confirmação de que os logos funcionaram. Respostas: outros canais podem surgir no futuro; jogo sem canal marcado não mostra nada; a atualização será feita pelo celular e pelo desktop. |
+| 33 | 03/11/2026 | Pedido | Em Confrontos, quando os dois times já se enfrentaram antes na temporada (rivais de divisão), mostrar ao expandir o card o placar do último jogo entre eles. |
+| 34 | 04/11/2026 | Pedido | Atualizar todos os documentos com as etapas dos logos, das transmissões (página admin) e dos reencontros. |
 
 ## 2. Preferências de trabalho
 
-| # | Data (aprox.) | Registro |
+| # | Data | Registro |
 |---|---|---|
-| P1 | 18–19/10/2026 | Entregar código e arquivos direto no chat, para copiar e colar (o usuário só faz o commit); sem arquivos para baixar nem zip. |
+| P1 | 18–19/10/2026 (aprox.) | Entregar código e arquivos direto no chat, para copiar e colar (o usuário só faz o commit); sem arquivos para baixar nem zip. |
 | P2 | 27/10/2026 | Manter `PRD.md`, `arquitetura.md`, `regras.md` e `design.md` (pasta `docs/`) sempre atualizados e enviá-los completos a cada modificação relacionada. |
 | P3 | 27/10/2026 | Manter também este `memory.md`, com a data da solicitação, da modificação e da implementação. |
 
-## 3. Decisões e modificações da conversa ainda não registradas na memória
+## 3. Decisões e modificações da conversa não registradas como pedido na memória
 
-Itens que aconteceram no projeto mas não viraram registro na memória do assistente. Datas só quando foram informadas.
+Itens que aconteceram no projeto, mas não têm registro próprio na memória do assistente. Datas só quando foram informadas.
 
 | Data | Tipo | Registro |
 |---|---|---|
@@ -63,16 +73,37 @@ Itens que aconteceram no projeto mas não viraram registro na memória do assist
 | 25/10/2026 | Decisão | Agendamento em segunda, terça e sábado às 11:07 UTC (08:07 em Brasília). *Confirmar no arquivo do fluxo.* |
 | 25–27/10/2026 | Implementação | Playoffs em Confrontos, com seleção da rodada, "x" no campo neutro e cores por rodada (azul, violeta, laranja e rosa), mantendo o amarelo para jogo de divisão. |
 | 27/10/2026 | Implementação | Criação dos documentos `PRD.md`, `arquitetura.md`, `regras.md`, `design.md` e `memory.md`. |
+| 29/10/2026 | Ocorrência | `AGENTS.md` e atualizações de `arquitetura.md`, `regras.md` e `memory.md` foram propostos por engano (pergunta lida como pedido) e **não foram aplicados**. |
+| 30/10/2026 | Implementação | Etapa dos logos: `comum.js`, `logos.py` (script de uso único), `requirements-logos.txt`, cores dos times nas páginas, logos em todas as páginas e aviso de marcas no rodapé. Cabeçalho do card com sigla e apelido em linhas separadas em telas estreitas e seta no canto inferior. |
+| 30–31/10/2026 | Ocorrência | O build falhou porque `config.py` e `render.py` do repositório não tinham o `REPO_URL`; corrigido com os arquivos completos. |
+| 31/10/2026 | Ocorrência | Confirmado que a etapa dos logos funcionou. |
+| 31/10/2026 | Implementação | Etapa das transmissões: `broadcasts.py`, `data/transmissoes.json`, linha "Onde assistir" e nota no card, página `admin.html` (token do GitHub, política de segurança, sem contador) e `CHANNELS` no `config.py`. |
+| 31/10–03/11/2026 | Ocorrência | O editor acusava erro no `layout.html` por causa de `{{DATA}}` dentro de um script; o marcador passou a ser `__DADOS__`. |
+| 03/11/2026 | Ocorrência | Build e deploy confirmados sem erro após o ajuste do marcador. |
+| 03/11/2026 | Implementação | Reencontros: `rematches.py` e o bloco "Último confronto nesta temporada" no card expandido. |
+| 04/11/2026 | Implementação | Atualização dos documentos `PRD.md`, `arquitetura.md`, `regras.md`, `design.md` e `memory.md` e do `README.md`. |
 
-## 4. Como manter este documento
+## 4. Pendências
+
+| Pendência | Situação |
+|---|---|
+| Confirmar o agendamento do fluxo (`cron: "7 11 * * 1,2,6"`) | Sem resposta: os documentos assumem segunda, terça e sábado às 11:07 UTC. |
+| Teste real da página admin com o token do GitHub | A página foi testada com a API simulada; o primeiro salvamento real ainda não foi confirmado. |
+| Reforço de segurança do admin (transmissões em branch separada e `main` protegida) | Oferecido, sem decisão. |
+| Contagem de testes (46) | Conferir no `pytest` do repositório se o total confere. |
+
+## 5. Como manter este documento
 
 1. A cada nova solicitação, decisão ou implementação, acrescentar uma linha com a **data exata** (dia da solicitação e, quando diferente, da implementação).
-2. Registrar o tipo: Pedido, Decisão, Implementação, Preferência ou Ocorrência.
+2. Registrar o tipo: Pedido, Pergunta, Decisão, Implementação, Preferência ou Ocorrência.
 3. Quando o registro mudar `PRD.md`, `arquitetura.md`, `regras.md` ou `design.md`, atualizar também o documento correspondente e o histórico dele.
 4. Se um registro for substituído por outro, manter as duas linhas e indicar qual valeu por último.
+5. Ao resolver uma pendência, atualizar a tabela da seção 4.
 
 ## Histórico de alterações
 
 | Data | Alteração |
 |---|---|
 | 27/10/2026 | Criação do documento a partir dos registros da memória e da conversa. |
+| 30/10/2026 | Inclusão dos registros 26 a 29 (cores por rodada, documentos e a decisão sobre o `AGENTS.md`); tipo "Pergunta" criado; seção 3 corrigida. |
+| 04/11/2026 | Inclusão dos registros 30 a 34 (logos, transmissões, reencontros e atualização dos documentos); seção 3 ampliada; nova seção de pendências. |
