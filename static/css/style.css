@@ -142,6 +142,11 @@ select,input[type=password]{width:100%;min-height:44px;padding:0 12px;border:1px
 .cb .duel th{font-size:12.5px;color:var(--mut);font-weight:600}
 .cb .duel .rk{display:table;margin:3px auto 0}
 .ea{color:var(--good);font-weight:700}.ed{color:var(--bad);font-weight:700}.ee{color:var(--mut)}
+.pbox{display:flex;align-items:center;justify-content:center;gap:12px;background:var(--seg);border-radius:12px;padding:10px 12px}
+.pt{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:600}
+.ps{font-size:26px;line-height:1;font-weight:700;color:var(--mut)}
+.ps.w{color:var(--fg)}
+.px{color:var(--mut);font-weight:600}
 /* jogadores */
 .btn.go{display:flex;align-items:center;justify-content:center;margin:0 0 16px;text-decoration:none;color:var(--acc)}
 .golinks{display:flex;gap:8px;margin:0 0 16px}.golinks .btn.go{flex:1 1 0;min-width:0;margin:0;padding:6px 10px;text-align:center;line-height:1.15;white-space:normal}

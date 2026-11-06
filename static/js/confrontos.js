@@ -27,6 +27,12 @@ function duels(atk,dfn){
  const S=atk[win],Dd=dfn[win];
  return DU.map(([ko,kd,l])=>{const ra=rk(ko,atk.abbr),rd=rk(kd,dfn.abbr),gap=ra!=null&&rd!=null?rd-ra:null;
   return{l,x:S?S[ko]:null,y:Dd?Dd[kd]:null,ra,rd,gap,edge:gap==null?"":gap>=TH?"a":gap<=-TH?"d":"e"}})}
+// placar do último jogo entre os dois times na temporada (só aparece se já se enfrentaram)
+function previo(g){
+ const p=g.previous;if(!p)return"";
+ const wa=p.as>=p.hs?"w":"",wh=p.hs>=p.as?"w":"";
+ const quando=[p.round?"Playoffs · "+p.round:"Semana "+p.week,p.day,"jogo em "+p.home].filter(Boolean).join(" · ");
+ return`<section class="sec"><h3>Último confronto nesta temporada</h3><div class="pbox"><span class="pt">${teamLogo(p.away,24)}${p.away}<b class="ps ${wa}">${p.as}</b></span><span class="px">×</span><span class="pt"><b class="ps ${wh}">${p.hs}</b>${p.home}${teamLogo(p.home,24)}</span></div><p class="note">${quando}</p></section>`}
 function resumo(g){
  const a=g.away,h=g.home,A=a[win],H=h[win];
  if(!A||!H)return`<section class="sec"><p class="note">Sem dados suficientes para este período.</p></section>`;
@@ -67,7 +73,7 @@ function card(g,i,open){
  const dv=po||dt?`<div class="dvrow">${po}${dt}</div>`:"";
  const bc=g.canais&&g.canais.length?`<div class="bcrow"><span class="bcl">Onde assistir</span>${g.canais.map(c=>`<span class="bc">${c}</span>`).join("")}</div>`:"";
  return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><span class="tt">${teamLogo(a.abbr,40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A?A.rec:"–"}</small></span></span></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><span class="tt">${teamLogo(h.abbr,40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H?H.rec:"–"}</small></span></span></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}${bc}</summary>
- <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
+ <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${previo(g)}${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
 function draw(){
  document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));
  const op=new Set([...document.querySelectorAll("#games .card[open]")].map(d=>+d.dataset.i));

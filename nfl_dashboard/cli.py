@@ -7,6 +7,7 @@ from .broadcasts import admin_page, attach_channels, load_broadcasts, schedule_r
 from .config import DEFAULT_SEASON, METRICS, REPO_URL, local_tz_name, tz_label
 from .logos import load_team_colors
 from .players import PLAYER_META, load_players
+from .rematches import attach_last_meetings
 from .render import write_site
 from .stats import (
     build_games, build_history, build_matchups, build_teams, compute_ranks,
@@ -40,9 +41,11 @@ def main(argv=None):
     week = int(g["week"].max() or 0)
     metrics = [{"k": k, "l": l, "hb": hb} for k, l, hb in METRICS]
 
+    rows = schedule_rows(season)   # calendário completo (usado nos reencontros e na página admin)
     mu = build_matchups(season, info, {t["abbr"]: t for t in teams}, local_tz_name())
     broadcasts = load_broadcasts()
     attach_channels(season, mu, broadcasts)
+    attach_last_meetings(rows, mu, local_tz_name())
     weeks, hteams = build_history(g, info)
 
     pages = {
@@ -68,9 +71,7 @@ def main(argv=None):
             "cats": PLAYER_META,
             "players": load_players(season, team_weeks_from(g)),
         },
-        "admin": admin_page(
-            season, schedule_rows(season), info, local_tz_name(), broadcasts, updated, REPO_URL
-        ),
+        "admin": admin_page(season, rows, info, local_tz_name(), broadcasts, updated, REPO_URL),
     }
     colors = load_team_colors()
     for page in pages.values():
