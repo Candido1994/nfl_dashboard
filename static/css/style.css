@@ -227,4 +227,4 @@ select,input[type=password]{width:100%;min-height:44px;padding:0 12px;border:1px
 .bk li.bye{grid-template-columns:auto 1fr;background:var(--win)}
 .bk li.bye .tx{font-size:13px;color:var(--mut);font-weight:600;line-height:1.3}
 .bk li.bye .tx b{display:block;color:var(--fg);font-size:15px}
-@media(max-width:480px){.pt .dsh{display:none}.pt .nk{display:block}.pt td.tm{white-space:normal}}
+@media(max-width:480px){.seeds .dsh{display:none}.seeds .nk{display:block}.seeds td.tm{white-space:normal}}
