@@ -143,3 +143,71 @@ def test_interna_nao_vaza_sorteio_quando_a_divisao_empata_totalmente():
     assert c_interna("A", grupo, ctx) is None
     assert c_interna("B", grupo, ctx) is None
     assert ctx["sorteio"] == set()
+
+
+import random
+
+from nfl_dashboard.playoffs import monta_pagina, valida
+
+
+def liga(semanas=3, seed=7):
+    """32 times fictícios em 8 divisões, com jogos aleatórios (determinísticos) por semana."""
+    rng = random.Random(seed)
+    info, times = {}, []
+    for conf in ("AFC", "NFC"):
+        for div in ("East", "North", "South", "West"):
+            for k in range(4):
+                sigla = f"{conf[0]}{div[0]}{k}"
+                info[sigla] = {"team_conf": conf, "team_division": f"{conf} {div}",
+                               "team_name": sigla, "team_nick": sigla}
+                times.append(sigla)
+    rows, tds = [], {}
+    for semana in range(1, semanas + 1):
+        ordem = times[:]
+        rng.shuffle(ordem)
+        for i in range(0, len(ordem), 2):
+            mand, visit = ordem[i], ordem[i + 1]
+            rows.append(jogo(semana, mand, visit, rng.randint(0, 40), rng.randint(0, 40)))
+        for t in times:
+            tds[(semana, t)] = rng.randint(0, 5)
+    return rows, info, tds
+
+
+def test_monta_pagina_com_liga_completa_passa_na_checagem():
+    rows, info, tds = liga(semanas=3)
+    pagina = monta_pagina(rows, info, tds, 2026, "10/11/2026 12:00")
+    assert pagina["week"] == 3
+    for conf in ("AFC", "NFC"):
+        c = pagina["conferencias"][conf]
+        assert [s["seed"] for s in c["seeds"]] == list(range(1, 8))
+        assert c["bye"] == c["seeds"][0]["abbr"]
+        assert len(c["jogos"]) == 3
+        assert {s["div"] for s in c["seeds"][:4]} == {f"{conf} {d}" for d in ("East", "North", "South", "West")}
+        assert all(isinstance(s["pct"], float) for s in c["seeds"])
+
+
+def test_chaveamento_segue_2x7_3x6_4x5():
+    rows, info, tds = liga(semanas=2)
+    c = monta_pagina(rows, info, tds, 2026, "x")["conferencias"]["AFC"]
+    seeds = {s["seed"]: s["abbr"] for s in c["seeds"]}
+    assert c["jogos"] == [[seeds[2], seeds[7]], [seeds[3], seeds[6]], [seeds[4], seeds[5]]]
+
+
+def test_sem_semana_fechada_devolve_pagina_vazia():
+    pagina = monta_pagina([], {}, {}, 2026, "x")
+    assert pagina == {"season": 2026, "updated": "x", "week": None, "conferencias": {}}
+
+
+def test_valida_recusa_seeds_repetidos():
+    rows, info, tds = liga(semanas=2)
+    pagina = monta_pagina(rows, info, tds, 2026, "x")
+    pagina["conferencias"]["AFC"]["seeds"][6]["abbr"] = pagina["conferencias"]["AFC"]["seeds"][0]["abbr"]
+    with pytest.raises(ValueError, match="time repetido"):
+        valida(pagina)
+
+
+def test_monta_pagina_recusa_conferencia_incompleta():
+    rows, info, tds = liga(semanas=2)
+    del info["AE0"]
+    with pytest.raises(KeyError):
+        monta_pagina(rows, info, tds, 2026, "x")

@@ -208,3 +208,74 @@ def ordena(grupo, cadeia, ctx):
         return ordena(alto, cadeia, ctx) + ordena([t for t in grupo if t not in alto], cadeia, ctx)
     ctx["sorteio"].update(grupo)
     return sorted(grupo)
+
+
+def _checa_liga(conferencia, divisao):
+    """Cada conferência precisa de 16 times em 4 divisões de 4 times."""
+    for conf in set(conferencia.values()):
+        times = [t for t, c in conferencia.items() if c == conf]
+        if len(times) != 16:
+            raise ValueError(f"{conf}: {len(times)} times em vez de 16")
+        for div in {divisao[t] for t in times}:
+            if sum(1 for t in times if divisao[t] == div) != 4:
+                raise ValueError(f"{div}: divisão sem 4 times")
+
+
+def classifica(jogos, divisao, conferencia, info):
+    base = _contexto(jogos, divisao)
+    saida = {}
+    for conf in sorted(set(conferencia.values())):
+        times = [t for t, c in conferencia.items() if c == conf]
+        vencedores, resto = [], []
+        for div in sorted({divisao[t] for t in times}):
+            do_div = [t for t in times if divisao[t] == div]
+            ordem = ordena(do_div, CADEIA_DIV, dict(base, varredura=False, minimo=1))
+            vencedores.append(ordem[0])
+            resto += ordem[1:]
+        cruz = dict(base, varredura=True, minimo=4)
+        topo = ordena(vencedores, CADEIA_CRUZ, cruz)
+        cortados = ordena(resto, CADEIA_CRUZ, cruz)[:3]
+        seeds = []
+        for n, t in enumerate(topo + cortados, start=1):
+            w, l, e = campanha(jogos, t)
+            pct = aproveitamento([j for j in jogos if j["team"] == t])
+            seeds.append({
+                "seed": n, "abbr": t, "label": label(t, info), "div": divisao[t],
+                "w": w, "l": l, "t": e,
+                "pct": round(pct, 3) if pct is not None else None,
+                "sorteio": t in base["sorteio"],
+            })
+        saida[conf] = {
+            "seeds": seeds,
+            "bye": seeds[0]["abbr"],
+            "jogos": [[seeds[1]["abbr"], seeds[6]["abbr"]],
+                      [seeds[2]["abbr"], seeds[5]["abbr"]],
+                      [seeds[3]["abbr"], seeds[4]["abbr"]]],
+        }
+    return saida
+
+
+def valida(pagina):
+    """Confere a saída antes de gravar; levanta ValueError se algo fugir das regras."""
+    for conf, c in pagina["conferencias"].items():
+        seeds = c["seeds"]
+        if [s["seed"] for s in seeds] != list(range(1, 8)):
+            raise ValueError(f"{conf}: seeds incompletos")
+        if len({s["abbr"] for s in seeds}) != 7:
+            raise ValueError(f"{conf}: time repetido")
+        if len({s["div"] for s in seeds[:4]}) != 4:
+            raise ValueError(f"{conf}: seeds 1 a 4 não são campeões de divisões diferentes")
+
+
+def monta_pagina(rows, info, tds, season, updated):
+    semana = closed_week(rows)
+    if semana is None:
+        return {"season": season, "updated": updated, "week": None, "conferencias": {}}
+    jogos = build_games(rows, info, tds, semana)
+    conferencia = {t: info[t]["team_conf"] for t in {j["team"] for j in jogos}}
+    divisao = {t: info[t]["team_division"] for t in conferencia}
+    _checa_liga(conferencia, divisao)
+    pagina = {"season": season, "updated": updated, "week": semana,
+              "conferencias": classifica(jogos, divisao, conferencia, info)}
+    valida(pagina)
+    return pagina
