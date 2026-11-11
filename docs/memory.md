@@ -1,6 +1,6 @@
 # Memória do projeto — NFL Dashboard
 
-> Última atualização: 04/11/2026
+> Última atualização: 10/11/2026
 
 Este documento reúne os pedidos, decisões e modificações do projeto que ficaram registrados na memória do assistente, com a data de cada um.
 
@@ -46,6 +46,8 @@ Os registros a partir do 27 levam a data conhecida.
 | 32 | 31/10/2026 | Pedido | Seguir para a etapa 2 (transmissões) após a confirmação de que os logos funcionaram. Respostas: outros canais podem surgir no futuro; jogo sem canal marcado não mostra nada; a atualização será feita pelo celular e pelo desktop. |
 | 33 | 03/11/2026 | Pedido | Em Confrontos, quando os dois times já se enfrentaram antes na temporada (rivais de divisão), mostrar ao expandir o card o placar do último jogo entre eles. |
 | 34 | 04/11/2026 | Pedido | Atualizar todos os documentos com as etapas dos logos, das transmissões (página admin) e dos reencontros. |
+| 35 | 10/11/2026 | Pedido | Em Confrontos, a lista de times em folga (bye) está confusa: mostrar só os times de folga da semana atual (semana 10 em diante). |
+| 36 | 10/11/2026 | Implementação | Folgas corrigidas: a lista usa o calendário da temporada (sem siglas antigas como OAK, SD e STL) e mostra a semana no rótulo; nota de transmissão em linha própria. Testes em 45. |
 
 ## 2. Preferências de trabalho
 
@@ -82,6 +84,7 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 03/11/2026 | Ocorrência | Build e deploy confirmados sem erro após o ajuste do marcador. |
 | 03/11/2026 | Implementação | Reencontros: `rematches.py` e o bloco "Último confronto nesta temporada" no card expandido. |
 | 04/11/2026 | Implementação | Atualização dos documentos `PRD.md`, `arquitetura.md`, `regras.md`, `design.md` e `memory.md` e do `README.md`. |
+| 10/11/2026 | Ocorrência | Lista de folgas com 8 times na semana 6 (4 reais); causa: o cadastro de times do nflverse tem siglas antigas (OAK, SD, STL) e `LAR` duplicando os Rams. Corrigido filtrando pelos times do calendário da temporada. |
 
 ## 4. Pendências
 
@@ -90,7 +93,7 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | Confirmar o agendamento do fluxo (`cron: "7 11 * * 1,2,6"`) | Sem resposta: os documentos assumem segunda, terça e sábado às 11:07 UTC. |
 | Teste real da página admin com o token do GitHub | A página foi testada com a API simulada; o primeiro salvamento real ainda não foi confirmado. |
 | Reforço de segurança do admin (transmissões em branch separada e `main` protegida) | Oferecido, sem decisão. |
-| Contagem de testes (46) | Conferir no `pytest` do repositório se o total confere. |
+| Contagem de testes | Conferido em 10/11/2026: o `pytest` tinha 44 testes (não 46); agora são 45, com o teste de folgas. Documentos atualizados. |
 
 ## 5. Como manter este documento
 
@@ -107,3 +110,4 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 27/10/2026 | Criação do documento a partir dos registros da memória e da conversa. |
 | 30/10/2026 | Inclusão dos registros 26 a 29 (cores por rodada, documentos e a decisão sobre o `AGENTS.md`); tipo "Pergunta" criado; seção 3 corrigida. |
 | 04/11/2026 | Inclusão dos registros 30 a 34 (logos, transmissões, reencontros e atualização dos documentos); seção 3 ampliada; nova seção de pendências. |
+| 10/11/2026 | Inclusão dos registros 35 e 36 (folgas), ocorrência na seção 3 e pendência da contagem de testes resolvida. |

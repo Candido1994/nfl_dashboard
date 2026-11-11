@@ -1,6 +1,6 @@
 # Arquitetura — NFL Dashboard
 
-> Última atualização: 04/11/2026
+> Última atualização: 10/11/2026
 
 ## 1. Visão geral
 
@@ -64,7 +64,7 @@ nfl_dashboard/
 | Módulo | Responsabilidade |
 |---|---|
 | `config.py` | Lista de métricas (`METRICS`), canais de transmissão (`CHANNELS`), temporada padrão, fuso e rótulo do fuso, `REPO_URL`, `GOATCOUNTER_URL`. |
-| `stats.py` | Estatísticas dos times: `build_games`, `summarize`, `build_teams`, `compute_ranks`, `select_games`, `build_matchups`, `build_history`, `local_kickoff`, `divisional`, `load_team_info`, `team_weeks_from`. |
+| `stats.py` | Estatísticas dos times: `build_games`, `summarize`, `build_teams`, `compute_ranks`, `select_games`, `bye_teams`, `build_matchups`, `build_history`, `local_kickoff`, `divisional`, `load_team_info`, `team_weeks_from`. |
 | `players.py` | Agregação de jogadores por janela e por categoria (`build_player_pages`, `load_players`, `PLAYER_CATS`). |
 | `broadcasts.py` | Transmissões: `load_broadcasts` (lê e valida o JSON), `attach_channels` (acrescenta os canais a cada jogo), `schedule_rows` (calendário completo) e `admin_page` (dados da página admin). |
 | `rematches.py` | Reencontros: `last_meeting` e `attach_last_meetings` (placar do último jogo entre os dois times). |
@@ -96,7 +96,7 @@ Todas as páginas recebem também `colors` (`{sigla: "#RRGGBB"}`).
 | Página | Campos principais |
 |---|---|
 | Painel | `season`, `week`, `updated`, `metrics[]`, `teams[]` (cada um com `abbr`, `label`, `conf`, `div` e as janelas `w1`, `w3`, `s`). |
-| Confrontos | `season`, `updated`, `tz`, `metrics[]`, `nteams`, `ranks{s,w3,w1}`, `week`, `round`, `games[]`, `bye[]`. Cada jogo: `away`, `home` (times), `day`, `time`, `as`, `hs`, `division`, `round`, `neutral`, `key`, `canais[]` (nomes) e `previous` (`week`, `round`, `day`, `away`, `as`, `home`, `hs`, ou `null`). |
+| Confrontos | `season`, `updated`, `tz`, `metrics[]`, `nteams`, `ranks{s,w3,w1}`, `week`, `round`, `games[]`, `bye[]` (rótulos "SIGLA - Apelido" dos times de folga na semana exibida, calculados por `bye_teams`). Cada jogo: `away`, `home` (times), `day`, `time`, `as`, `hs`, `division`, `round`, `neutral`, `key`, `canais[]` (nomes) e `previous` (`week`, `round`, `day`, `away`, `as`, `home`, `hs`, ou `null`). |
 | Evolução | `season`, `updated`, `metrics[]` (+ aproveitamento), `weeks[]`, `teams[]` com `series[]` (`week`, `s`, `w3`). |
 | Jogadores | `season`, `updated`, `week`, `teams[]`, `cats[]` (colunas e ordenação padrão), `players{qb,rb,rec,def,k}` com as janelas `s`, `w3`, `w1`. |
 | Admin | `season`, `updated`, `channels[]` (`id`, `label`), `games[]` (`key`, `week`, `round`, `away`, `home`, `awayAbbr`, `homeAbbr`, `day`, `time`, `canais[]` com ids) e `repo` (`owner`, `name`, `branch`, `path`). |
@@ -153,8 +153,8 @@ dependências indiretas. `tzdata` fica sem versão. `requirements-dev.txt` acres
 
 ## 11. Testes
 
-46 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
-agregação de jogadores, conversão de horários, jogo de divisão, seleção de jogos nos playoffs e consistência entre as rodadas,
+45 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
+agregação de jogadores, conversão de horários, jogo de divisão, seleção de jogos nos playoffs, folgas (bye) e consistência entre as rodadas,
 o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da admin) e reencontros. Não dependem de internet.
 
 ## 12. Segurança
@@ -179,3 +179,4 @@ A página admin lista só a rodada atual nesse período.
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 29/10/2026 | Inclusão do `AGENTS.md` e da pasta `docs/` na estrutura do repositório (proposta revertida em 30/10/2026: o `AGENTS.md` não foi criado). |
 | 04/11/2026 | Logos (`logos.py`, `comum.js`, `static/img`), transmissões (`broadcasts.py`, página admin, `data/`), reencontros (`rematches.py`), marcador `__DADOS__`, páginas ocultas, cores nas páginas e testes (46). |
+| 10/11/2026 | Folgas (bye): `bye_teams` em `stats.py` usa o calendário da temporada (não mais o cadastro de times, que tinha siglas antigas); nova linha `#tv` para a nota de transmissão em `confrontos.html`; testes em 45. |

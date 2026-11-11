@@ -122,7 +122,7 @@ select,input[type=password]{width:100%;min-height:44px;padding:0 12px;border:1px
 .note b{color:var(--fg)}
 .note.form{background:var(--seg);border-radius:10px;padding:8px 12px;margin:0 0 12px;font-size:14px;line-height:1.6}
 #bye{margin-top:12px}
-#bye div{margin-top:4px}
+#tv{margin-top:4px}
 /* leitura do confronto */
 .sec{margin:0 0 18px}.sec:last-child{margin-bottom:0}
 .sec h3{font-size:15px;font-weight:700;margin:0 0 8px}

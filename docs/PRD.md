@@ -1,6 +1,6 @@
 # PRD — NFL Dashboard
 
-> Última atualização: 04/11/2026 · Status: em produção (GitHub Pages)
+> Última atualização: 10/11/2026 · Status: em produção (GitHub Pages)
 
 ## 1. Visão geral
 
@@ -68,7 +68,7 @@ para o usuário tirar as próprias conclusões.
 | RF-19 | Etiqueta e faixa amarelas para jogo entre times da mesma divisão. |
 | RF-20 | Links no card para Jogadores e Evolução já filtrados pelos dois times. |
 | RF-21 | Aviso de que projeções e análises são apenas didáticas (no topo da página e em cada card). |
-| RF-22 | Lista de times em folga (bye) na temporada regular. |
+| RF-22 | Lista de times em folga (bye) da semana exibida, só na temporada regular. |
 | RF-23 | Logos no cabeçalho do card (40 px) e no resumo (28 px); em telas estreitas, sigla e apelido em linhas separadas. |
 | RF-24 | Linha "Onde assistir" com os canais de transmissão no Brasil marcados pelo administrador; jogo sem marcação não mostra nada, e uma nota informa que a informação é manual. |
 | RF-25 | Bloco "Último confronto nesta temporada" no card expandido, com o placar, a semana (ou a rodada dos playoffs), a data e o local, quando os dois times já se enfrentaram antes. |
@@ -115,7 +115,7 @@ para o usuário tirar as próprias conclusões.
 - **Custo zero:** hospedagem gratuita; nenhuma chave de API ou segredo no repositório.
 - **Sem servidor:** os números ficam embutidos em cada página; o navegador só monta tabelas e gráficos.
 - **Resiliência:** se uma atualização falhar, o site continua com a última versão publicada; arquivo de transmissões ausente ou inválido não quebra a geração.
-- **Reprodutibilidade:** versões das bibliotecas fixas; 46 testes automatizados que não dependem de internet.
+- **Reprodutibilidade:** versões das bibliotecas fixas; 45 testes automatizados que não dependem de internet.
 - **Privacidade:** sem cookies; contador de acessos anônimo e opcional.
 - **Segurança da área admin:** token só na memória da aba por padrão, página sem scripts de terceiros, `noindex` e política que só permite conexão com a API do GitHub.
 - **Acessibilidade:** contraste mínimo de 4,5:1 no texto, foco visível, respeito a "reduzir movimento".
@@ -196,3 +196,4 @@ para o usuário tirar as próprias conclusões.
 |---|---|
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 04/11/2026 | Logos (RF-07, 23, 34, 43, 55), transmissões e página admin (RF-24, 60 a 64), último confronto (RF-25), decisões, riscos e glossário atualizados. |
+| 10/11/2026 | Folgas (RF-22) corrigidas: só os times da semana exibida que não jogam, sem siglas antigas. |

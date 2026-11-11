@@ -1,6 +1,6 @@
 # Regras — NFL Dashboard
 
-> Última atualização: 04/11/2026
+> Última atualização: 10/11/2026
 
 ## 1. Regras de cálculo
 
@@ -43,7 +43,8 @@
 1. Temporada regular: a **primeira semana que ainda tem jogo pendente** (mostra a semana inteira, com placares dos jogos já finalizados).
 2. Temporada regular encerrada: a **primeira rodada dos playoffs com jogo pendente**; se todas foram disputadas, a **última rodada**.
 3. Jogos de playoffs sem os dois times definidos são ignorados. Sem nada a mostrar, a página avisa "Sem jogos pendentes".
-4. Os jogos aparecem em ordem de data e horário. A lista de folgas (bye) só existe na temporada regular.
+4. Os jogos aparecem em ordem de data e horário.
+5. **Folgas (bye):** só na temporada regular. Lista os times que têm jogo na temporada e não jogam na semana exibida, com o número da semana (ex.: "Folga (bye) na semana 10: CHI - Bears, ..."). Siglas antigas de times já realocados (ex.: OAK, SD, STL) não entram, porque não têm jogo na temporada.
 
 ### 2.2 Rodadas dos playoffs
 | Código do nflverse | Nome exibido |
@@ -152,3 +153,4 @@
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 29/10/2026 | Seção 7: inclusão do `AGENTS.md`, do envio completo dos documentos e do fuso das datas (a parte do `AGENTS.md` foi revertida em 30/10/2026). |
 | 04/11/2026 | Novas regras: último confronto (2.6), transmissões (2.7), logos (6), marcas no rodapé e marcador de dados; seções renumeradas. |
+| 10/11/2026 | Folgas (bye) (2.1, item 5): só os times da semana exibida que não jogam, com a semana no rótulo. |

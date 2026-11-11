@@ -1,4 +1,4 @@
-from nfl_dashboard.stats import select_games
+from nfl_dashboard.stats import bye_teams, select_games
 
 
 def _g(game_type, week, home_score=None, away="AAA", home="BBB", gameday="2027-01-10"):
@@ -45,6 +45,16 @@ def test_depois_do_super_bowl_mostra_o_resultado_final():
 def test_jogos_de_playoff_sem_times_definidos_sao_ignorados():
     rows = [_g("REG", 18, 24), {"game_type": "WC", "week": 19, "away_team": None, "home_team": None, "home_score": None}]
     assert select_games(rows) is None
+
+
+def test_bye_so_tem_times_da_temporada_que_nao_jogam_na_semana():
+    rows = [_g("REG", 10, away="AAA", home="BBB"), _g("REG", 10, away="CCC", home="DDD"),
+            _g("REG", 10, away="EEE", home="FFF"), _g("REG", 3, away="GGG", home="AAA")]
+    info = {"AAA": {"team_nick": "Alpha"}, "EEE": {"team_nick": "Echo"}, "OAK": {"team_nick": "Raiders"}}
+    playing = {"AAA", "BBB", "CCC", "DDD", "EEE", "FFF"}
+    assert bye_teams(rows, playing, info) == ["GGG - GGG"]
+    rows = [r for r in rows if r["away_team"] != "GGG"]
+    assert bye_teams(rows, playing, info) == []  # OAK (sigla antiga, sem jogo) não entra
 
 
 def test_toda_rodada_tem_cor_no_css_e_no_js():

@@ -9,8 +9,8 @@ const RC={"Wild Card":"wc","Rodada Divisional":"div","Final da Conferência":"co
 const MK=Object.fromEntries(D.metrics.map(m=>[m.k,m]));
 document.querySelector("h1").textContent="NFL "+D.season+(D.round?" – Playoffs · "+D.round:D.week?" – Confrontos da semana "+D.week:" – Confrontos");
 $("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários: "+(D.tz||"ET");
-$("bye").textContent=D.bye.length?"Folga (bye): "+D.bye.join(", "):"";
-if(D.games.some(g=>g.canais&&g.canais.length)){const n=document.createElement("div");n.textContent="Transmissão no Brasil informada manualmente; confirme na programação oficial.";$("bye").appendChild(n)}
+$("bye").textContent=D.bye.length?"Folga (bye) na semana "+D.week+": "+D.bye.join(", "):"";
+if(D.games.some(g=>g.canais&&g.canais.length))$("tv").textContent="Transmissão no Brasil informada manualmente; confirme na programação oficial.";
 $("wins").innerHTML=Object.entries(WL).map(([k,l])=>`<button data-w="${k}">${l}</button>`).join("");
 $("wins").onclick=e=>{if(e.target.dataset.w){win=e.target.dataset.w;draw()}};
 $("ex").onclick=()=>document.querySelectorAll("#games .card").forEach(d=>d.open=true);

@@ -202,11 +202,18 @@ def select_games(rows):
     return rd, POSTSEASON[chosen], min(r["week"] for r in rd)
 
 
+def bye_teams(rows, playing, info):
+    """Times de folga: os que têm jogo na temporada regular e não jogam na semana exibida."""
+    teams = {r[k] for r in rows if r.get("game_type") == "REG" for k in ("away_team", "home_team") if r.get(k)}
+    return sorted(label(a, info) for a in teams if a not in playing)
+
+
 def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
     """Jogos da semana atual (ou da próxima) e, depois da temporada regular, da rodada dos playoffs."""
     import nflreadpy as nfl
 
-    picked = select_games(nfl.load_schedules([season]).to_dicts())
+    rows = nfl.load_schedules([season]).to_dicts()
+    picked = select_games(rows)
     if not picked:
         return None
     wg, rnd, wk = picked
@@ -231,7 +238,7 @@ def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
             }
         )
     # nos playoffs a lista de folgas não faz sentido (só 14 times jogam)
-    bye = sorted(label(a, info) for a in info if a not in playing) if rnd is None else []
+    bye = bye_teams(rows, playing, info) if rnd is None else []
     return {"week": wk, "round": rnd, "games": games, "bye": bye}
 
 
