@@ -63,6 +63,7 @@ Os registros a partir do 27 levam a data conhecida.
 | 49 | 10/11/2026 | Implementação | Página Playoffs na branch `playoffs-impl` (ainda não mesclada na `main`): `playoffs.py`, `team_week_tds` em `stats.py`, template, JS e CSS, integração ao build e à aba, commits `7b30d0c` a `dd93ba3`. Testes de 45 para 69. |
 | 50 | 10/11/2026 | Implementação | Documentos atualizados (PRD, regras, arquitetura, design, memory e README), com as datas de 10/11/2026. |
 | 51 | 10/11/2026 | Ocorrência | Marcador corrigido: a documentação dizia `__DADOS__`, mas o código (`render.py` e `layout.html`) usa `{{DATA}}`. Corrigido em `regras.md`, `arquitetura.md` e `memory.md` nesta data. |
+| 52 | 10/11/2026 | Decisão | Aprovação do plano de implementação (`docs/superpowers/plans/2026-11-10-playoffs.md`, skill writing-plans) com execução por subagentes (subagent-driven-development), em worktree na branch `playoffs-impl`, com um commit por tarefa. |
 
 ## 2. Preferências de trabalho
 
@@ -134,3 +135,4 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 04/11/2026 | Inclusão dos registros 30 a 34 (logos, transmissões, reencontros e atualização dos documentos); seção 3 ampliada; nova seção de pendências. |
 | 10/11/2026 | Inclusão dos registros 35 e 36 (folgas), ocorrência na seção 3 e pendência da contagem de testes resolvida. |
 | 10/11/2026 | Inclusão dos registros 37 a 51 (página Playoffs: pedido, decisões, implementação e correção do marcador); pendências da página e touchdowns, com as resolvidas marcadas. |
+| 10/11/2026 | Inclusão do registro 52 (aprovação do plano de implementação e da execução por subagentes em worktree). |
