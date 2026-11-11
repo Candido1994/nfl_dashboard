@@ -232,3 +232,22 @@ def test_pagina_playoffs_renderiza_com_dados_vazios():
     assert "{{" not in html
     assert "static/js/playoffs.js?v=v1" in html
     assert '<a href="playoffs.html" aria-current="page">Playoffs</a>' in html
+
+
+def test_interna_usa_contexto_da_divisao_sem_varredura_e_minimo(monkeypatch):
+    # A probe da divisão não herda varredura nem o mínimo de 4 jogos comuns da classificação.
+    capturados = []
+
+    def espiao(grupo, cadeia, ctx):
+        capturados.append(ctx)
+        return ordena(grupo, cadeia, ctx)
+
+    monkeypatch.setattr("nfl_dashboard.playoffs.ordena", espiao)
+    jogos = par("A", "C", 20, 10) + par("A", "D", 20, 10) + par("A", "V1", 10, 20) + par("A", "V2", 10, 20) \
+        + par("B", "C", 10, 20) + par("B", "D", 10, 20) + par("B", "W1", 20, 10) + par("B", "W2", 20, 10)
+    ctx = _ctx(jogos, {"A": "X", "B": "X", "C": "Y", "D": "Y", "V1": "Z", "V2": "Z", "W1": "Z", "W2": "Z"})
+    ctx["varredura"] = True
+    ctx["minimo"] = 4
+    c_interna("A", ["A", "B"], ctx)
+    assert capturados[0]["varredura"] is False
+    assert capturados[0]["minimo"] == 1

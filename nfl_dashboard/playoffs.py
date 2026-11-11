@@ -92,7 +92,7 @@ def c_interna(t, grupo, ctx):
     irmaos = [o for o in grupo if ctx["div"][o] == ctx["div"][t]]
     if len(irmaos) < 2:
         return None
-    teste = dict(ctx, sorteio=set())
+    teste = dict(ctx, sorteio=set(), varredura=False, minimo=1)
     ordem = ordena(irmaos, CADEIA_DIV, teste)
     if teste["sorteio"]:
         return None
