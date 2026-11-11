@@ -64,6 +64,9 @@ Os registros a partir do 27 levam a data conhecida.
 | 50 | 10/11/2026 | Implementação | Documentos atualizados (PRD, regras, arquitetura, design, memory e README), com as datas de 10/11/2026. |
 | 51 | 10/11/2026 | Ocorrência | Marcador corrigido: a documentação dizia `__DADOS__`, mas o código (`render.py` e `layout.html`) usa `{{DATA}}`. Corrigido em `regras.md`, `arquitetura.md` e `memory.md` nesta data. |
 | 52 | 10/11/2026 | Decisão | Aprovação do plano de implementação (`docs/superpowers/plans/2026-11-10-playoffs.md`, skill writing-plans) com execução por subagentes (subagent-driven-development), em worktree na branch `playoffs-impl`, com um commit por tarefa. |
+| 53 | 10/11/2026 | Ocorrência | Revisão final: o desempate interno entre times da mesma divisão usava o contexto cruzado (varredura e mínimo de 4 jogos em comum), divergindo do spec. Corrigido para `varredura=False` e `minimo=1` no commit `403b7a1` (Ruling 15). |
+| 54 | 10/11/2026 | Ocorrência | A página de playoffs poderia sair em branco se o calendário falhasse, porque `schedule_rows` engolia a exceção. Decisão: carga estrita (`strict=True`) só para a página de playoffs, no commit `3f6faa9` (Ruling 16); a página admin mantém o comportamento anterior. |
+| 55 | 10/11/2026 | Decisão | O passo "ordem interna da divisão" entrou na cadeia entre divisões da especificação (seção 5.4), alinhando o spec ao código e a `regras.md`, seção 9.4 (Ruling 17). |
 
 ## 2. Preferências de trabalho
 
@@ -136,3 +139,4 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 10/11/2026 | Inclusão dos registros 35 e 36 (folgas), ocorrência na seção 3 e pendência da contagem de testes resolvida. |
 | 10/11/2026 | Inclusão dos registros 37 a 51 (página Playoffs: pedido, decisões, implementação e correção do marcador); pendências da página e touchdowns, com as resolvidas marcadas. |
 | 10/11/2026 | Inclusão do registro 52 (aprovação do plano de implementação e da execução por subagentes em worktree). |
+| 10/11/2026 | Inclusão dos registros 53 a 55 (correções da revisão final: contexto do desempate interno, carga estrita do calendário e passo "ordem interna" no spec). |
