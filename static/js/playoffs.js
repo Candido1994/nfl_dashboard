@@ -20,7 +20,8 @@ function quadro(conf) {
       + `<td class="rc">${rec(s)}<small>${pct(s.pct)}</small></td></tr>`;
   });
   return `<div class="wrap"><table class="seeds">`
-    + `<thead><tr><th class="n">Seed</th><th>Time</th><th>Divisão</th><th>V-D</th></tr></thead><tbody>${linhas}</tbody></table></div>`;
+    + `<colgroup><col style="width:12%"><col style="width:40%"><col style="width:24%"><col style="width:24%"></colgroup>`
+    + `<tbody>${linhas}</tbody></table></div>`;
 }
 
 function chave(conf) {
