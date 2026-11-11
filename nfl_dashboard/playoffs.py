@@ -92,7 +92,11 @@ def c_interna(t, grupo, ctx):
     irmaos = [o for o in grupo if ctx["div"][o] == ctx["div"][t]]
     if len(irmaos) < 2:
         return None
-    return -ordena(irmaos, CADEIA_DIV, ctx).index(t)
+    teste = dict(ctx, sorteio=set())
+    ordem = ordena(irmaos, CADEIA_DIV, teste)
+    if teste["sorteio"]:
+        return None
+    return -ordem.index(t)
 
 
 def c_h2h(t, grupo, ctx):

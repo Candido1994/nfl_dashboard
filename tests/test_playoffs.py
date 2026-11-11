@@ -71,7 +71,7 @@ def test_build_games_falha_sem_touchdowns_em_vez_de_zerar():
 
 
 from nfl_dashboard.playoffs import (
-    CADEIA_CRUZ, CADEIA_DIV, _contexto, c_h2h, c_pct, ordena,
+    CADEIA_CRUZ, CADEIA_DIV, _contexto, c_h2h, c_interna, c_pct, ordena,
 )
 
 
@@ -133,3 +133,13 @@ def test_time_sem_jogos_fica_por_ultimo_sem_quebrar():
 def test_cadeias_tem_os_criterios_das_regras_na_ordem():
     assert CADEIA_DIV[0] is c_pct and CADEIA_CRUZ[0] is c_pct
     assert len(CADEIA_DIV) == 12 and len(CADEIA_CRUZ) == 12
+
+
+def test_interna_nao_vaza_sorteio_quando_a_divisao_empata_totalmente():
+    # A e B (mesma divisão) empatam em todos os critérios da divisão; C (outra divisão) perde para D.
+    jogos = par("A", "D", 20, 10) + par("B", "D", 20, 10) + par("C", "D", 10, 20)
+    ctx = _ctx(jogos, {"A": "X", "B": "X", "C": "Y", "D": "Z"})
+    grupo = ["A", "B", "C"]
+    assert c_interna("A", grupo, ctx) is None
+    assert c_interna("B", grupo, ctx) is None
+    assert ctx["sorteio"] == set()
