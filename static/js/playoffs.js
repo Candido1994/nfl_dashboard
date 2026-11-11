@@ -19,7 +19,7 @@ function quadro(conf) {
       + `<td class="dv">${s.div}</td>`
       + `<td class="rc">${rec(s)}<small>${pct(s.pct)}</small></td></tr>`;
   });
-  return `<div class="wrap"><table class="seeds pt"><colgroup><col style="width:56px"><col style="width:44%"><col style="width:28%"><col style="width:28%"></colgroup>`
+  return `<div class="wrap"><table class="seeds pt">`
     + `<thead><tr><th class="n">Seed</th><th>Time</th><th>Divisão</th><th>V-D</th></tr></thead><tbody>${linhas}</tbody></table></div>`;
 }
 
