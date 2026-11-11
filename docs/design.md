@@ -100,7 +100,7 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 | Admin: barra de salvar | Barra fixa na parte de baixo com "Alterações não salvas" e o botão "Salvar transmissões". |
 | Admin: mensagens | Faixa com borda verde (sucesso) ou vermelha (erro), com link para a aba Actions após salvar. |
 | Folga (bye) | Linha de apoio sob o cabeçalho de Confrontos: "Folga (bye) na semana N: SIGLA - Apelido, ..."; a nota de transmissão fica em linha própria abaixo. |
-| Quadro de seeds | Componente de tabela (`.seeds`) por conferência, com colunas Seed, Time, Divisão e V-D: cabeçalho fixo, rolagem só dentro do quadro e colunas em porcentagem, para a linha não quebrar. Logo de 24 px; em até 480 px, sigla e apelido em linhas separadas. O aproveitamento aparece em tamanho menor ao lado do V-D. Dois grupos com linha de título: "Campeões de divisão (seeds 1 a 4)" e "Wild Card (seeds 5 a 7)", separados por uma linha tracejada. |
+| Quadro de seeds | Componente de tabela (`.seeds`) por conferência, sem linha de cabeçalho: as colunas são Seed, Time, Divisão e V-D, identificadas pelos grupos e pelo próprio conteúdo. Rolagem só dentro do quadro e colunas em porcentagem, para a linha não quebrar. Logo de 24 px; em até 480 px, sigla e apelido em linhas separadas. O aproveitamento aparece em tamanho menor ao lado do V-D. Dois grupos com linha de título: "Campeões de divisão (seeds 1 a 4)" e "Wild Card (seeds 5 a 7)", separados por uma linha tracejada. |
 | Sorteio pendente | Etiqueta neutra (`.tg`, fundo `--seg`) ao lado do nome do time, quando o desempate depende do sorteio. Sem amarelo e sem cor de posição. |
 | Chaveamento | Títulos de rodada ("Divisional Round" e "Wild Card Round", com `po-div` e `po-wc`) e cartões de jogo em fundo suave (`--seg`), com a sigla e a posição (seed) de cada time e logo de 28 px. O bye do seed 1 aparece num cartão de fundo `--win` com a nota "Bye week: entra na Divisional Round". |
 | Rodapé | Texto centralizado com atribuição, aviso de marcas, licença e link do código. |
@@ -137,3 +137,4 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 | 04/11/2026 | Logos e distintivos, cabeçalho do card com logo, seta no canto inferior, "Onde assistir", bloco de último confronto e componentes da página admin. |
 | 10/11/2026 | Linha de folgas (bye) com a semana e nota de transmissão em linha própria. |
 | 10/11/2026 | Página Playoffs: componentes do quadro de seeds, sorteio pendente (etiqueta neutra, sem amarelo) e chaveamento; títulos de rodada com `po-wc` e `po-div`; aba e largura da página. Implementação na mesma data. |
+| 10/11/2026 | Quadro de seeds sem linha de cabeçalho (Seed, Time, Divisão e V-D): o conteúdo e os títulos de grupo identificam as colunas. |

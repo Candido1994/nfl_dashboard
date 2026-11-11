@@ -67,6 +67,7 @@ Os registros a partir do 27 levam a data conhecida.
 | 53 | 10/11/2026 | Ocorrência | Revisão final: o desempate interno entre times da mesma divisão usava o contexto cruzado (varredura e mínimo de 4 jogos em comum), divergindo do spec. Corrigido para `varredura=False` e `minimo=1` no commit `403b7a1` (Ruling 15). |
 | 54 | 10/11/2026 | Ocorrência | A página de playoffs poderia sair em branco se o calendário falhasse, porque `schedule_rows` engolia a exceção. Decisão: carga estrita (`strict=True`) só para a página de playoffs, no commit `3f6faa9` (Ruling 16); a página admin mantém o comportamento anterior. |
 | 55 | 10/11/2026 | Decisão | O passo "ordem interna da divisão" entrou na cadeia entre divisões da especificação (seção 5.4), alinhando o spec ao código e a `regras.md`, seção 9.4 (Ruling 17). |
+| 56 | 10/11/2026 | Pedido | Remover a linha de cabeçalho (Seed, Time, Divisão e V-D) do quadro de seeds, porque estava desalinhada e os dados se explicam sozinhos. Implementado no commit `2dd8db5`: tabela sem `thead`, com `colgroup` em porcentagem para manter as larguras. |
 
 ## 2. Preferências de trabalho
 
@@ -116,7 +117,7 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | Touchdowns: `fumble_recovery_tds` | **Em aberto.** A coluna ficou fora de `TD_COLS` (regra 9.2 de `regras.md`) porque a sobreposição com `rushing_tds` não foi confirmada. Confirmar no dicionário do nflverse; o dicionário não estava acessível na implementação. |
 | Playoffs após a temporada regular | **Em aberto.** A página continua mostrando os seeds finais e o chaveamento do Wild Card, sem resultados de playoffs. Confirmar esse comportamento (spec, seção 12, item 3). |
 | Histórico de semanas na página Playoffs | Fora desta etapa: a página mostra só a última semana fechada. Guardar o histórico no JSON fica para uma etapa futura. |
-| Verificação visual da página Playoffs | Pendente: 360, 390, 414 e 1100 px com dados reais, sem rolagem lateral da página (Tarefa 8 do plano). |
+| Verificação visual da página Playoffs | Resolvida em 10/11/2026: 360, 390, 414 e 1100 px com dados reais, sem rolagem lateral da página (Tarefa 8 do plano). |
 | Divergência do marcador `__DADOS__` / `{{DATA}}` | Resolvida em 10/11/2026: o código usa `{{DATA}}`; a documentação foi corrigida (registro 51). |
 | Sorteio na tela (spec, seção 12, item 2) | Resolvida: etiqueta neutra "Sorteio pendente" ao lado do time (registro 40). |
 | Touchdowns: colunas e definição (spec, seção 12, item 1) | Resolvida, exceto `fumble_recovery_tds` (ver acima). Colunas e decisão: spike da Tarefa 1 e `regras.md`, seção 9.2. |
@@ -140,3 +141,4 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 10/11/2026 | Inclusão dos registros 37 a 51 (página Playoffs: pedido, decisões, implementação e correção do marcador); pendências da página e touchdowns, com as resolvidas marcadas. |
 | 10/11/2026 | Inclusão do registro 52 (aprovação do plano de implementação e da execução por subagentes em worktree). |
 | 10/11/2026 | Inclusão dos registros 53 a 55 (correções da revisão final: contexto do desempate interno, carga estrita do calendário e passo "ordem interna" no spec). |
+| 10/11/2026 | Inclusão do registro 56 (remoção do cabeçalho do quadro de seeds) e pendência da verificação visual marcada como resolvida. |
