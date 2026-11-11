@@ -2,6 +2,7 @@
 import pytest
 
 from nfl_dashboard.playoffs import aproveitamento, build_games, campanha, closed_week
+from nfl_dashboard.render import PAGES
 
 
 def jogo(semana, mand, visit, pm, pv, tipo="REG"):
@@ -219,3 +220,9 @@ def test_valida_recusa_divisao_de_seed_5_a_7_sem_campeao_entre_os_1_a_4():
     pagina["conferencias"]["AFC"]["seeds"][4]["div"] = "AFC Inexistente"
     with pytest.raises(ValueError, match="divisão sem campeão"):
         valida(pagina)
+
+
+def test_playoffs_e_a_ultima_aba():
+    assert list(PAGES)[-1] == "playoffs"
+    assert PAGES["playoffs"]["tab"] == "Playoffs"
+

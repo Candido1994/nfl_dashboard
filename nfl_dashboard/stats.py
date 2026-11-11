@@ -304,3 +304,18 @@ def team_weeks_from(g):
     for r in g.select("team", "week").to_dicts():
         out.setdefault(r["team"], set()).add(r["week"])
     return {t: sorted(w) for t, w in out.items()}
+
+# colunas de touchdown de load_team_stats somadas como touchdowns marcados (confirmadas na spike)
+TD_COLS = ("passing_tds", "rushing_tds", "def_tds", "special_teams_tds", "pt_return_tds")
+
+
+def team_week_tds(season):
+    """Touchdowns marcados por time e semana: {(semana, sigla): n}."""
+    import nflreadpy as nfl
+    import polars as pl
+
+    ts = nfl.load_team_stats([season], summary_level="week").filter(pl.col("season_type") == "REG")
+    tds = {}
+    for r in ts.select("week", "team", *TD_COLS).to_dicts():
+        tds[(r["week"], r["team"])] = sum(int(r[c] or 0) for c in TD_COLS)
+    return tds
