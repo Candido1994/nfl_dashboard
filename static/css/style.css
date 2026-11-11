@@ -203,6 +203,10 @@ select,input[type=password]{width:100%;min-height:44px;padding:0 12px;border:1px
 .conf h2{margin:0 0 8px}
 .seeds{width:100%;table-layout:fixed;border-collapse:collapse}
 .seeds th,.seeds td{vertical-align:middle;white-space:nowrap;min-width:0}
+.seeds th:nth-child(1),.seeds td:nth-child(1){width:12%}
+.seeds th:nth-child(2),.seeds td:nth-child(2){width:40%}
+.seeds th:nth-child(3),.seeds td:nth-child(3){width:24%}
+.seeds th:nth-child(4),.seeds td:nth-child(4){width:24%}
 .seeds th.n,.seeds td.n{text-align:center}
 .seeds td.tm{font-weight:600;text-align:left}
 .seeds td.tm .tl{margin-right:8px;vertical-align:middle}
