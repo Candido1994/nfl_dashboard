@@ -144,7 +144,77 @@
 - **Entrega de alterações:** o código e os arquivos são enviados completos no chat, para copiar e colar; não são gerados arquivos para baixar.
 - **Documentação:** sempre que uma alteração afetar produto, arquitetura, regras ou design, os documentos de `docs/` são atualizados e enviados completos, e a mudança é registrada no `docs/memory.md` com a data.
 - **Datas:** cada registro leva a data da solicitação, da modificação e da implementação, no fuso de Brasília (dd/mm/aaaa).
-- **Marcadores do layout:** `{{...}}` só existe em `templates/`; os dados entram pelo marcador `__DADOS__`.
+- **Marcadores do layout:** `{{...}}` só existe em `templates/`; os dados entram pelo marcador `{{DATA}}`.
+
+## 9. Regras da página de Playoffs
+
+### 9.1 Semana fechada, quadro e chaveamento
+- **Semana fechada:** a semana cujos jogos da temporada regular têm todos os placares. A página mostra a maior semana fechada. Só jogos da temporada regular entram; os jogos de playoffs não mudam a classificação.
+- **Sem semana fechada:** a página mostra "Sem semanas fechadas na temporada" (`week: null`, sem seeds).
+- **Seeds 1 a 4:** campeões de cada divisão, ordenados pela cadeia entre divisões (9.4). **Seeds 5 a 7:** os três melhores times que não são campeões, ordenados da mesma forma.
+- **Chaveamento:** o seed 1 tem bye e entra na Divisional Round. Wild Card: 2 × 7, 3 × 6 e 4 × 5; o seed de número menor recebe em casa.
+- **Campeão de divisão:** o time melhor colocado na cadeia dentro da divisão (9.3) entre os quatro da divisão.
+
+### 9.2 Definições
+- **Campanha:** vitórias, derrotas e empates. **Aproveitamento** = (V + 0,5 × E) ÷ J. É o critério principal de ordenação.
+- **Saldo de pontos:** pontos feitos menos pontos sofridos, em total.
+- **Média combinada por jogo (ranking de pontos):** pontos feitos por jogo menos pontos sofridos por jogo; maior é melhor. Na conferência usa só os jogos de conferência; na liga, todos os jogos.
+- **Força da vitória (SoV):** soma das vitórias ÷ soma dos jogos dos times derrotados. Cada time derrotado conta uma vez, com o registro dele na semana fechada.
+- **Força da tabela (SoS):** mesma conta, com todos os adversários enfrentados. Cada jogo conta uma vez.
+- **Jogos em comum:** adversários que os dois times enfrentaram. Aproveitamento e saldo são calculados só nesses jogos.
+- **Confronto direto:** resultado dos jogos entre os dois times. Se empatarem em uma série de jogos, vale o aproveitamento entre si.
+- **Saldo de touchdowns:** touchdowns marcados menos sofridos, em total. Touchdown marcado = soma de `passing_tds`, `rushing_tds`, `def_tds`, `special_teams_tds` e `pt_return_tds` do time no jogo. Ficam de fora `receiving_tds` (repete `passing_tds` em todas as linhas) e `fumble_recovery_tds` (sobreposição com `rushing_tds` não confirmada no dicionário do nflverse).
+  **Em aberto:** confirmar `fumble_recovery_tds` no dicionário do nflverse (não foi acessível na implementação). Esse critério é o último desempate e raramente é alcançado.
+
+### 9.3 Cadeia dentro da mesma divisão
+1. Confronto direto
+2. Campanha na divisão
+3. Jogos em comum (qualquer número de jogos em comum, mínimo 1)
+4. Campanha na conferência
+5. Força das vitórias
+6. Força da tabela
+7. Ranking de pontos na conferência (média combinada por jogo)
+8. Ranking geral de pontos (média combinada por jogo, liga)
+9. Saldo de pontos em jogos comuns (total)
+10. Saldo geral de pontos (total)
+11. Saldo de touchdowns (total)
+12. Sorteio
+
+### 9.4 Cadeia entre divisões
+O aproveitamento vem antes da lista. Depois, na ordem:
+1. Ordem interna: só entre times da mesma divisão, a ordem que eles têm na cadeia do item 9.3. Se essa ordem depender do sorteio, o critério é ignorado nessa comparação, e o sorteio nunca decide entre divisões.
+2. Confronto direto (só se os times se enfrentaram)
+3. Campanha na conferência
+4. Jogos em comum (exige **no mínimo 4 jogos em comum**; abaixo disso o critério não se aplica)
+5. Força das vitórias
+6. Força da tabela
+7. Ranking de pontos na conferência (média combinada por jogo)
+8. Ranking geral de pontos (média combinada por jogo, liga)
+9. Saldo de pontos na conferência (total)
+10. Saldo geral de pontos (total)
+11. Saldo de touchdowns (total)
+12. Sorteio
+
+### 9.5 Empates entre três ou mais times
+- **Varredura no confronto direto (só entre divisões):** o confronto direto vale só se um time venceu todos os outros ou perdeu para todos. Caso contrário, o critério é ignorado nesse grupo. Dentro da mesma divisão, o confronto direto vale sem varredura.
+- **Reinício:** sempre que um critério separa o melhor ou o pior do grupo, esse time é posicionado e a cadeia recomeça do primeiro item para os restantes. Se o critério deixar um subconjunto empatado, a cadeia recomeça só dentro dele.
+
+### 9.6 Jogos em comum entre divisões
+- Entre times de divisões diferentes, o critério de jogos em comum só vale com **no mínimo 4 jogos em comum** entre os dois times. Abaixo disso, o critério não se aplica.
+
+### 9.7 Sorteio pendente
+- Se todos os critérios empatarem, o time recebe a marcação **"sorteio pendente"** e a ordem provisória é alfabética pela sigla. O site nunca sorteia sozinho.
+- A marcação aparece como etiqueta neutra ao lado do nome do time. Não usa amarelo (ver `design.md`).
+
+### 9.8 Arredondamento
+- A ordenação usa o aproveitamento sem arredondamento. O JSON da página (`pct`) traz 3 casas decimais (ex.: 0.889, mostrado como .889).
+
+### 9.9 Checagem antes de gravar
+- Cada conferência tem 16 times e 7 seeds distintos.
+- Seeds 1 a 4 são campeões de divisões diferentes.
+- Cada divisão dos seeds 5 a 7 tem exatamente um campeão entre os seeds 1 a 4.
+- **Dispensa consciente:** a checagem de que V-D-E somam com os jogos fechados não é feita. A campanha sai dos mesmos jogos, então a checagem seria tautológica (spec, seção 9).
+- Se a checagem falhar, o build para e a página não é publicada; o GitHub Pages mantém a última versão.
 
 ## Histórico de alterações
 
@@ -154,3 +224,4 @@
 | 29/10/2026 | Seção 7: inclusão do `AGENTS.md`, do envio completo dos documentos e do fuso das datas (a parte do `AGENTS.md` foi revertida em 30/10/2026). |
 | 04/11/2026 | Novas regras: último confronto (2.6), transmissões (2.7), logos (6), marcas no rodapé e marcador de dados; seções renumeradas. |
 | 10/11/2026 | Folgas (bye) (2.1, item 5): só os times da semana exibida que não jogam, com a semana no rótulo. |
+| 10/11/2026 | Nova seção 9 (Playoffs): definições, cadeias de desempate, mínimo de 4 jogos em comum, sorteio pendente, arredondamento e checagem. Marcador corrigido para `{{DATA}}`. Implementação na mesma data. |

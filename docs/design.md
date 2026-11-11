@@ -57,7 +57,9 @@ Em telas de até 480 px os botões segmentados passam a 15 px, e em até 400 px 
 | Final da Conferência | `po-con` | `#C2410C` / `#FFFFFF` | `#FFA374` / `#2A1004` | 5,2 e 9,1 |
 | Super Bowl | `po-sb` | `#BE185D` / `#FFFFFF` | `#F59AC4` / `#330A20` | 6,0 e 8,5 |
 
-O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no claro e 10,1 no escuro) e ao item ativo (aba atual, coluna ordenada).
+O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no claro e 10,1 no escuro) e ao item ativo (aba atual, coluna ordenada). Não é usado na página Playoffs: a marcação "Sorteio pendente" é uma etiqueta neutra (`--seg`) ao lado do nome do time.
+
+Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as mesmas classes `po-wc` e `po-div` da página de Confrontos, para a mesma cor em cada rodada.
 
 ### 3.3 Logos e distintivos
 - O distintivo usa a cor do time (`team_color` do nflverse, padrão `#5A685F`); a cor do texto (clara ou escura) é escolhida pelo brilho do fundo.
@@ -67,14 +69,14 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 
 - **Raios:** cards e tabelas 14 px; campos e botões 10 px; controle segmentado 12 px (botões internos 9 px); etiquetas, selos e logos 999 px / círculo.
 - **Espaçamentos comuns:** conteúdo 16 px; cards 12–16 px; separação entre blocos 12–18 px.
-- **Largura máxima:** Painel e Jogadores 1100 px; Evolução 880 px; Confrontos e Admin 760 px. O rodapé acompanha a largura da página.
+- **Largura máxima:** Painel e Jogadores 1100 px; Evolução 880 px; Confrontos, Playoffs e Admin 760 px. O rodapé acompanha a largura da página.
 - **Pontos de quebra:** 599 px (abas ocupam a largura toda), 480 px (ranking e botões compactos; sigla e apelido do time em linhas separadas) e 400 px (fontes menores nas abas; logo do cabeçalho do card de 32 px).
 
 ## 5. Componentes
 
 | Componente | Descrição |
 |---|---|
-| Cabeçalho | Título, subtítulo com data de atualização, abas (Painel, Confrontos, Evolução, Jogadores) e faixa de marcações de jardas. A aba atual leva sublinhado amarelo. A página admin usa o mesmo cabeçalho, sem aba própria. |
+| Cabeçalho | Título, subtítulo com data de atualização, abas (Painel, Confrontos, Evolução, Jogadores, Playoffs) e faixa de marcações de jardas. A aba atual leva sublinhado amarelo. A página admin usa o mesmo cabeçalho, sem aba própria. |
 | Logo / distintivo | Círculo de 20, 24, 28, 32 ou 40 px com o logo do time; sem o arquivo, círculo na cor do time com a sigla (só a cor em 24 px ou menos). |
 | Controle segmentado | Botões lado a lado para a janela, a posição e o modo; o selecionado fica verde. Altura de 40 px. |
 | Menus e botões | Altura mínima de 44 px; menus com rótulo visível acima; botão principal (`.btn.primary`) em verde. |
@@ -98,6 +100,9 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 | Admin: barra de salvar | Barra fixa na parte de baixo com "Alterações não salvas" e o botão "Salvar transmissões". |
 | Admin: mensagens | Faixa com borda verde (sucesso) ou vermelha (erro), com link para a aba Actions após salvar. |
 | Folga (bye) | Linha de apoio sob o cabeçalho de Confrontos: "Folga (bye) na semana N: SIGLA - Apelido, ..."; a nota de transmissão fica em linha própria abaixo. |
+| Quadro de seeds | Componente de tabela (`.seeds`) por conferência, com colunas Seed, Time, Divisão e V-D: cabeçalho fixo, rolagem só dentro do quadro e colunas em porcentagem, para a linha não quebrar. Logo de 24 px; em até 480 px, sigla e apelido em linhas separadas. O aproveitamento aparece em tamanho menor ao lado do V-D. Dois grupos com linha de título: "Campeões de divisão (seeds 1 a 4)" e "Wild Card (seeds 5 a 7)", separados por uma linha tracejada. |
+| Sorteio pendente | Etiqueta neutra (`.tg`, fundo `--seg`) ao lado do nome do time, quando o desempate depende do sorteio. Sem amarelo e sem cor de posição. |
+| Chaveamento | Títulos de rodada ("Divisional Round" e "Wild Card Round", com `po-div` e `po-wc`) e cartões de jogo em fundo suave (`--seg`), com a sigla e a posição (seed) de cada time e logo de 28 px. O bye do seed 1 aparece num cartão de fundo `--win` com a nota "Bye week: entra na Divisional Round". |
 | Rodapé | Texto centralizado com atribuição, aviso de marcas, licença e link do código. |
 
 ## 6. Interação
@@ -131,3 +136,4 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 04/11/2026 | Logos e distintivos, cabeçalho do card com logo, seta no canto inferior, "Onde assistir", bloco de último confronto e componentes da página admin. |
 | 10/11/2026 | Linha de folgas (bye) com a semana e nota de transmissão em linha própria. |
+| 10/11/2026 | Página Playoffs: componentes do quadro de seeds, sorteio pendente (etiqueta neutra, sem amarelo) e chaveamento; títulos de rodada com `po-wc` e `po-div`; aba e largura da página. Implementação na mesma data. |

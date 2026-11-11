@@ -15,9 +15,10 @@ O site é atualizado automaticamente pelo GitHub Actions e pode ser publicado em
 | Confrontos | `confrontos.html` | Jogos da semana atual (ou da próxima, se a atual já terminou), com horários em Brasília. Nos playoffs, mostra a rodada em andamento. Cada jogo é expansível e mostra o placar do último confronto entre os times (quando já se enfrentaram), projeção de pontos, duelos ataque x defesa, destaques e comparativo completo. Jogos de divisão ganham etiqueta amarela, jogos de playoffs uma etiqueta colorida por rodada e, quando informado, a linha "Onde assistir" com os canais no Brasil. |
 | Evolução | `evolucao.html` | Gráfico semana a semana de qualquer métrica (valor ou posição no ranking) e tabela de movimentação do ranking. |
 | Jogadores | `jogadores.html` | Líderes por time e tabelas de QBs, corredores, recebedores, defesa e kickers. |
+| Playoffs | `playoffs.html` | Seeds 1 a 7 de AFC e NFC pela temporada regular (campeões de divisão e os três melhores restantes), com campanha e aproveitamento, e o chaveamento do Wild Card da última semana fechada. Os critérios de desempate estão em `docs/regras.md`, seção 9. |
 | Admin (oculta) | `admin.html` | Página para marcar onde cada jogo passa no Brasil. Fora do menu e sem função sem o token do GitHub do administrador. |
 
-Todas as páginas públicas têm três janelas de período: **temporada**, **últimas 3 semanas** e **último jogo**.
+As páginas públicas, exceto Playoffs, têm três janelas de período: **temporada**, **últimas 3 semanas** e **último jogo**.
 Os cards de confronto têm links que abrem *Jogadores* e *Evolução* já filtrados pelos dois times
 (por exemplo `jogadores.html?times=NE,SF`).
 
@@ -78,6 +79,7 @@ nfl-dashboard/
 │   ├── players.py           # estatísticas de jogadores
 │   ├── broadcasts.py        # transmissões no Brasil e dados da página admin
 │   ├── rematches.py         # placar do último confronto entre os dois times
+│   ├── playoffs.py          # classificação dos playoffs (seeds, desempate e chaveamento)
 │   ├── logos.py             # cores dos times e script que baixa os logos
 │   ├── render.py            # monta o HTML a partir dos templates
 │   └── cli.py               # orquestra tudo e grava a pasta de saída
@@ -104,6 +106,7 @@ com esses dados, então o site final não precisa de servidor.
 - **EPA/jogada e success rate:** calculados a partir do play-by-play, só com passes e corridas da temporada regular.
 - **Ranking na liga:** de 1 a 32, em que **1 é o melhor em todas as métricas**, inclusive nas defensivas (1º em jardas cedidas = a defesa que menos cede).
 - **Campanha:** vitórias-derrotas (e empates, quando existem) em cada janela.
+- **Playoffs:** a classificação usa só a temporada regular e as semanas já fechadas (todos os placares). O desempate segue a ordem de `docs/regras.md`, seção 9; o sorteio nunca é automático e aparece como "sorteio pendente".
 - **Confrontos:** a projeção de pontos é a média entre os pontos que o ataque faz e os que a defesa adversária cede.
   "Vantagem clara" em um duelo ataque x defesa significa diferença de 6 ou mais posições no ranking
   (constante `TH` em `static/js/confrontos.js`).
@@ -218,6 +221,7 @@ confira se a execução na aba Actions ficou verde e rode `git pull` no seu comp
 - Os nomes das colunas de jogadores e de logos seguem o padrão do nflverse. Se o nflverse mudar algum nome, a estatística aparece zerada ou o logo vira distintivo.
 - Os dados do nflverse costumam ser atualizados na manhã seguinte aos jogos. Se uma execução rodar antes disso, o site mostra dados parciais até a próxima.
 - Nos playoffs, só a página de Confrontos avança para as novas rodadas. Painel, Evolução e Jogadores continuam mostrando a temporada regular, e as médias, os rankings e as projeções dos jogos de playoffs também vêm da temporada regular. Depois do Super Bowl, Confrontos mantém o resultado final.
+- A página Playoffs não mostra resultados de playoffs: mantém os seeds e o chaveamento da temporada regular.
 - As transmissões dependem de o administrador marcá-las; jogos sem marcação não mostram canal.
 - O nome das divisões aparece em inglês (por exemplo "AFC East"), do jeito que o nflverse informa.
 - O estilo usa a fonte Barlow Semi Condensed, carregada do Google Fonts. Sem internet, o navegador usa uma fonte do sistema.
