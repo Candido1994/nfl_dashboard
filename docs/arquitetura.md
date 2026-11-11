@@ -43,19 +43,21 @@ nfl_dashboard/
 │   ├── players.py
 │   ├── broadcasts.py
 │   ├── rematches.py
+│   ├── playoffs.py
 │   ├── logos.py
 │   ├── render.py
 │   ├── cli.py
 │   └── __main__.py
 ├── templates/
 │   ├── layout.html
-│   └── pages/ (painel, confrontos, evolucao, jogadores, admin)
+│   └── pages/ (painel, confrontos, evolucao, jogadores, playoffs, admin)
 ├── static/
 │   ├── css/style.css
-│   ├── js/ (comum.js, painel, confrontos, evolucao, jogadores, admin)
+│   ├── js/ (comum.js, painel, confrontos, evolucao, jogadores, playoffs, admin)
 │   └── img/teams/              # 32 logos <sigla>.png (128x128)
 ├── tests/
 ├── docs/                       # PRD.md, arquitetura.md, regras.md, design.md, memory.md
+│   └── superpowers/            # spec (specs/) e plano (plans/) da página Playoffs
 └── site/                       # saída gerada (ignorada pelo Git)
 ```
 
@@ -64,13 +66,14 @@ nfl_dashboard/
 | Módulo | Responsabilidade |
 |---|---|
 | `config.py` | Lista de métricas (`METRICS`), canais de transmissão (`CHANNELS`), temporada padrão, fuso e rótulo do fuso, `REPO_URL`, `GOATCOUNTER_URL`. |
-| `stats.py` | Estatísticas dos times: `build_games`, `summarize`, `build_teams`, `compute_ranks`, `select_games`, `bye_teams`, `build_matchups`, `build_history`, `local_kickoff`, `divisional`, `load_team_info`, `team_weeks_from`. |
+| `stats.py` | Estatísticas dos times: `build_games`, `summarize`, `build_teams`, `compute_ranks`, `select_games`, `bye_teams`, `build_matchups`, `build_history`, `local_kickoff`, `divisional`, `load_team_info`, `team_weeks_from`, e `team_week_tds` (touchdowns por time e semana, com `TD_COLS`). |
+| `playoffs.py` | Classificação dos playoffs: `closed_week`, `build_games` (jogos por conferência e divisão), critérios e cadeias de desempate (`CADEIA_DIV`, `CADEIA_CRUZ`, `ordena`), `classifica` (seeds, bye e Wild Card), `valida` (checagem antes de gravar) e `monta_pagina`. |
 | `players.py` | Agregação de jogadores por janela e por categoria (`build_player_pages`, `load_players`, `PLAYER_CATS`). |
 | `broadcasts.py` | Transmissões: `load_broadcasts` (lê e valida o JSON), `attach_channels` (acrescenta os canais a cada jogo), `schedule_rows` (calendário completo) e `admin_page` (dados da página admin). |
 | `rematches.py` | Reencontros: `last_meeting` e `attach_last_meetings` (placar do último jogo entre os dois times). |
 | `logos.py` | Cores dos times (`load_team_colors`) e script de uso único que baixa e converte os logos (`python -m nfl_dashboard.logos`). |
-| `render.py` | Lê `templates/` e `static/`, substitui os marcadores, grava as páginas e copia o `static/`. Define as quatro páginas públicas (`PAGES`) e as ocultas (`HIDDEN_PAGES`, com a admin). |
-| `cli.py` | Orquestra: baixa e calcula os dados, monta o dicionário de cada página e chama `write_site`. |
+| `render.py` | Lê `templates/` e `static/`, substitui os marcadores, grava as páginas e copia o `static/`. Define as cinco páginas públicas (`PAGES`, com Playoffs depois de Jogadores) e as ocultas (`HIDDEN_PAGES`, com a admin). |
+| `cli.py` | Orquestra: baixa e calcula os dados, monta o dicionário de cada página (inclusive `playoffs`, com `team_week_tds`) e chama `write_site`. |
 
 `polars`, `nflreadpy` e `Pillow` são importados dentro das funções que os usam, para os módulos poderem ser importados (e testados) sem essas bibliotecas.
 
@@ -83,11 +86,12 @@ nfl_dashboard/
 5. `build_matchups` escolhe os jogos a mostrar (`select_games`: semana pendente ou rodada dos playoffs), converte o horário (`local_kickoff`) e marca jogos de divisão (`divisional`).
 6. `load_broadcasts` lê `data/transmissoes.json` e `attach_channels` acrescenta `key` e `canais` a cada jogo.
 7. `attach_last_meetings` acrescenta `previous` (placar do último jogo entre os dois times, se houver).
-8. `build_history` recalcula o acumulado e a média móvel ao fim de cada semana.
-9. `load_players` baixa as estatísticas semanais de jogadores e `build_player_pages` as agrega por janela.
-10. `admin_page` monta os jogos da página admin (semana exibida e a seguinte).
-11. `load_team_colors` busca a cor de cada time; ela é copiada para os dados de todas as páginas (`colors`).
-12. `cli.main` junta tudo e `render.write_site` grava os HTML.
+8. `team_week_tds` soma os touchdowns por time e semana (só temporada regular) e `monta_pagina` (`playoffs.py`) monta a classificação da última semana fechada: campeões de divisão, seeds 5 a 7, bye e pares do Wild Card. Antes de devolver, `valida` confere a consistência; se falhar, o build para.
+9. `build_history` recalcula o acumulado e a média móvel ao fim de cada semana.
+10. `load_players` baixa as estatísticas semanais de jogadores e `build_player_pages` as agrega por janela.
+11. `admin_page` monta os jogos da página admin (semana exibida e a seguinte).
+12. `load_team_colors` busca a cor de cada time; ela é copiada para os dados de todas as páginas (`colors`).
+13. `cli.main` junta tudo e `render.write_site` grava os HTML.
 
 ## 5. Modelo de dados por página (`window.__DATA__`)
 
@@ -99,13 +103,14 @@ Todas as páginas recebem também `colors` (`{sigla: "#RRGGBB"}`).
 | Confrontos | `season`, `updated`, `tz`, `metrics[]`, `nteams`, `ranks{s,w3,w1}`, `week`, `round`, `games[]`, `bye[]` (rótulos "SIGLA - Apelido" dos times de folga na semana exibida, calculados por `bye_teams`). Cada jogo: `away`, `home` (times), `day`, `time`, `as`, `hs`, `division`, `round`, `neutral`, `key`, `canais[]` (nomes) e `previous` (`week`, `round`, `day`, `away`, `as`, `home`, `hs`, ou `null`). |
 | Evolução | `season`, `updated`, `metrics[]` (+ aproveitamento), `weeks[]`, `teams[]` com `series[]` (`week`, `s`, `w3`). |
 | Jogadores | `season`, `updated`, `week`, `teams[]`, `cats[]` (colunas e ordenação padrão), `players{qb,rb,rec,def,k}` com as janelas `s`, `w3`, `w1`. |
+| Playoffs | `season`, `updated`, `week` (última semana fechada, ou `null`), `conferencias{AFC, NFC}` com `seeds[]` (`seed`, `abbr`, `label`, `div`, `w`, `l`, `t`, `pct` com 3 casas, `sorteio`), `bye` (sigla do seed 1) e `jogos[]` (pares do Wild Card: 2×7, 3×6, 4×5). Sem semana fechada: `week: null`, `conferencias` vazio. |
 | Admin | `season`, `updated`, `channels[]` (`id`, `label`), `games[]` (`key`, `week`, `round`, `away`, `home`, `awayAbbr`, `homeAbbr`, `day`, `time`, `canais[]` com ids) e `repo` (`owner`, `name`, `branch`, `path`). |
 
 Cada janela de um time guarda as médias por jogo das métricas, `g` (jogos), `rec` (campanha) e `pct` (aproveitamento).
 
 ## 6. Camada de apresentação
 
-- **Templates:** `layout.html` traz cabeçalho, abas, rodapé e scripts. Os marcadores são `{{TITLE}}`, `{{H1}}`, `{{BODY_CLASS}}`, `{{NAV}}`, `{{VERSION}}`, `{{SCRIPT}}`, `{{REPO_URL}}`, `{{HEAD_EXTRA}}`, `{{ANALYTICS}}`, `{{ANALYTICS_NOTE}}` e `{{CONTENT}}`. Os dados entram por último, no marcador `__DADOS__` (nome de variável válido em JavaScript, para o editor não acusar erro de sintaxe).
+- **Templates:** `layout.html` traz cabeçalho, abas, rodapé e scripts. Os marcadores são `{{TITLE}}`, `{{H1}}`, `{{BODY_CLASS}}`, `{{NAV}}`, `{{VERSION}}`, `{{SCRIPT}}`, `{{REPO_URL}}`, `{{HEAD_EXTRA}}`, `{{ANALYTICS}}`, `{{ANALYTICS_NOTE}}`, `{{CONTENT}}` e `{{DATA}}`. Os dados entram por último, no marcador `{{DATA}}` (`render.py` faz a troca; `layout.html` traz `window.__DATA__={{DATA}}`). A correção da documentação está registrada em `memory.md`.
 - **Páginas:** cada arquivo em `templates/pages/` tem só o miolo (`<main>`); o JS da página tem o mesmo nome.
 - **Páginas ocultas:** a admin fica em `HIDDEN_PAGES`: sem aba no menu, sem contador de acessos e com `{{HEAD_EXTRA}}` preenchido (noindex, sem referrer e política de segurança de conteúdo).
 - **JavaScript:** `comum.js` carrega antes do script da página e traz `teamLogo`, `teamName` e `tlInk`; não declara `D` (cada página declara o seu). Sem bibliotecas externas; o gráfico de evolução é SVG feito à mão.
@@ -153,9 +158,11 @@ dependências indiretas. `tzdata` fica sem versão. `requirements-dev.txt` acres
 
 ## 11. Testes
 
-45 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
+69 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
 agregação de jogadores, conversão de horários, jogo de divisão, seleção de jogos nos playoffs, folgas (bye) e consistência entre as rodadas,
-o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da admin) e reencontros. Não dependem de internet.
+o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da admin), reencontros e, na página Playoffs, a campanha,
+os critérios de desempate isolados e as cadeias, o mínimo de jogos em comum, o sorteio pendente, o chaveamento, a checagem antes de gravar
+e a ordem da aba. Não dependem de internet.
 
 ## 12. Segurança
 
@@ -172,11 +179,15 @@ o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da
 e, se todas já foram disputadas, a última. Jogos sem times definidos são ignorados. As demais páginas continuam na temporada regular.
 A página admin lista só a rodada atual nesse período.
 
+A página **Playoffs** (`playoffs.html`) não usa `select_games`: mostra a classificação da temporada regular (seeds 1 a 7 por conferência)
+e o chaveamento do Wild Card da última semana fechada. Não é atualizada com resultados de playoffs. O motor está em `playoffs.py` e as regras em `regras.md` (seção 9).
+
 ## Histórico de alterações
 
 | Data | Alteração |
 |---|---|
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 29/10/2026 | Inclusão do `AGENTS.md` e da pasta `docs/` na estrutura do repositório (proposta revertida em 30/10/2026: o `AGENTS.md` não foi criado). |
-| 04/11/2026 | Logos (`logos.py`, `comum.js`, `static/img`), transmissões (`broadcasts.py`, página admin, `data/`), reencontros (`rematches.py`), marcador `__DADOS__`, páginas ocultas, cores nas páginas e testes (46). |
+| 04/11/2026 | Logos (`logos.py`, `comum.js`, `static/img`), transmissões (`broadcasts.py`, página admin, `data/`), reencontros (`rematches.py`), marcador de dados (depois corrigido para `{{DATA}}`), páginas ocultas, cores nas páginas e testes (46). |
 | 10/11/2026 | Folgas (bye): `bye_teams` em `stats.py` usa o calendário da temporada (não mais o cadastro de times, que tinha siglas antigas); nova linha `#tv` para a nota de transmissão em `confrontos.html`; testes em 45. |
+| 10/11/2026 | Página Playoffs: `playoffs.py`, `team_week_tds` em `stats.py`, template, JS e CSS; passo de playoffs no fluxo de dados; modelo de dados da página; cinco páginas públicas em `PAGES`; pasta `docs/superpowers/`; correção do marcador (`{{DATA}}`); testes em 69. Implementação na mesma data. |

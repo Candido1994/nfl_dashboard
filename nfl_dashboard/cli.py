@@ -7,11 +7,12 @@ from .broadcasts import admin_page, attach_channels, load_broadcasts, schedule_r
 from .config import DEFAULT_SEASON, METRICS, REPO_URL, local_tz_name, tz_label
 from .logos import load_team_colors
 from .players import PLAYER_META, load_players
+from .playoffs import monta_pagina
 from .rematches import attach_last_meetings
 from .render import write_site
 from .stats import (
     build_games, build_history, build_matchups, build_teams, compute_ranks,
-    load_team_info, team_weeks_from,
+    load_team_info, team_week_tds, team_weeks_from,
 )
 
 
@@ -71,6 +72,9 @@ def main(argv=None):
             "cats": PLAYER_META,
             "players": load_players(season, team_weeks_from(g)),
         },
+        "playoffs": monta_pagina(
+            schedule_rows(season, strict=True), info, team_week_tds(season), season, updated
+        ),
         "admin": admin_page(season, rows, info, local_tz_name(), broadcasts, updated, REPO_URL),
     }
     colors = load_team_colors()

@@ -28,6 +28,7 @@ para o usuário tirar as próprias conclusões.
 **Dentro do escopo**
 - Estatísticas dos 32 times na temporada regular, em três janelas: temporada, últimas 3 semanas e último jogo.
 - Página de confrontos da semana e das rodadas dos playoffs, com o placar do último jogo entre os dois times quando já se enfrentaram.
+- Classificação e chaveamento dos playoffs (seeds 1 a 7 por conferência, Wild Card).
 - Evolução semana a semana e estatísticas de jogadores (QB, corrida, recepção, defesa e kickers).
 - Logos dos times em todas as páginas.
 - Indicação opcional dos canais de transmissão no Brasil, informada manualmente por uma página administrativa.
@@ -39,6 +40,7 @@ para o usuário tirar as próprias conclusões.
 - Busca automática de transmissões (não há fonte confiável): a informação é sempre manual.
 - Estatísticas dos jogos de playoffs nas páginas Painel, Evolução e Jogadores (só a temporada regular).
 - Servidor, banco de dados, login ou conteúdo enviado por visitantes.
+- Resultados dos jogos de playoffs na página Playoffs (ela mostra os seeds da temporada regular) e semana em andamento.
 
 ## 5. Requisitos funcionais
 
@@ -90,6 +92,15 @@ para o usuário tirar as próprias conclusões.
 | RF-42 | As mesmas três janelas de período. |
 | RF-43 | Logos nos cartões de líderes (28 px), nos chips e na coluna de time (20 px). |
 
+### Playoffs (`playoffs.html`)
+| ID | Requisito |
+|---|---|
+| RF-70 | Quadro de seeds 1 a 7 de AFC e NFC com a última semana fechada: time (SIGLA - Apelido), divisão, V-D e aproveitamento. |
+| RF-71 | Chaveamento do Wild Card: seed 1 com bye em Divisional Round; 2×7, 3×6 e 4×5 em Wild Card Round. |
+| RF-72 | Critérios de desempate aplicados na ordem de `regras.md` (seção 9), sem exibir a lista na página. |
+| RF-73 | Sem rolagem lateral da página em 360, 390 e 414 px; a tabela rola só dentro do próprio quadro. |
+| RF-74 | Sem semana fechada, a página mostra a mensagem "Sem semanas fechadas na temporada". |
+
 ### Administração das transmissões (`admin.html`, fora do menu)
 | ID | Requisito |
 |---|---|
@@ -102,7 +113,7 @@ para o usuário tirar as próprias conclusões.
 ### Transversais
 | ID | Requisito |
 |---|---|
-| RF-50 | Navegação por abas nas quatro páginas públicas. |
+| RF-50 | Navegação por abas nas cinco páginas públicas. |
 | RF-51 | Rodapé com atribuição ao nflverse (CC BY 4.0), aviso de marcas, licença MIT do código e link do código-fonte. |
 | RF-52 | Atualização automática pelo GitHub Actions (segunda, terça e sábado), por execução manual e a cada alteração na `main`. |
 | RF-53 | Contador de acessos opcional (GoatCounter, sem cookies), fora da página admin. |
@@ -115,7 +126,7 @@ para o usuário tirar as próprias conclusões.
 - **Custo zero:** hospedagem gratuita; nenhuma chave de API ou segredo no repositório.
 - **Sem servidor:** os números ficam embutidos em cada página; o navegador só monta tabelas e gráficos.
 - **Resiliência:** se uma atualização falhar, o site continua com a última versão publicada; arquivo de transmissões ausente ou inválido não quebra a geração.
-- **Reprodutibilidade:** versões das bibliotecas fixas; 45 testes automatizados que não dependem de internet.
+- **Reprodutibilidade:** versões das bibliotecas fixas; 69 testes automatizados que não dependem de internet.
 - **Privacidade:** sem cookies; contador de acessos anônimo e opcional.
 - **Segurança da área admin:** token só na memória da aba por padrão, página sem scripts de terceiros, `noindex` e política que só permite conexão com a API do GitHub.
 - **Acessibilidade:** contraste mínimo de 4,5:1 no texto, foco visível, respeito a "reduzir movimento".
@@ -185,6 +196,10 @@ para o usuário tirar as próprias conclusões.
 | Success rate | Porcentagem de jogadas bem-sucedidas. |
 | Turnover | Perda de posse (interceptação ou fumble perdido). |
 | Bye | Semana de folga do time. |
+| Bye week | Semana de folga que o seed 1 ganha na temporada regular: ele entra direto na Divisional Round. |
+| Seed | Posição do time na classificação da conferência para os playoffs (1 a 7); seeds 1 a 4 são campeões de divisão. |
+| Wild Card | Primeira rodada eliminatória dos playoffs, com os seeds 2 a 7. |
+| Divisional Round | Segunda rodada dos playoffs, com o seed 1 e os vencedores do Wild Card. |
 | Janela | Período das médias: temporada, últimas 3 semanas ou último jogo. |
 | Vantagem clara | Diferença de 6 ou mais posições no ranking da liga em um duelo ataque x defesa. |
 | Distintivo | Círculo com a sigla na cor do time, usado quando falta o arquivo do logo. |
@@ -197,3 +212,4 @@ para o usuário tirar as próprias conclusões.
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 04/11/2026 | Logos (RF-07, 23, 34, 43, 55), transmissões e página admin (RF-24, 60 a 64), último confronto (RF-25), decisões, riscos e glossário atualizados. |
 | 10/11/2026 | Folgas (RF-22) corrigidas: só os times da semana exibida que não jogam, sem siglas antigas. |
+| 10/11/2026 | Página Playoffs: escopo (seção 4), requisitos RF-70 a RF-74, RF-50 com cinco páginas, testes em 69 e glossário (Seed, Bye week, Wild Card e Divisional Round). Implementação na mesma data. |

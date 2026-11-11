@@ -48,6 +48,26 @@ Os registros a partir do 27 levam a data conhecida.
 | 34 | 04/11/2026 | Pedido | Atualizar todos os documentos com as etapas dos logos, das transmissões (página admin) e dos reencontros. |
 | 35 | 10/11/2026 | Pedido | Em Confrontos, a lista de times em folga (bye) está confusa: mostrar só os times de folga da semana atual (semana 10 em diante). |
 | 36 | 10/11/2026 | Implementação | Folgas corrigidas: a lista usa o calendário da temporada (sem siglas antigas como OAK, SD e STL) e mostra a semana no rótulo; nota de transmissão em linha própria. Testes em 45. |
+| 37 | 10/11/2026 | Pedido | Página de playoffs com dados reais: seeds 1 a 7 de AFC e NFC com a última semana fechada, chaveamento do Wild Card e desempate pelas regras do usuário. Sem previsão de campeão, cenários nem parcial de semana. |
+| 38 | 10/11/2026 | Decisão | Aba "Playoffs" no menu de todas as páginas públicas; RF-50 passa a cinco páginas. |
+| 39 | 10/11/2026 | Decisão | HTML de teste (`playoffs-teste.html`, na raiz, fora do repositório) como protótipo do layout: quadro de seeds e chaveamento abaixo, sem variação ▲▼ e sem coluna de critério. |
+| 40 | 10/11/2026 | Decisão | Sorteio pendente: marcação neutra ao lado do time, nunca amarela; a ordem provisória é alfabética pela sigla e o site nunca sorteia sozinho. |
+| 41 | 10/11/2026 | Decisão | Motivo do desempate: a página aplica a ordem de critérios que o usuário pediu (`regras.md`, seção 9), sem criar uma ordem própria. |
+| 42 | 10/11/2026 | Decisão | Ranking de pontos por média por jogo (pontos feitos menos sofridos, dividido pelos jogos), e não pelo total: os times têm números de jogos diferentes (bye). |
+| 43 | 10/11/2026 | Decisão | Só semanas fechadas: a página usa a maior semana em que todos os jogos da temporada regular têm placar; não mostra parcial de semana. |
+| 44 | 10/11/2026 | Decisão | Falha do build: se a checagem de consistência falhar, o build para e não publica a página; o site segue na última versão publicada. |
+| 45 | 10/11/2026 | Decisão | Dispensa consciente do spec §9: a conferência de V-D-E contra os jogos fechados não é feita, porque a campanha sai dos mesmos jogos (tautológica). A regra "seeds 5 a 7 não são campeões" é conferida pela divisão com um campeão entre os seeds 1 a 4. |
+| 46 | 10/11/2026 | Decisão | Desempate entre divisões: a ordem interna da divisão nunca cai no sorteio (quando cairia, o critério é ignorado). O sorteio decide só dentro da divisão. |
+| 47 | 10/11/2026 | Decisão | Teste da checagem de campeão usa uma divisão inexistente para o seed 5, porque a versão com a divisão do seed 1 nunca falharia. |
+| 48 | 10/11/2026 | Decisão | Datas: o pedido e a implementação são registrados em 10/11/2026 (data da sessão e da spec, aprovada nesse dia). |
+| 49 | 10/11/2026 | Implementação | Página Playoffs na branch `playoffs-impl` (ainda não mesclada na `main`): `playoffs.py`, `team_week_tds` em `stats.py`, template, JS e CSS, integração ao build e à aba, commits `7b30d0c` a `dd93ba3`. Testes de 45 para 69. |
+| 50 | 10/11/2026 | Implementação | Documentos atualizados (PRD, regras, arquitetura, design, memory e README), com as datas de 10/11/2026. |
+| 51 | 10/11/2026 | Ocorrência | Marcador corrigido: a documentação dizia `__DADOS__`, mas o código (`render.py` e `layout.html`) usa `{{DATA}}`. Corrigido em `regras.md`, `arquitetura.md` e `memory.md` nesta data. |
+| 52 | 10/11/2026 | Decisão | Aprovação do plano de implementação (`docs/superpowers/plans/2026-11-10-playoffs.md`, skill writing-plans) com execução por subagentes (subagent-driven-development), em worktree na branch `playoffs-impl`, com um commit por tarefa. |
+| 53 | 10/11/2026 | Ocorrência | Revisão final: o desempate interno entre times da mesma divisão usava o contexto cruzado (varredura e mínimo de 4 jogos em comum), divergindo do spec. Corrigido para `varredura=False` e `minimo=1` no commit `403b7a1` (Ruling 15). |
+| 54 | 10/11/2026 | Ocorrência | A página de playoffs poderia sair em branco se o calendário falhasse, porque `schedule_rows` engolia a exceção. Decisão: carga estrita (`strict=True`) só para a página de playoffs, no commit `3f6faa9` (Ruling 16); a página admin mantém o comportamento anterior. |
+| 55 | 10/11/2026 | Decisão | O passo "ordem interna da divisão" entrou na cadeia entre divisões da especificação (seção 5.4), alinhando o spec ao código e a `regras.md`, seção 9.4 (Ruling 17). |
+| 56 | 10/11/2026 | Pedido | Remover a linha de cabeçalho (Seed, Time, Divisão e V-D) do quadro de seeds, porque estava desalinhada e os dados se explicam sozinhos. Implementado no commit `2dd8db5`: tabela sem `thead`, com `colgroup` em porcentagem para manter as larguras. |
 
 ## 2. Preferências de trabalho
 
@@ -80,7 +100,7 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 30–31/10/2026 | Ocorrência | O build falhou porque `config.py` e `render.py` do repositório não tinham o `REPO_URL`; corrigido com os arquivos completos. |
 | 31/10/2026 | Ocorrência | Confirmado que a etapa dos logos funcionou. |
 | 31/10/2026 | Implementação | Etapa das transmissões: `broadcasts.py`, `data/transmissoes.json`, linha "Onde assistir" e nota no card, página `admin.html` (token do GitHub, política de segurança, sem contador) e `CHANNELS` no `config.py`. |
-| 31/10–03/11/2026 | Ocorrência | O editor acusava erro no `layout.html` por causa de `{{DATA}}` dentro de um script; o marcador passou a ser `__DADOS__`. |
+| 31/10–03/11/2026 | Ocorrência | O editor acusava erro no `layout.html` por causa de `{{DATA}}` dentro de um script; o marcador passou a ser `__DADOS__` (a documentação foi corrigida para `{{DATA}}` em 10/11/2026, registro 51). |
 | 03/11/2026 | Ocorrência | Build e deploy confirmados sem erro após o ajuste do marcador. |
 | 03/11/2026 | Implementação | Reencontros: `rematches.py` e o bloco "Último confronto nesta temporada" no card expandido. |
 | 04/11/2026 | Implementação | Atualização dos documentos `PRD.md`, `arquitetura.md`, `regras.md`, `design.md` e `memory.md` e do `README.md`. |
@@ -93,7 +113,14 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | Confirmar o agendamento do fluxo (`cron: "7 11 * * 1,2,6"`) | Sem resposta: os documentos assumem segunda, terça e sábado às 11:07 UTC. |
 | Teste real da página admin com o token do GitHub | A página foi testada com a API simulada; o primeiro salvamento real ainda não foi confirmado. |
 | Reforço de segurança do admin (transmissões em branch separada e `main` protegida) | Oferecido, sem decisão. |
-| Contagem de testes | Conferido em 10/11/2026: o `pytest` tinha 44 testes (não 46); agora são 45, com o teste de folgas. Documentos atualizados. |
+| Contagem de testes | Conferido em 10/11/2026: o `pytest` tinha 44 testes (não 46); agora são 45, com o teste de folgas. Documentos atualizados. Com a página Playoffs, são 69 (reconfirmar na verificação final da implementação). |
+| Touchdowns: `fumble_recovery_tds` | **Em aberto.** A coluna ficou fora de `TD_COLS` (regra 9.2 de `regras.md`) porque a sobreposição com `rushing_tds` não foi confirmada. Confirmar no dicionário do nflverse; o dicionário não estava acessível na implementação. |
+| Playoffs após a temporada regular | **Em aberto.** A página continua mostrando os seeds finais e o chaveamento do Wild Card, sem resultados de playoffs. Confirmar esse comportamento (spec, seção 12, item 3). |
+| Histórico de semanas na página Playoffs | Fora desta etapa: a página mostra só a última semana fechada. Guardar o histórico no JSON fica para uma etapa futura. |
+| Verificação visual da página Playoffs | Resolvida em 10/11/2026: 360, 390, 414 e 1100 px com dados reais, sem rolagem lateral da página (Tarefa 8 do plano). |
+| Divergência do marcador `__DADOS__` / `{{DATA}}` | Resolvida em 10/11/2026: o código usa `{{DATA}}`; a documentação foi corrigida (registro 51). |
+| Sorteio na tela (spec, seção 12, item 2) | Resolvida: etiqueta neutra "Sorteio pendente" ao lado do time (registro 40). |
+| Touchdowns: colunas e definição (spec, seção 12, item 1) | Resolvida, exceto `fumble_recovery_tds` (ver acima). Colunas e decisão: spike da Tarefa 1 e `regras.md`, seção 9.2. |
 
 ## 5. Como manter este documento
 
@@ -111,3 +138,7 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 30/10/2026 | Inclusão dos registros 26 a 29 (cores por rodada, documentos e a decisão sobre o `AGENTS.md`); tipo "Pergunta" criado; seção 3 corrigida. |
 | 04/11/2026 | Inclusão dos registros 30 a 34 (logos, transmissões, reencontros e atualização dos documentos); seção 3 ampliada; nova seção de pendências. |
 | 10/11/2026 | Inclusão dos registros 35 e 36 (folgas), ocorrência na seção 3 e pendência da contagem de testes resolvida. |
+| 10/11/2026 | Inclusão dos registros 37 a 51 (página Playoffs: pedido, decisões, implementação e correção do marcador); pendências da página e touchdowns, com as resolvidas marcadas. |
+| 10/11/2026 | Inclusão do registro 52 (aprovação do plano de implementação e da execução por subagentes em worktree). |
+| 10/11/2026 | Inclusão dos registros 53 a 55 (correções da revisão final: contexto do desempate interno, carga estrita do calendário e passo "ordem interna" no spec). |
+| 10/11/2026 | Inclusão do registro 56 (remoção do cabeçalho do quadro de seeds) e pendência da verificação visual marcada como resolvida. |

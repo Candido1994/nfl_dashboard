@@ -55,13 +55,15 @@ def attach_channels(season, mu, broadcasts, channels=CHANNELS):
         g["canais"] = [names[c] for c in broadcasts.get(g["key"], [])]
 
 
-def schedule_rows(season):
-    """Linhas do calendário (todas as fases). Em caso de falha, lista vazia."""
+def schedule_rows(season, strict=False):
+    """Linhas do calendário (todas as fases). Em caso de falha, lista vazia; com strict, propaga a falha."""
     try:
         import nflreadpy as nfl
 
         return nfl.load_schedules([season]).to_dicts()
     except Exception as e:
+        if strict:
+            raise
         print(f"Aviso: não foi possível carregar o calendário para a página admin ({e}).")
         return []
 

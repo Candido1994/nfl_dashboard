@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from nfl_dashboard.broadcasts import (
     admin_page, attach_channels, clean_games, game_key, load_broadcasts, parse_repo,
 )
@@ -88,3 +90,27 @@ def test_admin_page_sem_calendario_ou_sem_jogos():
 def test_parse_repo():
     assert parse_repo("https://github.com/Candido1994/nfl_dashboard/")["owner"] == "Candido1994"
     assert parse_repo("")["name"] == ""
+
+def _calendario_quebrado(monkeypatch):
+    import nflreadpy
+
+    def falha(*args, **kwargs):
+        raise RuntimeError("sem internet")
+
+    monkeypatch.setattr(nflreadpy, "load_schedules", falha)
+
+
+def test_schedule_rows_padrao_devolve_lista_vazia_em_falha(monkeypatch, capsys):
+    from nfl_dashboard.broadcasts import schedule_rows
+
+    _calendario_quebrado(monkeypatch)
+    assert schedule_rows(2026) == []
+    assert "Aviso" in capsys.readouterr().out
+
+
+def test_schedule_rows_strict_propaga_a_falha(monkeypatch):
+    from nfl_dashboard.broadcasts import schedule_rows
+
+    _calendario_quebrado(monkeypatch)
+    with pytest.raises(RuntimeError):
+        schedule_rows(2026, strict=True)

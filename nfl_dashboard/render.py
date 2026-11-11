@@ -28,6 +28,10 @@ PAGES = {
         "file": "jogadores.html", "tab": "Jogadores", "title": "NFL – Jogadores",
         "body_class": "dash",
     },
+    "playoffs": {
+        "file": "playoffs.html", "tab": "Playoffs", "title": "NFL – Playoffs",
+        "body_class": "narrow",
+    },
 }
 
 # páginas fora do menu (sem aba, sem contador de acessos e com cabeçalhos de segurança)
