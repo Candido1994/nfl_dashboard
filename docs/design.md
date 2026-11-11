@@ -1,6 +1,6 @@
 # Design — NFL Dashboard
 
-> Última atualização: 04/11/2026
+> Última atualização: 10/11/2026
 
 ## 1. Princípios
 
@@ -97,6 +97,7 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 | Admin: jogo | Cartão com os dois times (logos de 28 px), data e hora e as quatro caixas de canal em grade 2×2 (44 px de altura, marcadas ficam em verde claro). |
 | Admin: barra de salvar | Barra fixa na parte de baixo com "Alterações não salvas" e o botão "Salvar transmissões". |
 | Admin: mensagens | Faixa com borda verde (sucesso) ou vermelha (erro), com link para a aba Actions após salvar. |
+| Folga (bye) | Linha de apoio sob o cabeçalho de Confrontos: "Folga (bye) na semana N: SIGLA - Apelido, ..."; a nota de transmissão fica em linha própria abaixo. |
 | Rodapé | Texto centralizado com atribuição, aviso de marcas, licença e link do código. |
 
 ## 6. Interação
@@ -129,3 +130,4 @@ O amarelo fica reservado a "Jogo de divisão" (texto `#17211B`, contraste 9,1 no
 |---|---|
 | 27/10/2026 | Criação do documento a partir do estado atual do projeto. |
 | 04/11/2026 | Logos e distintivos, cabeçalho do card com logo, seta no canto inferior, "Onde assistir", bloco de último confronto e componentes da página admin. |
+| 10/11/2026 | Linha de folgas (bye) com a semana e nota de transmissão em linha própria. |
