@@ -2,7 +2,7 @@
 import pytest
 
 from nfl_dashboard.playoffs import aproveitamento, build_games, campanha, closed_week
-from nfl_dashboard.render import PAGES
+from nfl_dashboard.render import PAGES, render_page
 
 
 def jogo(semana, mand, visit, pm, pv, tipo="REG"):
@@ -226,3 +226,9 @@ def test_playoffs_e_a_ultima_aba():
     assert list(PAGES)[-1] == "playoffs"
     assert PAGES["playoffs"]["tab"] == "Playoffs"
 
+
+def test_pagina_playoffs_renderiza_com_dados_vazios():
+    html = render_page("playoffs", {"season": 2026, "updated": "x", "week": None, "conferencias": {}}, "v1")
+    assert "{{" not in html
+    assert "static/js/playoffs.js?v=v1" in html
+    assert '<a href="playoffs.html" aria-current="page">Playoffs</a>' in html
