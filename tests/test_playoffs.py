@@ -68,3 +68,68 @@ def test_build_games_falha_sem_touchdowns_em_vez_de_zerar():
     rows = [jogo(1, "BUF", "NYJ", 24, 14)]
     with pytest.raises(ValueError, match="touchdowns ausentes"):
         build_games(rows, INFO, {(1, "BUF"): 3}, through=1)
+
+
+from nfl_dashboard.playoffs import (
+    CADEIA_CRUZ, CADEIA_DIV, _contexto, c_h2h, c_pct, ordena,
+)
+
+
+def _ctx(jogos, divisao=None):
+    return _contexto(jogos, divisao or {})
+
+
+def par(a, b, pa, pb, semana=1):
+    """Jogo entre a e b: pa pontos de a, pb pontos de b (sem campos de divisão, só para ordenação)."""
+    return [
+        {"team": a, "opp": b, "week": semana, "pf": pa, "pa": pb, "td_for": 0, "td_against": 0, "conf": True, "div": False},
+        {"team": b, "opp": a, "week": semana, "pf": pb, "pa": pa, "td_for": 0, "td_against": 0, "conf": True, "div": False},
+    ]
+
+
+def test_confronto_direto_desempata_dois_times_com_mesmo_aproveitamento():
+    jogos = par("A", "B", 20, 10) + par("A", "C", 10, 20) + par("B", "C", 20, 10)
+    # A e B estão 1-1 em aproveitamento; A venceu B.
+    ctx = _ctx(jogos)
+    assert ordena(["B", "A"], [c_pct, c_h2h], ctx) == ["A", "B"]
+
+
+def test_com_tres_times_sem_varredura_o_confronto_direto_e_ignorado():
+    jogos = par("A", "B", 20, 10) + par("B", "C", 20, 10) + par("C", "A", 20, 10)  # ciclo
+    ctx = _ctx(jogos)
+    ctx["varredura"] = True
+    assert c_h2h("A", ["A", "B", "C"], ctx) is None
+
+
+def test_com_tres_times_a_varredura_classifica_o_time_que_venceu_todos():
+    jogos = par("A", "B", 20, 10) + par("A", "C", 20, 10) + par("B", "C", 20, 10)
+    ctx = _ctx(jogos)
+    ctx["varredura"] = True
+    assert c_h2h("A", ["A", "B", "C"], ctx) == 1.0
+    assert ordena(["C", "B", "A"], [c_h2h], ctx) == ["A", "B", "C"]
+
+
+def test_reinicio_depois_de_separar_um_time():
+    # A (1,0) fica à frente; B e C empatam em aproveitamento e B vence C no confronto direto.
+    jogos = par("A", "B", 20, 10) + par("A", "C", 20, 10) + par("B", "C", 20, 10)
+    ctx = _ctx(jogos)
+    ctx["varredura"] = False
+    assert ordena(["C", "B", "A"], [c_pct, c_h2h], ctx) == ["A", "B", "C"]
+
+
+def test_empate_total_marca_sorteio_e_ordena_por_sigla():
+    jogos = par("B", "A", 10, 10) + par("C", "A", 10, 10)
+    ctx = _ctx(jogos)
+    assert ordena(["C", "A"], [c_pct], ctx) == ["A", "C"]
+    assert ctx["sorteio"] == {"A", "C"}
+
+
+def test_time_sem_jogos_fica_por_ultimo_sem_quebrar():
+    jogos = par("A", "B", 20, 10)
+    ctx = _ctx(jogos)
+    assert ordena(["Z", "A", "B"], [c_pct], ctx)[-1] == "Z"
+
+
+def test_cadeias_tem_os_criterios_das_regras_na_ordem():
+    assert CADEIA_DIV[0] is c_pct and CADEIA_CRUZ[0] is c_pct
+    assert len(CADEIA_DIV) == 12 and len(CADEIA_CRUZ) == 12
