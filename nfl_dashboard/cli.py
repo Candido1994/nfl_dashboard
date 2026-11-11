@@ -72,7 +72,9 @@ def main(argv=None):
             "cats": PLAYER_META,
             "players": load_players(season, team_weeks_from(g)),
         },
-        "playoffs": monta_pagina(rows, info, team_week_tds(season), season, updated),
+        "playoffs": monta_pagina(
+            schedule_rows(season, strict=True), info, team_week_tds(season), season, updated
+        ),
         "admin": admin_page(season, rows, info, local_tz_name(), broadcasts, updated, REPO_URL),
     }
     colors = load_team_colors()
