@@ -211,3 +211,11 @@ def test_monta_pagina_recusa_conferencia_incompleta():
     del info["AE0"]
     with pytest.raises(KeyError):
         monta_pagina(rows, info, tds, 2026, "x")
+
+
+def test_valida_recusa_divisao_de_seed_5_a_7_sem_campeao_entre_os_1_a_4():
+    rows, info, tds = liga(semanas=2)
+    pagina = monta_pagina(rows, info, tds, 2026, "x")
+    pagina["conferencias"]["AFC"]["seeds"][4]["div"] = "AFC Inexistente"
+    with pytest.raises(ValueError, match="divisão sem campeão"):
+        valida(pagina)

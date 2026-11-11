@@ -265,6 +265,9 @@ def valida(pagina):
             raise ValueError(f"{conf}: time repetido")
         if len({s["div"] for s in seeds[:4]}) != 4:
             raise ValueError(f"{conf}: seeds 1 a 4 não são campeões de divisões diferentes")
+        for s in seeds[4:]:
+            if sum(1 for t in seeds[:4] if t["div"] == s["div"]) != 1:
+                raise ValueError(f"{conf}: divisão sem campeão entre os seeds 1 a 4")
 
 
 def monta_pagina(rows, info, tds, season, updated):
