@@ -34,6 +34,36 @@
     ],
     "2026_09_TB_CHI": [
       "sportv2"
+    ],
+    "2026_10_KC_ATL": [
+      "espn",
+      "disney"
+    ],
+    "2026_10_LAC_BAL": [
+      "espn",
+      "disney"
+    ],
+    "2026_10_MIN_GB": [
+      "sportv2"
+    ],
+    "2026_10_NE_DET": [
+      "sportv2",
+      "getv"
+    ],
+    "2026_10_PIT_CIN": [
+      "sportv2"
+    ],
+    "2026_10_SEA_LV": [
+      "sportv2",
+      "getv"
+    ],
+    "2026_10_SF_DAL": [
+      "espn",
+      "disney"
+    ],
+    "2026_10_WAS_NYG": [
+      "sportv2",
+      "getv"
     ]
   }
 }
