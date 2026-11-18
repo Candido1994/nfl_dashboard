@@ -1,6 +1,6 @@
 # Design — NFL Dashboard
 
-> Última atualização: 10/11/2026
+> Última atualização: 17/11/2026
 
 ## 1. Princípios
 
@@ -10,8 +10,7 @@
 4. **Coerência:** os mesmos componentes e as mesmas cores em todas as páginas.
 5. **Temas:** claro e escuro automáticos, com contraste de texto de pelo menos 4,5:1.
 
-Identidade: verde de gramado como cor principal, amarelo (cor do flag de penalidade) para o que está ativo, e uma faixa discreta de
-marcações de jardas sob o cabeçalho.
+Identidade: verde de gramado como cor principal (em barra superior de 3 px no cabeçalho) e amarelo (cor do flag de penalidade) para o que está ativo e jogos de divisão.
 
 ## 2. Tipografia
 
@@ -67,7 +66,7 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 
 ## 4. Espaçamento, forma e largura
 
-- **Raios:** cards e tabelas 14 px; campos e botões 10 px; controle segmentado 12 px (botões internos 9 px); etiquetas, selos e logos 999 px / círculo.
+- **Raios:** cards e tabelas 8 px (`--radius-lg`); campos, botões e controles segmentados 6 px (`--radius-md`); etiquetas, selos e botões internos 4 px (`--radius-sm`); logos circulares.
 - **Espaçamentos comuns:** conteúdo 16 px; cards 12–16 px; separação entre blocos 12–18 px.
 - **Largura máxima:** Painel e Jogadores 1100 px; Evolução 880 px; Confrontos, Playoffs e Admin 760 px. O rodapé acompanha a largura da página.
 - **Pontos de quebra:** 599 px (abas ocupam a largura toda), 480 px (ranking e botões compactos; sigla e apelido do time em linhas separadas) e 400 px (fontes menores nas abas; logo do cabeçalho do card de 32 px).
@@ -138,3 +137,4 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 | 10/11/2026 | Linha de folgas (bye) com a semana e nota de transmissão em linha própria. |
 | 10/11/2026 | Página Playoffs: componentes do quadro de seeds, sorteio pendente (etiqueta neutra, sem amarelo) e chaveamento; títulos de rodada com `po-wc` e `po-div`; aba e largura da página. Implementação na mesma data. |
 | 10/11/2026 | Quadro de seeds sem linha de cabeçalho (Seed, Time, Divisão e V-D): o conteúdo e os títulos de grupo identificam as colunas. |
+| 17/11/2026 | Refinamento visual e de UX: raios editoriais (4/6/8 px), remoção da faixa `.yard` (substituída por barra superior de 3 px), etiquetas retangulares, ícones SVG em `comum.js`, CSS/JS formatados e microcopy enxuta. |

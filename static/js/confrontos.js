@@ -1,81 +1,272 @@
-const D=window.__DATA__;
-const WL={s:"Temporada",w3:"Últimas 3 semanas",w1:"Último jogo"};
-let win="s";
-const $=id=>document.getElementById(id);
-const f=v=>v==null?"–":v;
-const NT=D.nteams||32,TH=6;
-// classe de cor de cada rodada (os nomes vêm de POSTSEASON em nfl_dashboard/stats.py)
-const RC={"Wild Card":"wc","Rodada Divisional":"div","Final da Conferência":"con","Super Bowl":"sb"};
-const MK=Object.fromEntries(D.metrics.map(m=>[m.k,m]));
-document.querySelector("h1").textContent="NFL "+D.season+(D.round?" – Playoffs · "+D.round:D.week?" – Confrontos da semana "+D.week:" – Confrontos");
-$("sub").textContent="Atualizado em "+D.updated+" • médias por jogo • horários: "+(D.tz||"ET");
-$("bye").textContent=D.bye.length?"Folga (bye) na semana "+D.week+": "+D.bye.join(", "):"";
-if(D.games.some(g=>g.canais&&g.canais.length))$("tv").textContent="Transmissão no Brasil informada manualmente; confirme na programação oficial.";
-$("wins").innerHTML=Object.entries(WL).map(([k,l])=>`<button data-w="${k}">${l}</button>`).join("");
-$("wins").onclick=e=>{if(e.target.dataset.w){win=e.target.dataset.w;draw()}};
-$("ex").onclick=()=>document.querySelectorAll("#games .card").forEach(d=>d.open=true);
-$("co").onclick=()=>document.querySelectorAll("#games .card").forEach(d=>d.open=false);
-// posição na liga (1º = melhor) para a janela selecionada
-const rk=(k,a)=>{const r=D.ranks&&D.ranks[win]&&D.ranks[win][k];return r&&r[a]!=null?r[a]:null};
-const chip=r=>r==null?"":`<span class="rk ${r<=NT/4?"g":r>NT*3/4?"b":""}">${r}º</span>`;
-function cmp(m,a,b){if(a==null||b==null||a===b)return["",""];const aw=m.hb?a>b:a<b;return aw?["w",""]:["","w"]}
-const recs=t=>`<b>${t.abbr}</b> – temporada ${f(t.s&&t.s.rec)} • últimos 3: ${f(t.w3&&t.w3.rec)} • último: ${f(t.w1&&t.w1.rec)}`;
-const GROUPS=[["Pontos",["pf","pa","pd"]],["Jardas",["pass_yds","pass_yds_a","rush_yds","rush_yds_a","yd_diff"]],["Turnovers",["to_lost","to_gain","to_diff"]],["Sacks",["sacks_taken","sacks_made"]],["Eficiência",["ypp","ypp_a","epa","epa_a","sr","sr_a"]]];
-const DU=[["pf","pa","Pontos"],["pass_yds","pass_yds_a","Jd aéreas"],["rush_yds","rush_yds_a","Jd corridas"],["epa","epa_a","EPA/jogada"],["sr","sr_a","Success rate"]];
-// duelos do ataque de atk contra a defesa de dfn; gap > 0 favorece o ataque
-function duels(atk,dfn){
- const S=atk[win],Dd=dfn[win];
- return DU.map(([ko,kd,l])=>{const ra=rk(ko,atk.abbr),rd=rk(kd,dfn.abbr),gap=ra!=null&&rd!=null?rd-ra:null;
-  return{l,x:S?S[ko]:null,y:Dd?Dd[kd]:null,ra,rd,gap,edge:gap==null?"":gap>=TH?"a":gap<=-TH?"d":"e"}})}
-// placar do último jogo entre os dois times na temporada (só aparece se já se enfrentaram)
-function previo(g){
- const p=g.previous;if(!p)return"";
- const wa=p.as>=p.hs?"w":"",wh=p.hs>=p.as?"w":"";
- const quando=[p.round?"Playoffs · "+p.round:"Semana "+p.week,p.day,"jogo em "+p.home].filter(Boolean).join(" · ");
- return`<section class="sec"><h3>Último confronto nesta temporada</h3><div class="pbox"><span class="pt">${teamLogo(p.away,24)}${p.away}<b class="ps ${wa}">${p.as}</b></span><span class="px">×</span><span class="pt"><b class="ps ${wh}">${p.hs}</b>${p.home}${teamLogo(p.home,24)}</span></div><p class="note">${quando}</p></section>`}
-function resumo(g){
- const a=g.away,h=g.home,A=a[win],H=h[win];
- if(!A||!H)return`<section class="sec"><p class="note">Sem dados suficientes para este período.</p></section>`;
- const d1=duels(a,h),d2=duels(h,a);
- const pj=(O,Dd)=>((O.pf+Dd.pa)/2).toFixed(1);
- const aw=d1.filter(x=>x.edge==="a").length+d2.filter(x=>x.edge==="d").length;
- const hw=d2.filter(x=>x.edge==="a").length+d1.filter(x=>x.edge==="d").length;
- return`<section class="sec"><h3>Resumo</h3><div class="proj"><div>${teamLogo(a.abbr,28)}<small>${a.label}</small><b>${pj(A,H)}</b></div><span class="mid">pontos projetados</span><div>${teamLogo(h.abbr,28)}<small>${h.label}</small><b>${pj(H,A)}</b></div></div>
- <p class="tally">Duelos ataque x defesa com vantagem clara (de ${d1.length+d2.length}): <b>${a.abbr} ${aw}</b> × <b>${hw} ${h.abbr}</b></p>
- <p class="note">Projeção simples: média entre os pontos que o ataque faz e os que a defesa adversária cede. Vantagem clara = diferença de ${TH} ou mais posições no ranking da liga.</p>
- <p class="note"><b>Aviso:</b> projeção apenas didática; não use para apostas nem para fins lucrativos.</p></section>`}
-function destaques(g){
- const a=g.away,h=g.home;if(!a[win]||!h[win])return"";
- const out=[];
- [[a,h],[h,a]].forEach(([atk,dfn])=>{
-  const d=duels(atk,dfn).filter(x=>x.gap!=null);if(!d.length)return;
-  const best=d.reduce((p,c)=>c.gap>p.gap?c:p),worst=d.reduce((p,c)=>c.gap<p.gap?c:p);
-  if(best.gap>=TH)out.push(`<li class="op"><b>Oportunidade para ${atk.abbr}:</b> ${best.l} – ataque ${best.ra}º x defesa ${best.rd}ª de ${dfn.abbr}.</li>`);
-  if(worst.gap<=-TH)out.push(`<li class="ob"><b>Obstáculo para ${atk.abbr}:</b> ${worst.l} – ataque ${worst.ra}º x defesa ${worst.rd}ª de ${dfn.abbr}.</li>`)});
- return out.length?`<section class="sec"><h3>Destaques do confronto</h3><ul class="hl">${out.join("")}</ul></section>`:""}
-function duelTable(g){
- const a=g.away,h=g.home;if(!a[win]||!h[win])return"";
- const blk=(atk,dfn)=>`<tr class="gh"><th colspan="4">Ataque ${atk.abbr} x defesa ${dfn.abbr}</th></tr>`+duels(atk,dfn).map(x=>{
-  const t=x.edge==="a"?'<span class="ea">Ataque</span>':x.edge==="d"?'<span class="ed">Defesa</span>':x.edge==="e"?'<span class="ee">Equilíbrio</span>':"–";
-  return`<tr><td class="lb">${x.l}</td><td><b>${f(x.x)}</b>${chip(x.ra)}</td><td><b>${f(x.y)}</b>${chip(x.rd)}</td><td>${t}</td></tr>`}).join("");
- return`<section class="sec"><h3>Ataque x defesa</h3><table class="duel"><tr><th></th><th>Ataque faz</th><th>Defesa cede</th><th>Vantagem</th></tr>${blk(a,h)}${blk(h,a)}</table></section>`}
-function fullTable(g){
- const a=g.away,h=g.home,A=a[win],H=h[win];
- const cell=(S,t,k,c)=>`<td class="${c}"><b>${S?f(S[k]):"–"}</b>${chip(rk(k,t.abbr))}</td>`;
- const rows=GROUPS.map(([gn,ks])=>`<tr class="gh"><th colspan="3">${gn}</th></tr>`+ks.map(k=>{const m=MK[k],x=A?A[k]:null,y=H?H[k]:null,[c1,c2]=cmp(m,x,y);
-  return`<tr>${cell(A,a,k,c1)}<td class="lb">${m.l}</td>${cell(H,h,k,c2)}</tr>`}).join("")).join("");
- return`<section class="sec"><details open><summary>Comparativo completo</summary><table><tr><th>${a.abbr}<br>${A?A.rec:"–"}</th><th></th><th>${h.abbr}<br>${H?H.rec:"–"}</th></tr>${rows}</table><p class="note">O número pequeno ao lado do valor é a posição na liga (1º = melhor, inclusive na defesa). Verde = melhor valor entre os dois times.</p></details></section>`}
-function card(g,i,open){
- const a=g.away,h=g.home,A=a[win],H=h[win];
- const sc=g.as!=null?` • <b>Final: ${g.as} x ${g.hs}</b>`:"";
- const po=g.round?`<span class="potag">Playoffs · ${g.round}</span>`:"";
- const dt=g.division?`<span class="dvtag">Jogo de divisão · ${g.division}</span>`:"";
- const dv=po||dt?`<div class="dvrow">${po}${dt}</div>`:"";
- const bc=g.canais&&g.canais.length?`<div class="bcrow"><span class="bcl">Onde assistir</span>${g.canais.map(c=>`<span class="bc">${c}</span>`).join("")}</div>`:"";
- return`<details class="card${g.division?" dv":""}${g.round?" po po-"+(RC[g.round]||""):""}" data-i="${i}"${open?" open":""}><summary><h2 class="mu"><span class="tm"><span class="tt">${teamLogo(a.abbr,40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A?A.rec:"–"}</small></span></span></span><span class="at">${g.neutral?"x":"@"}</span><span class="tm"><span class="tt">${teamLogo(h.abbr,40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H?H.rec:"–"}</small></span></span></span></h2><div class="m">${g.day} ${g.time}${sc}</div>${dv}${bc}</summary>
- <div class="cb"><div class="golinks"><a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times →</a><a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times →</a></div>${previo(g)}${resumo(g)}${destaques(g)}${duelTable(g)}<section class="sec"><h3>Campanha</h3><p class="note form">${recs(a)}<br>${recs(h)}</p></section>${fullTable(g)}</div></details>`}
-function draw(){
- document.querySelectorAll("#wins button").forEach(b=>b.classList.toggle("on",b.dataset.w===win));
- const op=new Set([...document.querySelectorAll("#games .card[open]")].map(d=>+d.dataset.i));
- $("games").innerHTML=D.games.length?D.games.map((g,i)=>card(g,i,op.has(i))).join(""):'<p class="hint">Sem jogos pendentes na temporada regular.</p>'}
+const D = window.__DATA__;
+const WINDOWS = { s: "Temporada", w3: "Últimas 3 semanas", w1: "Último jogo" };
+const $ = (id) => document.getElementById(id);
+const fmt = (v) => (v == null ? "–" : v);
+const NTEAMS = D.nteams || 32;
+const EDGE_THRESHOLD = 6;
+
+// Classe de cor de cada rodada (os nomes vêm de POSTSEASON em nfl_dashboard/stats.py)
+const ROUND_CLASS = {
+  "Wild Card": "wc",
+  "Rodada Divisional": "div",
+  "Final da Conferência": "con",
+  "Super Bowl": "sb",
+};
+
+const METRIC_MAP = Object.fromEntries(D.metrics.map((m) => [m.k, m]));
+
+let win = "s";
+
+document.querySelector("h1").textContent =
+  `NFL ${D.season}` +
+  (D.round
+    ? ` – Playoffs · ${D.round}`
+    : D.week
+      ? ` – Confrontos da semana ${D.week}`
+      : " – Confrontos");
+
+$("sub").textContent = `Atualizado em ${D.updated} · Horários: ${D.tz || "ET"}`;
+$("bye").textContent = D.bye.length ? `Folga (bye) na semana ${D.week}: ${D.bye.join(", ")}` : "";
+if (D.games.some((g) => g.canais && g.canais.length)) {
+  $("tv").textContent = "Transmissão no Brasil informada manualmente; confirme na programação oficial.";
+}
+
+$("wins").innerHTML = Object.entries(WINDOWS)
+  .map(([k, label]) => `<button data-w="${k}">${label}</button>`)
+  .join("");
+$("wins").onclick = (e) => {
+  if (e.target.dataset.w) {
+    win = e.target.dataset.w;
+    draw();
+  }
+};
+$("ex").onclick = () => document.querySelectorAll("#games .card").forEach((d) => (d.open = true));
+$("co").onclick = () => document.querySelectorAll("#games .card").forEach((d) => (d.open = false));
+
+// Posição na liga (1º = melhor) para a janela selecionada
+const rankOf = (k, abbr) => {
+  const r = D.ranks && D.ranks[win] && D.ranks[win][k];
+  return r && r[abbr] != null ? r[abbr] : null;
+};
+
+const rankChip = (r) =>
+  r == null ? "" : `<span class="rk ${r <= NTEAMS / 4 ? "g" : r > (NTEAMS * 3) / 4 ? "b" : ""}">${r}º</span>`;
+
+function compareCells(m, a, b) {
+  if (a == null || b == null || a === b) return ["", ""];
+  const awayWins = m.hb ? a > b : a < b;
+  return awayWins ? ["w", ""] : ["", "w"];
+}
+
+const recordsLine = (t) =>
+  `<b>${t.abbr}</b> · temporada ${fmt(t.s && t.s.rec)} · últimos 3: ${fmt(t.w3 && t.w3.rec)} · último: ${fmt(t.w1 && t.w1.rec)}`;
+
+const GROUPS = [
+  ["Pontos", ["pf", "pa", "pd"]],
+  ["Jardas", ["pass_yds", "pass_yds_a", "rush_yds", "rush_yds_a", "yd_diff"]],
+  ["Turnovers", ["to_lost", "to_gain", "to_diff"]],
+  ["Sacks", ["sacks_taken", "sacks_made"]],
+  ["Eficiência", ["ypp", "ypp_a", "epa", "epa_a", "sr", "sr_a"]],
+];
+
+const DUELS = [
+  ["pf", "pa", "Pontos"],
+  ["pass_yds", "pass_yds_a", "Jd aéreas"],
+  ["rush_yds", "rush_yds_a", "Jd corridas"],
+  ["epa", "epa_a", "EPA/jogada"],
+  ["sr", "sr_a", "Success rate"],
+];
+
+// Duelos do ataque de atk contra a defesa de dfn; gap > 0 favorece o ataque
+function buildDuels(atk, dfn) {
+  const S = atk[win];
+  const Dd = dfn[win];
+  return DUELS.map(([ko, kd, label]) => {
+    const ra = rankOf(ko, atk.abbr);
+    const rd = rankOf(kd, dfn.abbr);
+    const gap = ra != null && rd != null ? rd - ra : null;
+    const edge =
+      gap == null ? "" : gap >= EDGE_THRESHOLD ? "a" : gap <= -EDGE_THRESHOLD ? "d" : "e";
+    return { l: label, x: S ? S[ko] : null, y: Dd ? Dd[kd] : null, ra, rd, gap, edge };
+  });
+}
+
+// Placar do último jogo entre os dois times na temporada (só aparece se já se enfrentaram)
+function previousMeeting(g) {
+  const p = g.previous;
+  if (!p) return "";
+  const wa = p.as >= p.hs ? "w" : "";
+  const wh = p.hs >= p.as ? "w" : "";
+  const when = [
+    p.round ? `Playoffs · ${p.round}` : `Semana ${p.week}`,
+    p.day,
+    `jogo em ${p.home}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    `<section class="sec"><h3>Último confronto nesta temporada</h3>` +
+    `<div class="pbox"><span class="pt">${teamLogo(p.away, 24)}${p.away}<b class="ps ${wa}">${p.as}</b></span>` +
+    `<span class="px">×</span>` +
+    `<span class="pt"><b class="ps ${wh}">${p.hs}</b>${p.home}${teamLogo(p.home, 24)}</span></div>` +
+    `<p class="note">${when}</p></section>`
+  );
+}
+
+function summarySection(g) {
+  const a = g.away;
+  const h = g.home;
+  const A = a[win];
+  const H = h[win];
+  if (!A || !H) {
+    return '<section class="sec"><p class="note">Sem dados suficientes para este período.</p></section>';
+  }
+  const d1 = buildDuels(a, h);
+  const d2 = buildDuels(h, a);
+  const proj = (O, Dd) => ((O.pf + Dd.pa) / 2).toFixed(1);
+  const aw = d1.filter((x) => x.edge === "a").length + d2.filter((x) => x.edge === "d").length;
+  const hw = d2.filter((x) => x.edge === "a").length + d1.filter((x) => x.edge === "d").length;
+  return (
+    `<section class="sec"><h3>Resumo</h3>` +
+    `<div class="proj">` +
+    `<div>${teamLogo(a.abbr, 28)}<small>${a.label}</small><b>${proj(A, H)}</b></div>` +
+    `<span class="mid">pontos projetados</span>` +
+    `<div>${teamLogo(h.abbr, 28)}<small>${h.label}</small><b>${proj(H, A)}</b></div>` +
+    `</div>` +
+    `<p class="tally">Vantagens claras (de ${d1.length + d2.length} duelos, diferença ≥ ${EDGE_THRESHOLD} pos.): <b>${a.abbr} ${aw}</b> × <b>${hw} ${h.abbr}</b></p>` +
+    `<p class="note">Média entre ataque e defesa adversária. Uso apenas didático, sem fins de apostas.</p>` +
+    `</section>`
+  );
+}
+
+function highlightsSection(g) {
+  const a = g.away;
+  const h = g.home;
+  if (!a[win] || !h[win]) return "";
+  const items = [];
+  [
+    [a, h],
+    [h, a],
+  ].forEach(([atk, dfn]) => {
+    const d = buildDuels(atk, dfn).filter((x) => x.gap != null);
+    if (!d.length) return;
+    const best = d.reduce((p, c) => (c.gap > p.gap ? c : p));
+    const worst = d.reduce((p, c) => (c.gap < p.gap ? c : p));
+    if (best.gap >= EDGE_THRESHOLD) {
+      items.push(
+        `<li class="op"><b>Oportunidade (${atk.abbr}):</b> ${best.l} — ataque ${best.ra}º × defesa ${best.rd}ª de ${dfn.abbr}.</li>`
+      );
+    }
+    if (worst.gap <= -EDGE_THRESHOLD) {
+      items.push(
+        `<li class="ob"><b>Obstáculo (${atk.abbr}):</b> ${worst.l} — ataque ${worst.ra}º × defesa ${worst.rd}ª de ${dfn.abbr}.</li>`
+      );
+    }
+  });
+  return items.length
+    ? `<section class="sec"><h3>Destaques</h3><ul class="hl">${items.join("")}</ul></section>`
+    : "";
+}
+
+function duelTable(g) {
+  const a = g.away;
+  const h = g.home;
+  if (!a[win] || !h[win]) return "";
+  const block = (atk, dfn) =>
+    `<tr class="gh"><th colspan="4">Ataque ${atk.abbr} × defesa ${dfn.abbr}</th></tr>` +
+    buildDuels(atk, dfn)
+      .map((x) => {
+        const edgeLabel =
+          x.edge === "a"
+            ? '<span class="ea">Ataque</span>'
+            : x.edge === "d"
+              ? '<span class="ed">Defesa</span>'
+              : x.edge === "e"
+                ? '<span class="ee">Equilíbrio</span>'
+                : "–";
+        return `<tr><td class="lb">${x.l}</td><td><b>${fmt(x.x)}</b>${rankChip(x.ra)}</td><td><b>${fmt(x.y)}</b>${rankChip(x.rd)}</td><td>${edgeLabel}</td></tr>`;
+      })
+      .join("");
+  return (
+    `<section class="sec"><h3>Ataque × defesa</h3>` +
+    `<table class="duel"><tr><th></th><th>Ataque faz</th><th>Defesa cede</th><th>Vantagem</th></tr>${block(a, h)}${block(h, a)}</table>` +
+    `</section>`
+  );
+}
+
+function fullTable(g) {
+  const a = g.away;
+  const h = g.home;
+  const A = a[win];
+  const H = h[win];
+  const cell = (S, t, k, cls) =>
+    `<td class="${cls}"><b>${S ? fmt(S[k]) : "–"}</b>${rankChip(rankOf(k, t.abbr))}</td>`;
+  const rows = GROUPS.map(
+    ([groupName, keys]) =>
+      `<tr class="gh"><th colspan="3">${groupName}</th></tr>` +
+      keys
+        .map((k) => {
+          const m = METRIC_MAP[k];
+          const x = A ? A[k] : null;
+          const y = H ? H[k] : null;
+          const [c1, c2] = compareCells(m, x, y);
+          return `<tr>${cell(A, a, k, c1)}<td class="lb">${m.l}</td>${cell(H, h, k, c2)}</tr>`;
+        })
+        .join("")
+  ).join("");
+  return (
+    `<section class="sec"><details open><summary>Comparativo completo</summary>` +
+    `<table><tr><th>${a.abbr}<br>${A ? A.rec : "–"}</th><th></th><th>${h.abbr}<br>${H ? H.rec : "–"}</th></tr>${rows}</table>` +
+    `<p class="note">Selo ao lado do valor = posição na liga (1º = melhor) · Verde = melhor no confronto.</p>` +
+    `</details></section>`
+  );
+}
+
+function card(g, i, isOpen) {
+  const a = g.away;
+  const h = g.home;
+  const A = a[win];
+  const H = h[win];
+  const score = g.as != null ? ` · <b>Final: ${g.as} × ${g.hs}</b>` : "";
+  const poTag = g.round ? `<span class="potag">Playoffs · ${g.round}</span>` : "";
+  const divTag = g.division ? `<span class="dvtag">${g.division}</span>` : "";
+  const tagRow = poTag || divTag ? `<div class="dvrow">${poTag}${divTag}</div>` : "";
+  const bcRow =
+    g.canais && g.canais.length
+      ? `<div class="bcrow"><span class="bcl">Onde assistir</span>${g.canais.map((c) => `<span class="bc">${c}</span>`).join("")}</div>`
+      : "";
+  const arrow = iconArrow();
+
+  return (
+    `<details class="card${g.division ? " dv" : ""}${g.round ? " po po-" + (ROUND_CLASS[g.round] || "") : ""}" data-i="${i}"${isOpen ? " open" : ""}>` +
+    `<summary>` +
+    `<h2 class="mu">` +
+    `<span class="tm"><span class="tt">${teamLogo(a.abbr, 40)}<span class="tx"><b>${teamName(a.label)}</b><small>${A ? A.rec : "–"}</small></span></span></span>` +
+    `<span class="at">${g.neutral ? "×" : "@"}</span>` +
+    `<span class="tm"><span class="tt">${teamLogo(h.abbr, 40)}<span class="tx"><b>${teamName(h.label)}</b><small>${H ? H.rec : "–"}</small></span></span></span>` +
+    `</h2>` +
+    `<div class="m">${g.day} ${g.time}${score}</div>${tagRow}${bcRow}${iconChevron()}` +
+    `</summary>` +
+    `<div class="cb">` +
+    `<div class="golinks">` +
+    `<a class="btn go" href="jogadores.html?times=${a.abbr},${h.abbr}">Jogadores dos dois times ${arrow}</a>` +
+    `<a class="btn go" href="evolucao.html?times=${a.abbr},${h.abbr}">Evolução dos dois times ${arrow}</a>` +
+    `</div>` +
+    `${previousMeeting(g)}${summarySection(g)}${highlightsSection(g)}${duelTable(g)}` +
+    `<section class="sec"><h3>Campanha</h3><p class="note form">${recordsLine(a)}<br>${recordsLine(h)}</p></section>` +
+    `${fullTable(g)}` +
+    `</div></details>`
+  );
+}
+
+function draw() {
+  document
+    .querySelectorAll("#wins button")
+    .forEach((b) => b.classList.toggle("on", b.dataset.w === win));
+  const openSet = new Set([...document.querySelectorAll("#games .card[open]")].map((d) => +d.dataset.i));
+  $("games").innerHTML = D.games.length
+    ? D.games.map((g, i) => card(g, i, openSet.has(i))).join("")
+    : '<p class="hint">Sem jogos pendentes na temporada regular.</p>';
+}
+
 draw();

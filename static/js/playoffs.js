@@ -6,7 +6,7 @@ const rec = s => `${s.w}-${s.l}${s.t ? "-" + s.t : ""}`;
 
 document.querySelector("h1").textContent = "NFL " + D.season + " – Playoffs";
 $("sub").textContent = D.week
-  ? `Atualizado em ${D.updated} • posição após a semana ${D.week}`
+  ? `Atualizado em ${D.updated} · Posição após a semana ${D.week}`
   : `Atualizado em ${D.updated}`;
 
 function quadro(conf) {

@@ -70,6 +70,7 @@ Os registros a partir do 27 levam a data conhecida.
 | 56 | 10/11/2026 | Pedido | Remover a linha de cabeçalho (Seed, Time, Divisão e V-D) do quadro de seeds, porque estava desalinhada e os dados se explicam sozinhos. Implementado no commit `2dd8db5`: tabela sem `thead`, com `colgroup` em porcentagem para manter as larguras. |
 | 57 | 17/11/2026 | Implementação | Na `main` (PR #8, commit `dee70bc`), a página Playoffs já estava mesclada com 72 testes. Na branch `gemini`, eliminados os downloads redundantes do nflverse em `cli.py` (`schedules`, `team_stats` e `teams` baixados uma única vez) com novo teste em `tests/test_cli.py` (73 testes). |
 | 58 | 17/11/2026 | Implementação | Confirmado no `calculate_stats.R` do `nflfastR` que `fumble_recovery_tds` (`stat_id` 56, 58, 60 e 62) é excluído de `td_ids()` e não se sobrepõe a `rushing_tds`, `def_tds` nem `special_teams_tds`; coluna incluída em `TD_COLS` (`nfl_dashboard/stats.py`) e em `regras.md`. |
+| 59 | 17/11/2026 | Implementação | Refinamento do front-end na branch `gemini`: raios menores (4/6/8 px), remoção da faixa `.yard` e de textos redundantes, etiquetas retangulares, ícones SVG em `comum.js`, transições sutis e formatação legível de `style.css` e `static/js/*.js`. |
 
 ## 2. Preferências de trabalho
 
@@ -148,3 +149,4 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 17/11/2026 | Confirmação do agendamento real (`cron: "7 9 * * 1,2,6"`) e do nome do workflow (`atualizar-site.yml`), encerrando a pendência correspondente. |
 | 17/11/2026 | Registro 57 (merge da página Playoffs na `main` com 72 testes e deduplicação de downloads no `cli.py` com 73 testes) e encerramento da pendência de contagem de testes. |
 | 17/11/2026 | Registro 58 (inclusão de `fumble_recovery_tds` em `TD_COLS` após verificação no `nflfastR`) e encerramento da pendência de touchdowns. |
+| 17/11/2026 | Registro 59 (refinamento visual, de UX e legibilidade do front-end na branch `gemini`). |
