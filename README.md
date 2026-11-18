@@ -69,7 +69,7 @@ nfl-dashboard/
 ├── requirements-dev.txt     # dependências + ferramentas de teste
 ├── requirements-logos.txt   # dependências + Pillow (só para baixar os logos)
 ├── .github/
-│   ├── workflows/atualizar_site.yml   # gera e publica o site (agendado e manual)
+│   ├── workflows/atualizar-site.yml   # gera e publica o site (agendado e manual)
 │   └── dependabot.yml                 # atualização mensal das ferramentas do fluxo
 ├── data/
 │   └── transmissoes.json    # canais de transmissão por jogo (gravado pela página admin)
@@ -183,7 +183,7 @@ A pasta `site/` é um site estático completo e pode ir para qualquer hospedagem
 
 ### Atualização automática
 
-O fluxo `.github/workflows/atualizar_site.yml` roda **toda segunda, terça e sábado às 11:07 UTC (08:07 em Brasília)**:
+O fluxo `.github/workflows/atualizar-site.yml` roda **toda segunda, terça e sábado às 09:07 UTC (06:07 em Brasília)**:
 instala as dependências, roda os testes, gera o site e publica. Ele também roda quando você envia alterações para a branch `main`
 (inclusive as feitas pela página admin) e quando você clica em **Run workflow**. Nas execuções agendadas os testes não rodam: elas só atualizam os dados.
 

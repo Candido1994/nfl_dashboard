@@ -1,6 +1,6 @@
 # Memória do projeto — NFL Dashboard
 
-> Última atualização: 10/11/2026
+> Última atualização: 17/11/2026
 
 Este documento reúne os pedidos, decisões e modificações do projeto que ficaram registrados na memória do assistente, com a data de cada um.
 
@@ -68,6 +68,8 @@ Os registros a partir do 27 levam a data conhecida.
 | 54 | 10/11/2026 | Ocorrência | A página de playoffs poderia sair em branco se o calendário falhasse, porque `schedule_rows` engolia a exceção. Decisão: carga estrita (`strict=True`) só para a página de playoffs, no commit `3f6faa9` (Ruling 16); a página admin mantém o comportamento anterior. |
 | 55 | 10/11/2026 | Decisão | O passo "ordem interna da divisão" entrou na cadeia entre divisões da especificação (seção 5.4), alinhando o spec ao código e a `regras.md`, seção 9.4 (Ruling 17). |
 | 56 | 10/11/2026 | Pedido | Remover a linha de cabeçalho (Seed, Time, Divisão e V-D) do quadro de seeds, porque estava desalinhada e os dados se explicam sozinhos. Implementado no commit `2dd8db5`: tabela sem `thead`, com `colgroup` em porcentagem para manter as larguras. |
+| 57 | 17/11/2026 | Implementação | Na `main` (PR #8, commit `dee70bc`), a página Playoffs já estava mesclada com 72 testes. Na branch `gemini`, eliminados os downloads redundantes do nflverse em `cli.py` (`schedules`, `team_stats` e `teams` baixados uma única vez) com novo teste em `tests/test_cli.py` (73 testes). |
+| 58 | 17/11/2026 | Implementação | Confirmado no `calculate_stats.R` do `nflfastR` que `fumble_recovery_tds` (`stat_id` 56, 58, 60 e 62) é excluído de `td_ids()` e não se sobrepõe a `rushing_tds`, `def_tds` nem `special_teams_tds`; coluna incluída em `TD_COLS` (`nfl_dashboard/stats.py`) e em `regras.md`. |
 
 ## 2. Preferências de trabalho
 
@@ -105,22 +107,23 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 03/11/2026 | Implementação | Reencontros: `rematches.py` e o bloco "Último confronto nesta temporada" no card expandido. |
 | 04/11/2026 | Implementação | Atualização dos documentos `PRD.md`, `arquitetura.md`, `regras.md`, `design.md` e `memory.md` e do `README.md`. |
 | 10/11/2026 | Ocorrência | Lista de folgas com 8 times na semana 6 (4 reais); causa: o cadastro de times do nflverse tem siglas antigas (OAK, SD, STL) e `LAR` duplicando os Rams. Corrigido filtrando pelos times do calendário da temporada. |
+| 17/11/2026 | Decisão | Confirmado no workflow `.github/workflows/atualizar-site.yml` que o agendamento real é `cron: "7 9 * * 1,2,6"` (09:07 UTC / 06:07 em Brasília), substituindo a suposição de 25/10/2026 (11:07 UTC / 08:07 em Brasília) e corrigindo o nome do arquivo na documentação. |
 
 ## 4. Pendências
 
 | Pendência | Situação |
 |---|---|
-| Confirmar o agendamento do fluxo (`cron: "7 11 * * 1,2,6"`) | Sem resposta: os documentos assumem segunda, terça e sábado às 11:07 UTC. |
+| Confirmar o agendamento do fluxo (`cron: "7 11 * * 1,2,6"`) | Resolvida em 17/11/2026: confirmado em `.github/workflows/atualizar-site.yml` como `cron: "7 9 * * 1,2,6"` (09:07 UTC / 06:07 em Brasília). |
 | Teste real da página admin com o token do GitHub | A página foi testada com a API simulada; o primeiro salvamento real ainda não foi confirmado. |
 | Reforço de segurança do admin (transmissões em branch separada e `main` protegida) | Oferecido, sem decisão. |
-| Contagem de testes | Conferido em 10/11/2026: o `pytest` tinha 44 testes (não 46); agora são 45, com o teste de folgas. Documentos atualizados. Com a página Playoffs, são 69 (reconfirmar na verificação final da implementação). |
-| Touchdowns: `fumble_recovery_tds` | **Em aberto.** A coluna ficou fora de `TD_COLS` (regra 9.2 de `regras.md`) porque a sobreposição com `rushing_tds` não foi confirmada. Confirmar no dicionário do nflverse; o dicionário não estava acessível na implementação. |
+| Contagem de testes | Resolvida em 17/11/2026: após o merge da página Playoffs na `main` (PR #8), a suíte passou a 72 testes; com `tests/test_cli.py`, passou para **73 testes**. |
+| Touchdowns: `fumble_recovery_tds` | Resolvida em 17/11/2026: confirmado no `calculate_stats.R` do `nflfastR` que não há sobreposição com `rushing_tds`, `def_tds` ou `special_teams_tds`; incluída em `TD_COLS`. |
 | Playoffs após a temporada regular | **Em aberto.** A página continua mostrando os seeds finais e o chaveamento do Wild Card, sem resultados de playoffs. Confirmar esse comportamento (spec, seção 12, item 3). |
 | Histórico de semanas na página Playoffs | Fora desta etapa: a página mostra só a última semana fechada. Guardar o histórico no JSON fica para uma etapa futura. |
 | Verificação visual da página Playoffs | Resolvida em 10/11/2026: 360, 390, 414 e 1100 px com dados reais, sem rolagem lateral da página (Tarefa 8 do plano). |
 | Divergência do marcador `__DADOS__` / `{{DATA}}` | Resolvida em 10/11/2026: o código usa `{{DATA}}`; a documentação foi corrigida (registro 51). |
 | Sorteio na tela (spec, seção 12, item 2) | Resolvida: etiqueta neutra "Sorteio pendente" ao lado do time (registro 40). |
-| Touchdowns: colunas e definição (spec, seção 12, item 1) | Resolvida, exceto `fumble_recovery_tds` (ver acima). Colunas e decisão: spike da Tarefa 1 e `regras.md`, seção 9.2. |
+| Touchdowns: colunas e definição (spec, seção 12, item 1) | Resolvida (inclusive `fumble_recovery_tds`, encerrada em 17/11/2026). |
 
 ## 5. Como manter este documento
 
@@ -142,3 +145,6 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 10/11/2026 | Inclusão do registro 52 (aprovação do plano de implementação e da execução por subagentes em worktree). |
 | 10/11/2026 | Inclusão dos registros 53 a 55 (correções da revisão final: contexto do desempate interno, carga estrita do calendário e passo "ordem interna" no spec). |
 | 10/11/2026 | Inclusão do registro 56 (remoção do cabeçalho do quadro de seeds) e pendência da verificação visual marcada como resolvida. |
+| 17/11/2026 | Confirmação do agendamento real (`cron: "7 9 * * 1,2,6"`) e do nome do workflow (`atualizar-site.yml`), encerrando a pendência correspondente. |
+| 17/11/2026 | Registro 57 (merge da página Playoffs na `main` com 72 testes e deduplicação de downloads no `cli.py` com 73 testes) e encerramento da pendência de contagem de testes. |
+| 17/11/2026 | Registro 58 (inclusão de `fumble_recovery_tds` em `TD_COLS` após verificação no `nflfastR`) e encerramento da pendência de touchdowns. |

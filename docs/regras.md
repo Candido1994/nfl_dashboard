@@ -1,6 +1,6 @@
 # Regras — NFL Dashboard
 
-> Última atualização: 10/11/2026
+> Última atualização: 17/11/2026
 
 ## 1. Regras de cálculo
 
@@ -163,8 +163,7 @@
 - **Força da tabela (SoS):** mesma conta, com todos os adversários enfrentados. Cada jogo conta uma vez.
 - **Jogos em comum:** adversários que os dois times enfrentaram. Aproveitamento e saldo são calculados só nesses jogos.
 - **Confronto direto:** resultado dos jogos entre os dois times. Se empatarem em uma série de jogos, vale o aproveitamento entre si.
-- **Saldo de touchdowns:** touchdowns marcados menos sofridos, em total. Touchdown marcado = soma de `passing_tds`, `rushing_tds`, `def_tds`, `special_teams_tds` e `pt_return_tds` do time no jogo. Ficam de fora `receiving_tds` (repete `passing_tds` em todas as linhas) e `fumble_recovery_tds` (sobreposição com `rushing_tds` não confirmada no dicionário do nflverse).
-  **Em aberto:** confirmar `fumble_recovery_tds` no dicionário do nflverse (não foi acessível na implementação). Esse critério é o último desempate e raramente é alcançado.
+- **Saldo de touchdowns:** touchdowns marcados menos sofridos, em total. Touchdown marcado = soma de `passing_tds`, `rushing_tds`, `def_tds`, `special_teams_tds`, `pt_return_tds` e `fumble_recovery_tds` do time no jogo. Fica de fora `receiving_tds` (repete `passing_tds` em todas as linhas). Confirmado no `calculate_stats.R` do `nflfastR` que `fumble_recovery_tds` (`stat_id` 56, 58, 60 e 62) não se sobrepõe a `rushing_tds`, `def_tds` nem `special_teams_tds`.
 
 ### 9.3 Cadeia dentro da mesma divisão
 1. Confronto direto
@@ -225,3 +224,4 @@ O aproveitamento vem antes da lista. Depois, na ordem:
 | 04/11/2026 | Novas regras: último confronto (2.6), transmissões (2.7), logos (6), marcas no rodapé e marcador de dados; seções renumeradas. |
 | 10/11/2026 | Folgas (bye) (2.1, item 5): só os times da semana exibida que não jogam, com a semana no rótulo. |
 | 10/11/2026 | Nova seção 9 (Playoffs): definições, cadeias de desempate, mínimo de 4 jogos em comum, sorteio pendente, arredondamento e checagem. Marcador corrigido para `{{DATA}}`. Implementação na mesma data. |
+| 17/11/2026 | Seção 9.2 (`Saldo de touchdowns`): incluído `fumble_recovery_tds` em `TD_COLS` após confirmação no `calculate_stats.R` do `nflfastR` de que não há sobreposição com as demais colunas. |
