@@ -2,12 +2,14 @@
 from .config import BASE, METRICS
 
 
-def build_games(season):
+def build_games(season, sched=None, ts=None):
     """Uma linha por time por jogo, com stats do time e do adversário."""
     import nflreadpy as nfl
     import polars as pl
 
-    sched = nfl.load_schedules([season]).filter(
+    if sched is None:
+        sched = nfl.load_schedules([season])
+    sched = sched.filter(
         (pl.col("game_type") == "REG") & pl.col("home_score").is_not_null()
     )
     home = sched.select(
@@ -26,9 +28,9 @@ def build_games(season):
     )
     games = pl.concat([home, away])
 
-    ts = nfl.load_team_stats([season], summary_level="week").filter(
-        pl.col("season_type") == "REG"
-    )
+    if ts is None:
+        ts = nfl.load_team_stats([season], summary_level="week")
+    ts = ts.filter(pl.col("season_type") == "REG")
 
     def f(c):
         return pl.col(c).fill_null(0)
@@ -208,11 +210,12 @@ def bye_teams(rows, playing, info):
     return sorted(label(a, info) for a in teams if a not in playing)
 
 
-def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo"):
+def build_matchups(season, info, by_abbr, tz_name="America/Sao_Paulo", rows=None):
     """Jogos da semana atual (ou da próxima) e, depois da temporada regular, da rodada dos playoffs."""
-    import nflreadpy as nfl
+    if rows is None:
+        import nflreadpy as nfl
 
-    rows = nfl.load_schedules([season]).to_dicts()
+        rows = nfl.load_schedules([season]).to_dicts()
     picked = select_games(rows)
     if not picked:
         return None
@@ -266,13 +269,15 @@ def build_history(g, info):
     return weeks, teams
 
 
-def load_team_info():
+def load_team_info(teams_df=None):
     """Dicionário sigla -> dados do time (nome, conferência, divisão)."""
-    import nflreadpy as nfl
+    if teams_df is None:
+        import nflreadpy as nfl
 
+        teams_df = nfl.load_teams()
     return {
         r["team_abbr"]: r
-        for r in nfl.load_teams().select(
+        for r in teams_df.select(
             "team_abbr", "team_name", "team_conf", "team_division"
         ).to_dicts()
     }
@@ -305,16 +310,19 @@ def team_weeks_from(g):
         out.setdefault(r["team"], set()).add(r["week"])
     return {t: sorted(w) for t, w in out.items()}
 
-# colunas de touchdown de load_team_stats somadas como touchdowns marcados (confirmadas na spike)
-TD_COLS = ("passing_tds", "rushing_tds", "def_tds", "special_teams_tds", "pt_return_tds")
+# colunas de touchdown de load_team_stats somadas como touchdowns marcados (sem sobreposição no nflfastR)
+TD_COLS = ("passing_tds", "rushing_tds", "def_tds", "special_teams_tds", "pt_return_tds", "fumble_recovery_tds")
 
 
-def team_week_tds(season):
+def team_week_tds(season, ts=None):
     """Touchdowns marcados por time e semana: {(semana, sigla): n}."""
-    import nflreadpy as nfl
     import polars as pl
 
-    ts = nfl.load_team_stats([season], summary_level="week").filter(pl.col("season_type") == "REG")
+    if ts is None:
+        import nflreadpy as nfl
+
+        ts = nfl.load_team_stats([season], summary_level="week")
+    ts = ts.filter(pl.col("season_type") == "REG")
     tds = {}
     for r in ts.select("week", "team", *TD_COLS).to_dicts():
         tds[(r["week"], r["team"])] = sum(int(r[c] or 0) for c in TD_COLS)

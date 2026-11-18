@@ -3,7 +3,7 @@ import argparse
 import os
 from datetime import datetime
 
-from .broadcasts import admin_page, attach_channels, load_broadcasts, schedule_rows
+from .broadcasts import admin_page, attach_channels, load_broadcasts
 from .config import DEFAULT_SEASON, METRICS, REPO_URL, local_tz_name, tz_label
 from .logos import load_team_colors
 from .players import PLAYER_META, load_players
@@ -35,15 +35,21 @@ def main(argv=None):
     args = parser.parse_args(argv)
     season = args.temporada
 
-    g = build_games(season)
-    info = load_team_info()
+    import nflreadpy as nfl
+
+    sched = nfl.load_schedules([season])
+    rows = sched.to_dicts()
+    ts = nfl.load_team_stats([season], summary_level="week")
+    teams_df = nfl.load_teams()
+
+    g = build_games(season, sched=sched, ts=ts)
+    info = load_team_info(teams_df=teams_df)
     teams = build_teams(g, info)
     updated = _now().strftime("%d/%m/%Y %H:%M")
     week = int(g["week"].max() or 0)
     metrics = [{"k": k, "l": l, "hb": hb} for k, l, hb in METRICS]
 
-    rows = schedule_rows(season)   # calendário completo (usado nos reencontros e na página admin)
-    mu = build_matchups(season, info, {t["abbr"]: t for t in teams}, local_tz_name())
+    mu = build_matchups(season, info, {t["abbr"]: t for t in teams}, local_tz_name(), rows=rows)
     broadcasts = load_broadcasts()
     attach_channels(season, mu, broadcasts)
     attach_last_meetings(rows, mu, local_tz_name())
@@ -73,11 +79,11 @@ def main(argv=None):
             "players": load_players(season, team_weeks_from(g)),
         },
         "playoffs": monta_pagina(
-            schedule_rows(season, strict=True), info, team_week_tds(season), season, updated
+            rows, info, team_week_tds(season, ts=ts), season, updated
         ),
         "admin": admin_page(season, rows, info, local_tz_name(), broadcasts, updated, REPO_URL),
     }
-    colors = load_team_colors()
+    colors = load_team_colors(teams_df=teams_df)
     for page in pages.values():
         page["colors"] = colors
     for path in write_site(args.out, pages):
