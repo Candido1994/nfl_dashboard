@@ -10,3 +10,8 @@ venv/
 
 # sistema
 .DS_Store
+
+# protótipos, ferramentas locais e rascunhos
+.playwright-mcp/
+playoffs-teste.html
+docs/superpowers/

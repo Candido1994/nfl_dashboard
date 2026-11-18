@@ -1,6 +1,6 @@
 # Arquitetura — NFL Dashboard
 
-> Última atualização: 10/11/2026
+> Última atualização: 17/11/2026
 
 ## 1. Visão geral
 
@@ -33,7 +33,7 @@ nfl_dashboard/
 ├── requirements-dev.txt        # + ferramentas de teste
 ├── requirements-logos.txt      # + Pillow, só para baixar os logos (uso único)
 ├── .github/
-│   ├── workflows/atualizar_site.yml
+│   ├── workflows/atualizar-site.yml
 │   └── dependabot.yml
 ├── data/
 │   └── transmissoes.json       # canais por jogo (gravado pela página admin)
@@ -73,7 +73,7 @@ nfl_dashboard/
 | `rematches.py` | Reencontros: `last_meeting` e `attach_last_meetings` (placar do último jogo entre os dois times). |
 | `logos.py` | Cores dos times (`load_team_colors`) e script de uso único que baixa e converte os logos (`python -m nfl_dashboard.logos`). |
 | `render.py` | Lê `templates/` e `static/`, substitui os marcadores, grava as páginas e copia o `static/`. Define as cinco páginas públicas (`PAGES`, com Playoffs depois de Jogadores) e as ocultas (`HIDDEN_PAGES`, com a admin). |
-| `cli.py` | Orquestra: baixa e calcula os dados, monta o dicionário de cada página (inclusive `playoffs`, com `team_week_tds`) e chama `write_site`. |
+| `cli.py` | Orquestra: baixa uma única vez as bases de calendário (`schedules`), estatísticas de times (`team_stats`) e times (`teams`), calcula os dados, monta o dicionário de cada página (inclusive `playoffs`, com `team_week_tds`) e chama `write_site`. |
 
 `polars`, `nflreadpy` e `Pillow` são importados dentro das funções que os usam, para os módulos poderem ser importados (e testados) sem essas bibliotecas.
 
@@ -129,8 +129,8 @@ Cada janela de um time guarda as médias por jogo das métricas, `g` (jogos), `r
 
 | Item | Configuração |
 |---|---|
-| Fluxo | `.github/workflows/atualizar_site.yml`, nome "Atualizar site". |
-| Gatilhos | Agendado (segunda, terça e sábado às 11:07 UTC = 08:07 em Brasília; confirmar no arquivo), manual (`workflow_dispatch`) e `push` na `main` (inclusive o commit da página admin). |
+| Fluxo | `.github/workflows/atualizar-site.yml`, nome "Atualizar site". |
+| Gatilhos | Agendado (segunda, terça e sábado às 09:07 UTC = 06:07 em Brasília), manual (`workflow_dispatch`) e `push` na `main` (inclusive o commit da página admin). |
 | Jobs | `build` (instala, testa, gera e envia o artefato) e `deploy` (publica no Pages). |
 | Testes | Rodam em push e execução manual; **não** rodam nas execuções agendadas. |
 | Permissões | `contents: read`, `pages: write`, `id-token: write`. |
@@ -158,9 +158,9 @@ dependências indiretas. `tzdata` fica sem versão. `requirements-dev.txt` acres
 
 ## 11. Testes
 
-69 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
+73 testes em `tests/`: montagem das páginas (rodapé, avisos, contador, escape do JSON, página admin e seus cabeçalhos), rankings,
 agregação de jogadores, conversão de horários, jogo de divisão, seleção de jogos nos playoffs, folgas (bye) e consistência entre as rodadas,
-o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da admin), reencontros e, na página Playoffs, a campanha,
+o CSS e o JS de Confrontos, cores e logos, transmissões (validação e dados da admin), reencontros, carga única das bases no `cli.main` e, na página Playoffs, a campanha,
 os critérios de desempate isolados e as cadeias, o mínimo de jogos em comum, o sorteio pendente, o chaveamento, a checagem antes de gravar
 e a ordem da aba. Não dependem de internet.
 
@@ -190,4 +190,6 @@ e o chaveamento do Wild Card da última semana fechada. Não é atualizada com r
 | 29/10/2026 | Inclusão do `AGENTS.md` e da pasta `docs/` na estrutura do repositório (proposta revertida em 30/10/2026: o `AGENTS.md` não foi criado). |
 | 04/11/2026 | Logos (`logos.py`, `comum.js`, `static/img`), transmissões (`broadcasts.py`, página admin, `data/`), reencontros (`rematches.py`), marcador de dados (depois corrigido para `{{DATA}}`), páginas ocultas, cores nas páginas e testes (46). |
 | 10/11/2026 | Folgas (bye): `bye_teams` em `stats.py` usa o calendário da temporada (não mais o cadastro de times, que tinha siglas antigas); nova linha `#tv` para a nota de transmissão em `confrontos.html`; testes em 45. |
-| 10/11/2026 | Página Playoffs: `playoffs.py`, `team_week_tds` em `stats.py`, template, JS e CSS; passo de playoffs no fluxo de dados; modelo de dados da página; cinco páginas públicas em `PAGES`; pasta `docs/superpowers/`; correção do marcador (`{{DATA}}`); testes em 69. Implementação na mesma data. |
+| 10/11/2026 | Página Playoffs: `playoffs.py`, `team_week_tds` em `stats.py`, template, JS e CSS, passo de playoffs no fluxo de dados; modelo de dados da página; cinco páginas públicas em `PAGES`; pasta `docs/superpowers/`; correção do marcador (`{{DATA}}`); testes em 69. Implementação na mesma data. |
+| 17/11/2026 | Alinhamento do nome do arquivo do workflow (`atualizar-site.yml`) e do horário do cron (`09:07 UTC = 06:07 em Brasília`) com `.github/workflows/atualizar-site.yml`. |
+| 17/11/2026 | Carga única de `schedules`, `team_stats` e `teams` em `cli.py` (repassadas em memória para `stats`, `logos` e `playoffs`); testes atualizados para 73 (com `test_cli.py`). |

@@ -1,6 +1,6 @@
 # PRD — NFL Dashboard
 
-> Última atualização: 10/11/2026 · Status: em produção (GitHub Pages)
+> Última atualização: 17/11/2026 · Status: em produção (GitHub Pages)
 
 ## 1. Visão geral
 
@@ -126,7 +126,7 @@ para o usuário tirar as próprias conclusões.
 - **Custo zero:** hospedagem gratuita; nenhuma chave de API ou segredo no repositório.
 - **Sem servidor:** os números ficam embutidos em cada página; o navegador só monta tabelas e gráficos.
 - **Resiliência:** se uma atualização falhar, o site continua com a última versão publicada; arquivo de transmissões ausente ou inválido não quebra a geração.
-- **Reprodutibilidade:** versões das bibliotecas fixas; 69 testes automatizados que não dependem de internet.
+- **Reprodutibilidade:** versões das bibliotecas fixas; 73 testes automatizados que não dependem de internet.
 - **Privacidade:** sem cookies; contador de acessos anônimo e opcional.
 - **Segurança da área admin:** token só na memória da aba por padrão, página sem scripts de terceiros, `noindex` e política que só permite conexão com a API do GitHub.
 - **Acessibilidade:** contraste mínimo de 4,5:1 no texto, foco visível, respeito a "reduzir movimento".
@@ -213,3 +213,4 @@ para o usuário tirar as próprias conclusões.
 | 04/11/2026 | Logos (RF-07, 23, 34, 43, 55), transmissões e página admin (RF-24, 60 a 64), último confronto (RF-25), decisões, riscos e glossário atualizados. |
 | 10/11/2026 | Folgas (RF-22) corrigidas: só os times da semana exibida que não jogam, sem siglas antigas. |
 | 10/11/2026 | Página Playoffs: escopo (seção 4), requisitos RF-70 a RF-74, RF-50 com cinco páginas, testes em 69 e glossário (Seed, Bye week, Wild Card e Divisional Round). Implementação na mesma data. |
+| 17/11/2026 | Contagem de testes atualizada para 73. |

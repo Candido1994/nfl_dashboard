@@ -30,12 +30,14 @@ def team_colors(rows):
     return {r["team_abbr"]: normalize_color(r.get("team_color")) for r in rows if r.get("team_abbr")}
 
 
-def load_team_colors():
+def load_team_colors(teams_df=None):
     """Cores dos times; nunca derruba a geração do site."""
     try:
-        import nflreadpy as nfl
+        if teams_df is None:
+            import nflreadpy as nfl
 
-        return team_colors(nfl.load_teams().to_dicts())
+            teams_df = nfl.load_teams()
+        return team_colors(teams_df.to_dicts())
     except Exception as e:
         print(f"Aviso: não foi possível carregar as cores dos times ({e}).")
         return {}
