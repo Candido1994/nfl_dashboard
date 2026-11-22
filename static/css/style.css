@@ -1,20 +1,21 @@
 :root {
   color-scheme: light dark;
-  --bg: #F4F5F2;
+  --bg: #F6F6F7;
   --surface: #FFFFFF;
-  --fg: #17211B;
-  --mut: #5A685F;
-  --line: #DCE2DA;
+  --fg: #171717;
+  --fg2: #525252;
+  --mut: #6B6B70;
+  --line: rgba(23, 23, 23, 0.09);
   --acc: #1B6B3A;
   --acc-ink: #FFFFFF;
-  --good: #1B7A41;
-  --bad: #B3261E;
+  --good: #16A34A;
+  --bad: #DC2626;
   --flag: #F2B705;
-  --zebra: #F8FAF7;
-  --hover: #EAF2EA;
-  --seg: #EAEFE9;
-  --win: #E4F3E8;
-  --badbg: #FBE9E7;
+  --zebra: #FAFAFB;
+  --hover: #F1F2F4;
+  --seg: #EFEFF1;
+  --win: #EAF7EE;
+  --badbg: #FDECEC;
   --focus: #1B6B3A;
   --po-wc: #1F5FBF;
   --po-wc-ink: #FFFFFF;
@@ -25,28 +26,30 @@
   --po-sb: #BE185D;
   --po-sb-ink: #FFFFFF;
   --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0D130F;
-    --surface: #141C17;
-    --fg: #E7EEE8;
-    --mut: #97A89D;
-    --line: #27322B;
-    --acc: #58BF7B;
+  :root:not([data-theme="light"]) {
+    --bg: #111214;
+    --surface: #18191C;
+    --fg: #EDEDED;
+    --fg2: #A1A1A6;
+    --mut: #85858B;
+    --line: rgba(237, 237, 237, 0.09);
+    --acc: #4CC38A;
     --acc-ink: #07130B;
-    --good: #58BF7B;
-    --bad: #FF8A80;
+    --good: #4CC38A;
+    --bad: #E5484D;
     --flag: #F5C518;
-    --zebra: #171F1A;
-    --hover: #1F2B23;
-    --seg: #1B241E;
-    --win: #1B3325;
-    --badbg: #3A1F1C;
-    --focus: #58BF7B;
+    --zebra: #1C1D21;
+    --hover: #232429;
+    --seg: #222328;
+    --win: #162B1F;
+    --badbg: #32181A;
+    --focus: #4CC38A;
     --po-wc: #7DB3FF;
     --po-wc-ink: #0A1A33;
     --po-div: #B9A0F0;
@@ -56,6 +59,34 @@
     --po-sb: #F59AC4;
     --po-sb-ink: #330A20;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #111214;
+  --surface: #18191C;
+  --fg: #EDEDED;
+  --fg2: #A1A1A6;
+  --mut: #85858B;
+  --line: rgba(237, 237, 237, 0.09);
+  --acc: #4CC38A;
+  --acc-ink: #07130B;
+  --good: #4CC38A;
+  --bad: #E5484D;
+  --flag: #F5C518;
+  --zebra: #1C1D21;
+  --hover: #232429;
+  --seg: #222328;
+  --win: #162B1F;
+  --badbg: #32181A;
+  --focus: #4CC38A;
+  --po-wc: #7DB3FF;
+  --po-wc-ink: #0A1A33;
+  --po-div: #B9A0F0;
+  --po-div-ink: #1E1033;
+  --po-con: #FFA374;
+  --po-con-ink: #2A1004;
+  --po-sb: #F59AC4;
+  --po-sb-ink: #330A20;
 }
 
 * {
@@ -70,12 +101,12 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 16px/1.4 "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
+  font: 400 15px/1.45 "Barlow Semi Condensed", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
 }
 
 :focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -90,7 +121,7 @@ body {
 .top-in,
 main,
 .foot {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
 }
 
@@ -116,22 +147,28 @@ main,
 }
 
 h1 {
-  font-size: 26px;
-  line-height: 1.1;
-  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 600;
   letter-spacing: -0.015em;
   margin: 0;
 }
 
 .sub {
   color: var(--mut);
-  font-size: 13.5px;
+  font-size: 13px;
   margin: 4px 0 12px;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .tabs {
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 
 .tabs a {
@@ -139,12 +176,12 @@ h1 {
   align-items: center;
   justify-content: center;
   min-height: 44px;
-  padding: 0 14px;
-  color: var(--mut);
-  font-weight: 600;
+  padding: 0 12px;
+  color: var(--fg2);
+  font-weight: 500;
   text-decoration: none;
-  border-bottom: 3px solid transparent;
-  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 
 .tabs a:hover {
@@ -154,28 +191,55 @@ h1 {
 
 .tabs a[aria-current="page"] {
   color: var(--fg);
+  font-weight: 600;
   border-bottom-color: var(--flag);
 }
 
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 4px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg2);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.theme-btn:hover {
+  color: var(--fg);
+  background: var(--seg);
+}
+
 @media (max-width: 599px) {
-  .tabs {
+  .top-nav {
     width: 100%;
+  }
+  .tabs {
+    flex: 1;
+    min-width: 0;
   }
   .tabs a {
     flex: 1;
-    padding: 0 6px;
+    padding: 0 4px;
   }
 }
 
 main {
-  padding: 18px 16px 48px;
+  padding: 20px 16px 48px;
 }
 
 h2 {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
-  margin: 28px 0 10px;
+  margin: 32px 0 12px;
 }
 
 .foot {
@@ -195,22 +259,23 @@ h2 {
 
 .foot a {
   color: var(--acc);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .aviso {
-  margin: 0 0 14px;
-  padding: 9px 12px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
-  color: var(--mut);
-  font-size: 13.5px;
-  line-height: 1.4;
+  color: var(--fg2);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .aviso b {
   color: var(--fg);
+  font-weight: 600;
 }
 
 /* Controles */
@@ -218,7 +283,7 @@ h2 {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .controls:has(> .field:only-child) {
@@ -228,16 +293,14 @@ h2 {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
 }
 
 .lbl {
-  font-size: 12.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--mut);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg2);
 }
 
 select,
@@ -250,7 +313,7 @@ input[type="password"] {
   background: var(--surface);
   color: var(--fg);
   font: inherit;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s var(--ease);
 }
 
 select:hover,
@@ -261,7 +324,7 @@ input[type="password"]:hover {
 .seg {
   display: flex;
   gap: 2px;
-  padding: 3px;
+  padding: 4px;
   background: var(--seg);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -270,17 +333,17 @@ input[type="password"]:hover {
 .seg button {
   flex: 1;
   min-width: 0;
-  min-height: 38px;
-  padding: 4px 10px;
+  min-height: 36px;
+  padding: 4px 12px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--mut);
+  color: var(--fg2);
   font: inherit;
-  font-weight: 600;
-  line-height: 1.1;
+  font-weight: 500;
+  line-height: 1.15;
   cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease);
 }
 
 .seg button:hover {
@@ -290,26 +353,38 @@ input[type="password"]:hover {
 .seg button.on {
   background: var(--acc);
   color: var(--acc-ink);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16);
+  font-weight: 600;
+}
+
+.viewbar {
+  margin-bottom: 12px;
+}
+
+.viewbar .seg {
+  overflow-x: auto;
+}
+
+.viewbar .seg button {
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {
   .seg button {
-    padding: 4px 3px;
-    font-size: 15px;
+    padding: 4px 4px;
+    font-size: 14px;
   }
   .tabs a {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 400px) {
   .tabs a {
-    font-size: 14px;
+    font-size: 13px;
     padding: 0 2px;
   }
   .seg button {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 
@@ -317,29 +392,33 @@ input[type="password"]:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--fg);
   font: inherit;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
 .btn:hover {
   background: var(--seg);
-  border-color: var(--mut);
+}
+
+.btn:active {
+  transform: scale(0.99);
 }
 
 .btn.primary {
   background: var(--acc);
   color: var(--acc-ink);
   border-color: var(--acc);
+  font-weight: 600;
 }
 
 .btn.primary:hover {
@@ -364,13 +443,13 @@ input[type="password"]:hover {
 .tools {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .hint {
   color: var(--mut);
   font-size: 13px;
-  margin: 8px 2px 0;
+  margin: 8px 0 0;
 }
 
 /* Tabelas */
@@ -395,7 +474,7 @@ input[type="password"]:hover {
   text-align: right;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
-  transition: background-color 0.12s ease;
+  transition: background-color 0.12s var(--ease);
 }
 
 .wrap tr:last-child td {
@@ -406,12 +485,12 @@ input[type="password"]:hover {
   position: sticky;
   top: 0;
   z-index: 2;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--mut);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg2);
   white-space: normal;
-  min-width: 92px;
-  line-height: 1.15;
+  min-width: 84px;
+  line-height: 1.2;
   vertical-align: bottom;
   user-select: none;
   background: var(--zebra);
@@ -439,6 +518,7 @@ input[type="password"]:hover {
 
 .dash .wrap th.sorted {
   color: var(--fg);
+  font-weight: 600;
   box-shadow: inset 0 -2px 0 var(--flag);
 }
 
@@ -485,19 +565,19 @@ input[type="password"]:hover {
   padding: 10px 8px;
 }
 
-/* Grupos de colunas: pontos | jardas | turnovers | sacks | jd por jogada | EPA e success */
-.dash #tb th:nth-child(4),
-.dash #tb td:nth-child(4),
-.dash #tb th:nth-child(7),
-.dash #tb td:nth-child(7),
-.dash #tb th:nth-child(12),
-.dash #tb td:nth-child(12),
-.dash #tb th:nth-child(15),
-.dash #tb td:nth-child(15),
-.dash #tb th:nth-child(17),
-.dash #tb td:nth-child(17),
-.dash #tb th:nth-child(19),
-.dash #tb td:nth-child(19) {
+/* Grupos de colunas na visão completa */
+.dash #tb.all-cols th:nth-child(4),
+.dash #tb.all-cols td:nth-child(4),
+.dash #tb.all-cols th:nth-child(7),
+.dash #tb.all-cols td:nth-child(7),
+.dash #tb.all-cols th:nth-child(12),
+.dash #tb.all-cols td:nth-child(12),
+.dash #tb.all-cols th:nth-child(15),
+.dash #tb.all-cols td:nth-child(15),
+.dash #tb.all-cols th:nth-child(17),
+.dash #tb.all-cols td:nth-child(17),
+.dash #tb.all-cols th:nth-child(19),
+.dash #tb.all-cols td:nth-child(19) {
   border-left: 1px solid var(--line);
 }
 
@@ -506,14 +586,14 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 4px 14px;
+  padding: 4px 16px;
 }
 
 .r {
   display: grid;
-  grid-template-columns: minmax(120px, 190px) 1fr 58px;
+  grid-template-columns: minmax(120px, 192px) 1fr 60px;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 8px 0;
   border-bottom: 1px solid var(--line);
 }
@@ -526,7 +606,7 @@ input[type="password"]:hover {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-weight: 500;
   min-width: 0;
 }
 
@@ -535,11 +615,11 @@ input[type="password"]:hover {
   width: 24px;
   text-align: right;
   color: var(--mut);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .r .t {
-  height: 10px;
+  height: 8px;
   background: var(--seg);
   border-radius: 3px;
   overflow: hidden;
@@ -553,13 +633,13 @@ input[type="password"]:hover {
 
 .r .v {
   text-align: right;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
   .r {
-    grid-template-columns: minmax(0, 1fr) 58px;
-    gap: 6px 10px;
+    grid-template-columns: minmax(0, 1fr) 60px;
+    gap: 8px 12px;
   }
   .r .n {
     grid-column: 1;
@@ -580,7 +660,7 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   overflow: hidden;
 }
 
@@ -588,8 +668,8 @@ input[type="password"]:hover {
   position: relative;
   list-style: none;
   cursor: pointer;
-  padding: 14px 16px;
-  transition: background-color 0.15s ease;
+  padding: 16px;
+  transition: background-color 0.15s var(--ease);
 }
 
 .card > summary::-webkit-details-marker {
@@ -605,7 +685,7 @@ input[type="password"]:hover {
   right: 16px;
   bottom: 16px;
   color: var(--mut);
-  transition: transform 0.18s ease;
+  transition: transform 0.18s var(--ease);
 }
 
 .card[open] > summary {
@@ -622,8 +702,8 @@ input[type="password"]:hover {
   align-items: center;
   gap: 8px;
   margin: 0;
-  font-size: 17px;
-  line-height: 1.15;
+  font-size: 16px;
+  line-height: 1.2;
 }
 
 .mu .tm {
@@ -633,7 +713,7 @@ input[type="password"]:hover {
 .mu .tt {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .mu .tm:last-child .tt {
@@ -649,6 +729,7 @@ input[type="password"]:hover {
 }
 
 .mu .tx b {
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 
@@ -670,29 +751,26 @@ input[type="password"]:hover {
   .mu .tl-40 {
     --s: 32px;
   }
-  .mu .tt {
-    gap: 8px;
-  }
   .mu .nk {
     font-size: 14px;
   }
 }
 
 .mu .tm small {
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--mut);
 }
 
 .mu .at {
   color: var(--mut);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .card .m {
-  color: var(--mut);
-  font-size: 13.5px;
-  margin-top: 6px;
+  color: var(--fg2);
+  font-size: 13px;
+  margin-top: 8px;
 }
 
 .card.dv {
@@ -711,7 +789,7 @@ input[type="password"]:hover {
 .dvrow {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
 }
 
@@ -720,10 +798,8 @@ input[type="password"]:hover {
   display: inline-block;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .potag {
@@ -740,30 +816,30 @@ input[type="password"]:hover {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
-  padding-right: 30px;
+  padding-right: 28px;
 }
 
 .bcl {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--mut);
 }
 
 .bc {
   display: inline-block;
-  padding: 1px 7px;
+  padding: 2px 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--zebra);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--fg);
 }
 
 .cb {
-  padding: 14px 16px 16px;
+  padding: 16px 20px 20px;
 }
 
 .cb table {
@@ -774,7 +850,7 @@ input[type="password"]:hover {
 .cb th,
 .cb td {
   text-align: center;
-  padding: 7px 6px;
+  padding: 8px 6px;
   font-size: 15px;
   border-bottom: 1px solid var(--line);
 }
@@ -784,27 +860,27 @@ input[type="password"]:hover {
 }
 
 .cb th {
-  font-size: 13.5px;
-  font-weight: 700;
-  line-height: 1.15;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
   vertical-align: bottom;
   padding-bottom: 8px;
 }
 
 .cb td.lb {
-  color: var(--mut);
+  color: var(--fg2);
   font-size: 13px;
-  width: 40%;
+  width: 42%;
 }
 
 .cb td.w {
   background: var(--win);
   color: var(--good);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .cb details {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .cb details > summary {
@@ -819,7 +895,7 @@ input[type="password"]:hover {
 .note {
   color: var(--mut);
   font-size: 13px;
-  line-height: 1.35;
+  line-height: 1.4;
   margin: 8px 0 0;
 }
 
@@ -837,7 +913,7 @@ input[type="password"]:hover {
 }
 
 #bye {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 #tv {
@@ -846,7 +922,7 @@ input[type="password"]:hover {
 
 /* Leitura do confronto */
 .sec {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
 }
 
 .sec:last-child {
@@ -854,23 +930,21 @@ input[type="password"]:hover {
 }
 
 .sec h3 {
-  font-size: 13.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--mut);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
   margin: 0 0 8px;
 }
 
 .rk {
   display: inline-block;
-  margin-left: 5px;
-  padding: 1px 5px;
+  margin-left: 4px;
+  padding: 1px 6px;
   border-radius: var(--radius-sm);
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   background: var(--seg);
-  color: var(--mut);
+  color: var(--fg2);
   vertical-align: middle;
 }
 
@@ -884,16 +958,42 @@ input[type="password"]:hover {
   color: var(--bad);
 }
 
+.proj-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--zebra);
+  overflow: hidden;
+}
+
 .proj {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   gap: 8px;
   align-items: center;
   text-align: center;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--zebra);
-  padding: 12px;
+  padding: 16px 12px;
+}
+
+.proj-sub {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--mut);
+}
+
+.proj-sub b {
+  color: var(--fg);
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.proj-empty {
+  color: var(--mut);
 }
 
 .proj .tl {
@@ -905,28 +1005,29 @@ input[type="password"]:hover {
   display: block;
   margin-bottom: 4px;
   font-size: 13px;
-  color: var(--mut);
-  font-weight: 600;
+  color: var(--fg2);
+  font-weight: 500;
 }
 
 .proj b {
   display: block;
   font-size: 32px;
+  font-weight: 600;
   line-height: 1;
 }
 
 .proj .mid {
-  max-width: 72px;
+  max-width: 76px;
   font-size: 12px;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--mut);
 }
 
 .tally {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   text-align: center;
   font-size: 14px;
-  color: var(--mut);
+  color: var(--fg2);
 }
 
 .tally b {
@@ -940,13 +1041,17 @@ input[type="password"]:hover {
 }
 
 .hl li {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--zebra);
-  font-size: 14.5px;
-  line-height: 1.35;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.hl li:last-child {
+  margin-bottom: 0;
 }
 
 .hl li.op b {
@@ -960,11 +1065,9 @@ input[type="password"]:hover {
 .cb .gh th {
   padding: 12px 0 4px;
   text-align: left;
-  font-size: 12.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--mut);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg2);
 }
 
 .cb .duel td.lb,
@@ -974,24 +1077,24 @@ input[type="password"]:hover {
 }
 
 .cb .duel th {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--mut);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .cb .duel .rk {
   display: table;
-  margin: 3px auto 0;
+  margin: 4px auto 0;
 }
 
 .ea {
   color: var(--good);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .ed {
   color: var(--bad);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .ee {
@@ -1006,21 +1109,21 @@ input[type="password"]:hover {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--zebra);
-  padding: 10px 12px;
+  padding: 12px;
 }
 
 .pt {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .ps {
   font-size: 26px;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--mut);
 }
 
@@ -1030,7 +1133,7 @@ input[type="password"]:hover {
 
 .px {
   color: var(--mut);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Jogadores */
@@ -1053,9 +1156,9 @@ input[type="password"]:hover {
   flex: 1 1 0;
   min-width: 0;
   margin: 0;
-  padding: 6px 10px;
+  padding: 8px 12px;
   text-align: center;
-  line-height: 1.15;
+  line-height: 1.2;
   white-space: normal;
 }
 
@@ -1073,40 +1176,42 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 12px 14px;
+  padding: 12px 16px;
 }
 
 .lead h3 {
   margin: 0 0 4px;
   font-size: 16px;
+  font-weight: 600;
 }
 
 .lead h3.lt {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lead .ln {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   padding: 8px 0;
   border-top: 1px solid var(--line);
 }
 
 .lead .ln small {
   color: var(--mut);
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .lead .ln b {
   font-size: 16px;
+  font-weight: 600;
 }
 
 .lead .ln span {
-  color: var(--mut);
+  color: var(--fg2);
   font-size: 14px;
 }
 
@@ -1155,7 +1260,7 @@ input[type="password"]:hover {
   background: var(--c);
   color: var(--ink);
   font-style: normal;
-  font-weight: 700;
+  font-weight: 600;
   font-size: calc(var(--s) * 0.34);
   line-height: 1;
 }
@@ -1170,11 +1275,17 @@ input[type="password"]:hover {
 }
 
 @media (prefers-color-scheme: dark) {
-  .tl img {
+  :root:not([data-theme="light"]) .tl img {
     background: #FFFFFF;
     border-radius: 50%;
     padding: 10%;
   }
+}
+
+:root[data-theme="dark"] .tl img {
+  background: #FFFFFF;
+  border-radius: 50%;
+  padding: 10%;
 }
 
 .tn {
@@ -1189,8 +1300,8 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 0 14px;
-  margin-bottom: 14px;
+  padding: 0 16px;
+  margin-bottom: 16px;
 }
 
 .tkbox > summary {
@@ -1204,14 +1315,14 @@ input[type="password"]:hover {
 
 .tkbox > summary span {
   color: var(--mut);
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
 }
 
 .tkin {
   display: grid;
   gap: 12px;
-  padding: 0 0 14px;
+  padding: 0 0 16px;
 }
 
 .steps {
@@ -1219,7 +1330,7 @@ input[type="password"]:hover {
   padding-left: 20px;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--mut);
+  color: var(--fg2);
 }
 
 .steps b {
@@ -1227,8 +1338,8 @@ input[type="password"]:hover {
 }
 
 .msg:not(:empty) {
-  margin: 0 0 14px;
-  padding: 10px 14px;
+  margin: 0 0 16px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
@@ -1254,8 +1365,8 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
 }
 
 .adm-h {
@@ -1268,12 +1379,12 @@ input[type="password"]:hover {
 
 .adm-h .at {
   color: var(--mut);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .adm-card .m {
   color: var(--mut);
-  font-size: 14px;
+  font-size: 13px;
   margin-top: 4px;
 }
 
@@ -1281,21 +1392,21 @@ input[type="password"]:hover {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .chk {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease);
 }
 
 .chk input {
@@ -1323,7 +1434,7 @@ input[type="password"]:hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 14px;
+  margin-top: 16px;
   padding: 12px 0;
   background: var(--bg);
   border-top: 1px solid var(--line);
@@ -1338,7 +1449,7 @@ input[type="password"]:hover {
 #chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -1349,16 +1460,16 @@ input[type="password"]:hover {
 #chips button {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 36px;
-  padding: 0 10px;
+  padding: 0 12px;
   border: 1.5px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
   font: inherit;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s var(--ease);
 }
 
 #chips button:hover {
@@ -1369,7 +1480,7 @@ input[type="password"]:hover {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  padding: 10px 8px 4px;
+  padding: 12px 8px 4px;
 }
 
 .chartcard svg {
@@ -1382,12 +1493,12 @@ input[type="password"]:hover {
 
 .up {
   color: var(--good);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .dn {
   color: var(--bad);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1398,7 +1509,7 @@ input[type="password"]:hover {
 
 /* Playoffs */
 .conf {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .conf h2 {
@@ -1454,23 +1565,21 @@ input[type="password"]:hover {
 
 .seeds td.rc {
   text-align: right;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .seeds td.rc small {
   color: var(--mut);
-  font-size: 12.5px;
+  font-size: 12px;
   margin-left: 4px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .seeds tr.gh th {
   background: var(--zebra);
-  color: var(--mut);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  color: var(--fg2);
+  font-size: 13px;
+  font-weight: 600;
   text-align: left;
 }
 
@@ -1480,16 +1589,14 @@ input[type="password"]:hover {
 
 .tg {
   display: inline-block;
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: var(--zebra);
-  color: var(--mut);
-  font-weight: 700;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  margin-left: 6px;
+  color: var(--fg2);
+  font-weight: 500;
+  font-size: 12px;
+  margin-left: 8px;
 }
 
 .bk-h {
@@ -1509,11 +1616,11 @@ input[type="password"]:hover {
   grid-template-columns: 1fr auto 1fr;
   gap: 8px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
 }
 
@@ -1531,12 +1638,12 @@ input[type="password"]:hover {
 .bk .sd {
   color: var(--mut);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .bk .at {
   color: var(--mut);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .bk li.bye {
@@ -1547,15 +1654,16 @@ input[type="password"]:hover {
 
 .bk li.bye .tx {
   font-size: 13px;
-  color: var(--mut);
-  font-weight: 600;
-  line-height: 1.3;
+  color: var(--fg2);
+  font-weight: 500;
+  line-height: 1.35;
 }
 
 .bk li.bye .tx b {
   display: block;
   color: var(--fg);
   font-size: 15px;
+  font-weight: 600;
 }
 
 @media (max-width: 480px) {
