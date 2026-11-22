@@ -1,6 +1,6 @@
 # Regras — NFL Dashboard
 
-> Última atualização: 17/11/2026
+> Última atualização: 22/11/2026
 
 ## 1. Regras de cálculo
 
@@ -66,7 +66,7 @@
 - **Ordem das linhas sob o horário:** etiquetas (playoffs e divisão) e, depois, "Onde assistir".
 
 ### 2.5 Leitura do confronto
-- **Pontos projetados:** (pontos feitos pelo ataque + pontos cedidos pela defesa adversária) ÷ 2, na janela selecionada. É uma estimativa simples.
+- **Pontos projetados:** (pontos feitos pelo ataque + pontos cedidos pela defesa adversária) ÷ 2, exibidos como placar inteiro arredondado. O destaque principal usa a média ponderada (**40% temporada + 60% últimos 3 jogos**), acompanhada das projeções individuais da temporada e dos últimos 3 jogos. Quando pelo menos um dos times tiver menos de 3 jogos disputados na temporada, a projeção principal usa 100% da temporada e oculta a janela de 3 jogos. É uma estimativa simples e didática.
 - **Duelo ataque x defesa:** compara a posição do ataque com a posição da defesa adversária em pontos, jardas aéreas, jardas corridas, EPA e success rate.
   Diferença = posição da defesa − posição do ataque. A partir de **6 posições** (constante `TH` em `static/js/confrontos.js`) há **vantagem clara**; abaixo disso, "Equilíbrio".
 - **Placar de duelos:** de 10 duelos (5 de cada lado), quantos cada time vence com vantagem clara. Um duelo vencido pela defesa conta para o time dono da defesa.
@@ -225,3 +225,4 @@ O aproveitamento vem antes da lista. Depois, na ordem:
 | 10/11/2026 | Folgas (bye) (2.1, item 5): só os times da semana exibida que não jogam, com a semana no rótulo. |
 | 10/11/2026 | Nova seção 9 (Playoffs): definições, cadeias de desempate, mínimo de 4 jogos em comum, sorteio pendente, arredondamento e checagem. Marcador corrigido para `{{DATA}}`. Implementação na mesma data. |
 | 17/11/2026 | Seção 9.2 (`Saldo de touchdowns`): incluído `fumble_recovery_tds` em `TD_COLS` após confirmação no `calculate_stats.R` do `nflfastR` de que não há sobreposição com as demais colunas. |
+| 22/11/2026 | Seção 2.5 (`Pontos projetados`): placar inteiro arredondado com média ponderada (40% temporada / 60% últimos 3 jogos), exibindo temporada e últimos 3 jogos abaixo e fallback para 100% temporada no início da temporada. |

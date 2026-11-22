@@ -116,25 +116,63 @@ function previousMeeting(g) {
 function summarySection(g) {
   const a = g.away;
   const h = g.home;
+  const As = a.s;
+  const Hs = h.s;
+  if (!As || !Hs || As.pf == null || Hs.pa == null || Hs.pf == null || As.pa == null) {
+    return '<section class="sec"><p class="note">Sem dados suficientes para este período</p></section>';
+  }
+
+  const sAway = (As.pf + Hs.pa) / 2;
+  const sHome = (Hs.pf + As.pa) / 2;
+  const Aw3 = a.w3;
+  const Hw3 = h.w3;
+  const hasW3 = Boolean(
+    Aw3 && Hw3 && Aw3.g >= 3 && Hw3.g >= 3 &&
+    Aw3.pf != null && Hw3.pa != null && Hw3.pf != null && Aw3.pa != null
+  );
+
+  let mainAway = Math.round(sAway);
+  let mainHome = Math.round(sHome);
+  let mainLabel = "Placar projetado (temporada)";
+  let subHtml =
+    '<div class="proj-sub"><span class="proj-empty">Janela de 3 jogos ainda incompleta · 100% temporada</span></div>';
+
+  if (hasW3) {
+    const w3Away = (Aw3.pf + Hw3.pa) / 2;
+    const w3Home = (Hw3.pf + Aw3.pa) / 2;
+    mainAway = Math.round(0.4 * sAway + 0.6 * w3Away);
+    mainHome = Math.round(0.4 * sHome + 0.6 * w3Home);
+    mainLabel = "Placar projetado (40/60)";
+    subHtml =
+      `<div class="proj-sub">` +
+      `<span>Temporada <b>${Math.round(sAway)} × ${Math.round(sHome)}</b></span>` +
+      `<span>Últimos 3 jogos <b>${Math.round(w3Away)} × ${Math.round(w3Home)}</b></span>` +
+      `</div>`;
+  }
+
   const A = a[win];
   const H = h[win];
-  if (!A || !H) {
-    return '<section class="sec"><p class="note">Sem dados suficientes para este período.</p></section>';
+  let tallyHtml = "";
+  if (A && H) {
+    const d1 = buildDuels(a, h);
+    const d2 = buildDuels(h, a);
+    const aw = d1.filter((x) => x.edge === "a").length + d2.filter((x) => x.edge === "d").length;
+    const hw = d2.filter((x) => x.edge === "a").length + d1.filter((x) => x.edge === "d").length;
+    tallyHtml = `<p class="tally">Vantagens claras (de ${d1.length + d2.length} duelos, diferença ≥ ${EDGE_THRESHOLD} pos.): <b>${a.abbr} ${aw}</b> × <b>${hw} ${h.abbr}</b></p>`;
   }
-  const d1 = buildDuels(a, h);
-  const d2 = buildDuels(h, a);
-  const proj = (O, Dd) => ((O.pf + Dd.pa) / 2).toFixed(1);
-  const aw = d1.filter((x) => x.edge === "a").length + d2.filter((x) => x.edge === "d").length;
-  const hw = d2.filter((x) => x.edge === "a").length + d1.filter((x) => x.edge === "d").length;
+
   return (
     `<section class="sec"><h3>Resumo</h3>` +
+    `<div class="proj-wrap">` +
     `<div class="proj">` +
-    `<div>${teamLogo(a.abbr, 28)}<small>${a.label}</small><b>${proj(A, H)}</b></div>` +
-    `<span class="mid">pontos projetados</span>` +
-    `<div>${teamLogo(h.abbr, 28)}<small>${h.label}</small><b>${proj(H, A)}</b></div>` +
+    `<div>${teamLogo(a.abbr, 28)}<small>${a.label}</small><b>${mainAway}</b></div>` +
+    `<span class="mid">${mainLabel}</span>` +
+    `<div>${teamLogo(h.abbr, 28)}<small>${h.label}</small><b>${mainHome}</b></div>` +
     `</div>` +
-    `<p class="tally">Vantagens claras (de ${d1.length + d2.length} duelos, diferença ≥ ${EDGE_THRESHOLD} pos.): <b>${a.abbr} ${aw}</b> × <b>${hw} ${h.abbr}</b></p>` +
-    `<p class="note">Média entre ataque e defesa adversária. Uso apenas didático, sem fins de apostas.</p>` +
+    `${subHtml}` +
+    `</div>` +
+    `${tallyHtml}` +
+    `<p class="note">Média ataque × defesa adversária (40% temporada, 60% últimos 3) · Uso didático</p>` +
     `</section>`
   );
 }
@@ -154,12 +192,12 @@ function highlightsSection(g) {
     const worst = d.reduce((p, c) => (c.gap < p.gap ? c : p));
     if (best.gap >= EDGE_THRESHOLD) {
       items.push(
-        `<li class="op"><b>Oportunidade (${atk.abbr}):</b> ${best.l} — ataque ${best.ra}º × defesa ${best.rd}ª de ${dfn.abbr}.</li>`
+        `<li class="op"><b>Oportunidade (${atk.abbr}):</b> ${best.l} — ataque ${best.ra}º × defesa ${best.rd}ª de ${dfn.abbr}</li>`
       );
     }
     if (worst.gap <= -EDGE_THRESHOLD) {
       items.push(
-        `<li class="ob"><b>Obstáculo (${atk.abbr}):</b> ${worst.l} — ataque ${worst.ra}º × defesa ${worst.rd}ª de ${dfn.abbr}.</li>`
+        `<li class="ob"><b>Obstáculo (${atk.abbr}):</b> ${worst.l} — ataque ${worst.ra}º × defesa ${worst.rd}ª de ${dfn.abbr}</li>`
       );
     }
   });
@@ -217,7 +255,7 @@ function fullTable(g) {
   return (
     `<section class="sec"><details open><summary>Comparativo completo</summary>` +
     `<table><tr><th>${a.abbr}<br>${A ? A.rec : "–"}</th><th></th><th>${h.abbr}<br>${H ? H.rec : "–"}</th></tr>${rows}</table>` +
-    `<p class="note">Selo ao lado do valor = posição na liga (1º = melhor) · Verde = melhor no confronto.</p>` +
+    `<p class="note">Selo = posição na liga (1º = melhor) · Verde = melhor no confronto</p>` +
     `</details></section>`
   );
 }
@@ -266,7 +304,7 @@ function draw() {
   const openSet = new Set([...document.querySelectorAll("#games .card[open]")].map((d) => +d.dataset.i));
   $("games").innerHTML = D.games.length
     ? D.games.map((g, i) => card(g, i, openSet.has(i))).join("")
-    : '<p class="hint">Sem jogos pendentes na temporada regular.</p>';
+    : '<p class="hint">Sem jogos pendentes na temporada regular</p>';
 }
 
 draw();

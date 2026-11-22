@@ -1,6 +1,6 @@
 # Memória do projeto — NFL Dashboard
 
-> Última atualização: 17/11/2026
+> Última atualização: 22/11/2026
 
 Este documento reúne os pedidos, decisões e modificações do projeto que ficaram registrados na memória do assistente, com a data de cada um.
 
@@ -71,6 +71,8 @@ Os registros a partir do 27 levam a data conhecida.
 | 57 | 17/11/2026 | Implementação | Na `main` (PR #8, commit `dee70bc`), a página Playoffs já estava mesclada com 72 testes. Na branch `gemini`, eliminados os downloads redundantes do nflverse em `cli.py` (`schedules`, `team_stats` e `teams` baixados uma única vez) com novo teste em `tests/test_cli.py` (73 testes). |
 | 58 | 17/11/2026 | Implementação | Confirmado no `calculate_stats.R` do `nflfastR` que `fumble_recovery_tds` (`stat_id` 56, 58, 60 e 62) é excluído de `td_ids()` e não se sobrepõe a `rushing_tds`, `def_tds` nem `special_teams_tds`; coluna incluída em `TD_COLS` (`nfl_dashboard/stats.py`) e em `regras.md`. |
 | 59 | 17/11/2026 | Implementação | Refinamento do front-end na branch `gemini`: raios menores (4/6/8 px), remoção da faixa `.yard` e de textos redundantes, etiquetas retangulares, ícones SVG em `comum.js`, transições sutis e formatação legível de `style.css` e `static/js/*.js`. |
+| 60 | 22/11/2026 | Implementação | Aplicação da skill `unslop` + `docs/plano-ui-ux.md` na branch `gemini`: rampa grafite neutra, grid de 4 px, remoção de uppercase/tracking, botão manual de tema claro/escuro (`comum.js`), abas de visão no Painel, cores dos times no ranking e grade de 2 colunas com barras comparativas duplas em Confrontos (`render.py`, `painel.js`, `confrontos.js`, `style.css`, `layout.html`). |
+| 61 | 22/11/2026 | Implementação | Ajustes em Confrontos na branch `gemini`: revertida a grade de 2 colunas e as barras coloridas dos cards (mantendo `narrow` em 1 coluna); implementado placar projetado em inteiros arredondados com média ponderada (40% temporada / 60% últimos 3 jogos), exibição das duas projeções abaixo e fallback para 100% temporada quando algum time tem menos de 3 jogos. |
 
 ## 2. Preferências de trabalho
 
@@ -150,3 +152,5 @@ Itens que aconteceram no projeto, mas não têm registro próprio na memória do
 | 17/11/2026 | Registro 57 (merge da página Playoffs na `main` com 72 testes e deduplicação de downloads no `cli.py` com 73 testes) e encerramento da pendência de contagem de testes. |
 | 17/11/2026 | Registro 58 (inclusão de `fumble_recovery_tds` em `TD_COLS` após verificação no `nflfastR`) e encerramento da pendência de touchdowns. |
 | 17/11/2026 | Registro 59 (refinamento visual, de UX e legibilidade do front-end na branch `gemini`). |
+| 22/11/2026 | Registro 60 (aplicação da skill `unslop` e do `plano-ui-ux.md` na branch `gemini`). |
+| 22/11/2026 | Registro 61 (reversão visual de Confrontos para 1 coluna e novo placar projetado ponderado 40/60). |

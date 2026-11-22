@@ -1,6 +1,6 @@
 # Design — NFL Dashboard
 
-> Última atualização: 17/11/2026
+> Última atualização: 22/11/2026
 
 ## 1. Princípios
 
@@ -86,7 +86,7 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 | Faixa lateral do card | Amarela para jogo de divisão; na cor da rodada nos playoffs (a rodada tem prioridade). |
 | Onde assistir | Rótulo "Onde assistir" e uma etiqueta de contorno neutra por canal, sob as etiquetas coloridas; só aparece nos jogos marcados. |
 | Último confronto | Bloco suave com logo, sigla e placar de cada time ("GB 24 × 20 DET", placar do vencedor em destaque) e uma linha de apoio (semana ou rodada, data e local). |
-| Placar projetado | Dois números grandes (32 px) em um bloco suave, com logos de 28 px e o texto "pontos projetados" no meio. |
+| Placar projetado | Dois inteiros arredondados (32 px) em quadro de placar (`.proj-wrap`), com logos de 28 px, rótulo "Placar projetado (40/60)" e barra inferior discreta (`.proj-sub`) exibindo as projeções da temporada e dos últimos 3 jogos. |
 | Selo de posição | Pequeno selo ao lado do valor ("12º"): verde no 1º quarto da liga, vermelho no último, neutro no meio. |
 | Destaques | Lista de barras com borda verde (oportunidade) ou vermelha (obstáculo). |
 | Vantagem | Texto "Ataque" (verde), "Defesa" (vermelho) ou "Equilíbrio" (neutro). |
@@ -138,3 +138,5 @@ Na página Playoffs, os títulos "Wild Card Round" e "Divisional Round" usam as 
 | 10/11/2026 | Página Playoffs: componentes do quadro de seeds, sorteio pendente (etiqueta neutra, sem amarelo) e chaveamento; títulos de rodada com `po-wc` e `po-div`; aba e largura da página. Implementação na mesma data. |
 | 10/11/2026 | Quadro de seeds sem linha de cabeçalho (Seed, Time, Divisão e V-D): o conteúdo e os títulos de grupo identificam as colunas. |
 | 17/11/2026 | Refinamento visual e de UX: raios editoriais (4/6/8 px), remoção da faixa `.yard` (substituída por barra superior de 3 px), etiquetas retangulares, ícones SVG em `comum.js`, CSS/JS formatados e microcopy enxuta. |
+| 22/11/2026 | Aplicação da skill `unslop` + `plano-ui-ux.md`: rampa neutra grafite (`--bg`, `--surface`, `--line` translúcido), escala de 4 px, remoção de caixa alta com tracking em etiquetas, botão de tema claro/escuro no topo (`localStorage`), abas de visão no Painel (`Resumo`, `Ataque`, `Defesa`, `Eficiência`, `Todas`), cores dos times nas barras do ranking e nos cards de Confrontos (grade 2 colunas no desktop + barras comparativas duplas). |
+| 22/11/2026 | Confrontos: revertida a grade de 2 colunas e barras coloridas nos cards (voltando a `narrow` em 1 coluna); placar projetado atualizado para inteiros arredondados com média ponderada 40/60 e detalhamento de temporada e últimos 3 jogos. |
